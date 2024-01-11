@@ -8,6 +8,8 @@ Every team member should have a brief bio (one small paragraph.)
 
 Emily Marron: I am a student of Data Science at EMU. I am graduating in April 2024. I have experience in adapting cutting-edge ML models (particularly image-based models) for end-users using component based development. I'm good with Python, R, Java, C++, etc., but am always looking to learn more languages. My personal projects are mostly in video game modding and I take commissions from there from time to time.
 
+Tyler Flinchum: I am a Computer Science student at EMU, with an expected graduation in Winter 2024. Embracing the exciting world of AI and mobile app development, I'm eager to dive into new challenges and expand my skill set. A few languages I am proficient in are  Java, Python, C#, and MySQL, but I'm actively learning more. Beyond coding, I enjoy reading and gaming, which I have made a few mods for popular games such as 7DTD or Minecraft. Let's make an amazing experience!
+
 
 <!--
 
