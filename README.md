@@ -3,28 +3,30 @@ JARVIS is a Flutter-based phone app AI assistant designed to help people handle 
 
 ## The Team: J.A.R.V.I.S
 
-### Haohua Zheng - Team Leader
+### [Haohua Zheng](https://github.com/haohuazheng3) - Team Leader
 
+//Fill here
 
+### [Emily Marron](https://github.com/emarron) - Deputy Team Leader
 
-### Emily Marron - Deputy Team Leader
+I am a student of Data Science at EMU. I am graduating in April 2024. I have experience in adapting cutting-edge ML models (particularly image-based models) for end-users using component based development. I'm good with Python, R, Java, C++, etc., but am always looking to learn more languages. My personal projects are mostly in video game modding and I take commissions from there from time to time.
 
+### [Jacob Yankee](//your github profile link) - Team Member
 
+//Fill here
 
-### Jacob Yankee - Team Member
+### [Nick](//your github profile link) - Team Member
 
+//Fill here
 
+### [Tyler](//your github profile link) - Team Member
 
-### Nick - Team Member
+//Fill here
 
+### [Dayshia Sweet](//your github profile link) - Team Member
 
+//Fill here
 
-### Tyler - Team Member
+### [Luna Jia](//your github profile link) - Team Member
 
-
-
-### Dayshia Sweet - Team Member
-
-
-
-### Luna Jia - Team Member
+//Fill here
