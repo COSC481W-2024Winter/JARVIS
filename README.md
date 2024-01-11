@@ -19,9 +19,9 @@ I am a student of Data Science at EMU. I am graduating in April 2024. I have exp
 
 //Fill here
 
-### [Tyler](//your github profile link) - Team Member
+### [Tyler Flinchum](https://github.com/TFlinchu) - Team Member
 
-//Fill here
+I am a Computer Science student at EMU, with an expected graduation in Winter 2024. Embracing the exciting world of AI and mobile app development, I'm eager to dive into new challenges and expand my skill set. A few languages I am proficient in are  Java, Python, C#, and MySQL, but I'm actively learning more. Beyond coding, I enjoy reading and gaming, which I have made a few mods for popular games such as 7DTD or Minecraft. Let's make an amazing experience!
 
 ### [Dayshia Sweet](//your github profile link) - Team Member
 
