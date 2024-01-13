@@ -5,7 +5,7 @@ JARVIS is a Flutter-based phone app AI assistant designed to help people handle 
 
 ### [Haohua Zheng](https://github.com/haohuazheng3) - Team Leader
 
-//Fill here
+I am a senior student at EMU, pursuing dual degrees in Computer Science and Entrepreneurship. I am proficient in languages like Java, Python, Javascript, Swift, and Dart. Additionally, I have initiated and developed several entrepreneurial projects with my business partners where my responsibilities include business development, UI design, and website development. These projects are showcased on my personal website www.haohuazheng.com.
 
 ### [Emily Marron](https://github.com/emarron) - Deputy Team Leader
 
