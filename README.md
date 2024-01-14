@@ -11,9 +11,9 @@ I am a senior student at EMU, pursuing dual degrees in Computer Science and Entr
 
 I am a student of Data Science at EMU. I am graduating in April 2024. I have experience in adapting cutting-edge ML models (particularly image-based models) for end-users using component based development. I'm good with Python, R, Java, C++, etc., but am always looking to learn more languages. My personal projects are mostly in video game modding and I take commissions from there from time to time.
 
-### [Jacob Yankee](//your github profile link) - Team Member
+### [Jacob Yankee](https://github.com/JacobYankee) - Team Member
 
-//Fill here
+I am a Computer Science student at EMU with an expected graduation in April 2024. I am a transfer student from Michigan Technological University and a former member of Husky Game Development. I am familiar with Java, C#, Unity, Agile development, HTMl, CSS, JavaScript, PHP, and some AWS. My personal projects tend to be small games made in Unity.
 
 ### [Nick](//your github profile link) - Team Member
 
