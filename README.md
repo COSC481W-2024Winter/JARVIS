@@ -27,6 +27,6 @@ I am a Computer Science student at EMU, with an expected graduation in Winter 20
 
 //Fill here
 
-### [Luna Jia](//your github profile link) - Team Member
+### [Luna Jia](https://github.com/Luna-Jia) - Team Member
 
-//Fill here
+I am a Computer Science student at Eastern Michigan University, graduating in Spring 2024, specializing in software engineering and database management. Skilled in Java, Python, and web development languages, I enjoy applying my knowledge to practical projects. Outside coding, my world revolves around cooking and gardening.
