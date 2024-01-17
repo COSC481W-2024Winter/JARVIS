@@ -30,3 +30,7 @@ I am a Computer Science student at EMU and will be graduating Winter 2024. My in
 ### [Luna Jia](https://github.com/Luna-Jia) - Team Member
 
 I am a Computer Science student at Eastern Michigan University, graduating in Spring 2024, specializing in software engineering and database management. Skilled in Java, Python, and web development languages, I enjoy applying my knowledge to practical projects. Outside coding, my world revolves around cooking and gardening.
+
+[Nicholas Garska](https://github.com/Nick-Garska) - Team Member
+
+I am a computer Science Student at Eastern Michigan University graduating Spring 2024 I have prefence for algorithms and AI I have alot of experience with java, Outside of school I read, and play video games at a competitive level.
