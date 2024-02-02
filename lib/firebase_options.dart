@@ -49,20 +49,5 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBdzkeMTs_JhlOdV9UlyfuZQDRKEYx-500',
-    appId: '1:278902935513:android:30b3412cc95494710a93c8',
-    messagingSenderId: '278902935513',
-    projectId: 'jarvis-team-15d4b',
-    storageBucket: 'jarvis-team-15d4b.appspot.com',
-  );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyABOx9-F2WK9bhlAGNDkIMrzdoniu1p7Nw',
-    appId: '1:278902935513:ios:9f4450657aac23c00a93c8',
-    messagingSenderId: '278902935513',
-    projectId: 'jarvis-team-15d4b',
-    storageBucket: 'jarvis-team-15d4b.appspot.com',
-    iosBundleId: 'com.example.jarvis',
-  );
 }
