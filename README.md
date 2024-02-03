@@ -1,5 +1,86 @@
+## Introduction
+
 # J.A.R.V.I.S
 JARVIS is a Flutter-based phone app AI assistant designed to help people handle all their daily tasks like a human assistant, allowing them to focus more on important matters. The software may include, but is not limited to, summarizing and sending emails, assisting users in answering and making phone calls, and helping with the payment of utilities and insurance bills, among other tasks. Just as the name JARVIS suggests, we aim to make this software a comprehensive AI assistant like JARVIS in Iron Man, helping Tony Stark solve problems and manage daily activities.
+
+## Project Layout
+
+- **README.md**: This file, providing an overview of the project and setup instructions.
+- **analysis_options.yaml**: Specifies the Dart analysis options for maintaining code quality.
+- **android/**: Android application project files and configurations.
+- **ios/**: iOS application project files and configurations.
+- **lib/**: Contains Dart source files for the Flutter app, the core of the application logic.
+- **linux/**: Linux desktop application project files.
+- **macos/**: MacOS desktop application project files.
+- **profile/**: Configuration files used for profiling the app's performance.
+- **pubspec.yaml** & **pubspec.lock**: Manage Flutter project dependencies and lock them to specific versions, respectively.
+- **test/**: Test code for the application ensuring functionality works as expected.
+- **web/**: Web application project files enabling the app to run in a browser.
+- **windows/**: Windows desktop application project files.
+
+## Setup Instructions
+
+### Prerequisites
+
+- Flutter SDK (Version: As per `pubspec.yaml` dependency, requires Flutter >=3.1.5 <4.0.0)
+- Dart SDK (Version: Compatible with Flutter SDK version)
+- Recommended Development Environment: Visual Studio Code
+
+### Dependencies
+
+The project uses the following main dependencies:
+
+- `firebase_core: ^2.24.2`
+- `cloud_firestore: ^4.14.0`
+- `flutter: sdk`
+- `cupertino_icons: ^1.0.2`
+
+They will be downloaded in the 'Getting Started' Section. 
+
+#### Optional Dependencies:
+To modify the back-end database FlutterFire and Firebase CLI are required. To emulate an android phone Android Studio is required.
+- FlutterFire: [FlutterFire Documentation](https://firebase.flutter.dev/docs/overview)
+- Firebase CLI: [Firebase Command Line Interface Setup](https://firebase.google.com/docs/cli)
+- Android Studio: [Download Android Studio](https://developer.android.com/studio)
+
+
+### Getting Started
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/COSC481W-2024Winter/JARVIS.git
+   cd JARVIS
+   ```
+
+2. **Setup Flutter Environment**
+   - Ensure Flutter is installed and set up on your system. If not, follow the instructions on the [Flutter official website](https://flutter.dev/docs/get-started/install). We recommend following the VSCode path.
+   - Run `flutter doctor` to ensure your environment is ready for Flutter development.
+
+3. **Install Dependencies**
+   ```bash
+   flutter pub get
+   ```
+   This command installs all the necessary dependencies as defined in `pubspec.yaml`.
+
+4. **Open in VSCode**
+   - Open the project folder in Visual Studio Code.
+   - Ensure the Flutter and Dart extensions are installed in VSCode for the best development experience.
+
+### Preferred Method of running the App
+
+1. **Start an Emulator or Connect a Device**
+   - Open your preferred emulator or connect a physical device to your computer.
+
+2. **Run the App**
+   ```bash
+   flutter run
+   ```
+   This command compiles the app and launches it on the connected device or emulator. 
+
+### Secondary Method of running the App
+
+- **Web**: To run the app in a web browser, use `flutter run -d chrome` (ensure you have Chrome installed).
+
 
 ## The Team: J.A.R.V.I.S
 
