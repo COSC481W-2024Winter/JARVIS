@@ -96,10 +96,6 @@ I am a student of Data Science at EMU. I am graduating in April 2024. I have exp
 
 I am a Computer Science student at EMU with an expected graduation in April 2024. I am a transfer student from Michigan Technological University and a former member of Husky Game Development. I am familiar with Java, C#, Unity, Agile development, HTMl, CSS, JavaScript, PHP, and some AWS. My personal projects tend to be small games made in Unity.
 
-### [Nicholas Garska](https://github.com/Nick-Garska) - Team Member
-
-I am a computer Science Student at Eastern Michigan University graduating Spring 2024 I have prefence for algorithms and AI I have alot of experience with java, Outside of school I read, and play video games at a competitive level.
-
 ### [Tyler Flinchum](https://github.com/TFlinchu) - Team Member
 
 I am a Computer Science student at EMU, with an expected graduation in Winter 2024. Embracing the exciting world of AI and mobile app development, I'm eager to dive into new challenges and expand my skill set. A few languages I am proficient in are  Java, Python, C#, and MySQL, but I'm actively learning more. Beyond coding, I enjoy reading and gaming, which I have made a few mods for popular games such as 7DTD or Minecraft. Let's make an amazing experience!
