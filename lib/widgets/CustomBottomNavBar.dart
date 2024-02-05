@@ -5,9 +5,12 @@ import '../profile.dart';
 
 
 class CustomBottomNavBar extends StatefulWidget {
+  const CustomBottomNavBar({Key? key}) : super(key: key);
+
   @override
   _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
 }
+
 
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   int _selectedIndex = 0; 

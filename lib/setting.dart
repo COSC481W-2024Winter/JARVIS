@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'customUIWidgets/customButton.dart';
-import 'customUIWidgets/CustomHeader.dart';
+import 'widgets/customButton.dart';
+import 'widgets/CustomHeader.dart';
 
 class Setting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Profile'),
+      appBar: CustomAppBar(
+        title: 'Setting',
+      ),
       body: Column(
         children: [
           SizedBox(height: 10),

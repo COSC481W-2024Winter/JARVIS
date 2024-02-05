@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'customUIWidgets/CustomHeader.dart';
+import 'widgets/CustomSubmitButton.dart';
+import 'widgets/CustomHeader.dart';
 
 class Profile extends StatelessWidget {
   final TextEditingController _textController = TextEditingController();
@@ -7,7 +8,9 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Profile'),
+      appBar: CustomAppBar(
+        title: 'Profile',
+      ),
       body: Column(
         children: [
           SizedBox(height: 10),
@@ -69,18 +72,9 @@ class Profile extends StatelessWidget {
           SizedBox(height: 10),
 
           // Submit button
-          ElevatedButton(
+          CustomSubmitButton(
+            label: 'Submit',
             onPressed: () {},
-            child: Text(
-              'Submit',
-              style: TextStyle(fontSize: 20), // Larger font size
-            ),
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(400, 60),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
-              ),
-            ),
           ),
         ],
       ),

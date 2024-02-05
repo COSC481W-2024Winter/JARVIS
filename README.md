@@ -8,10 +8,15 @@ JARVIS is a Flutter-based phone app AI assistant designed to help people handle 
 - **README.md**: This file, providing an overview of the project and setup instructions.
 - **analysis_options.yaml**: Specifies the Dart analysis options for maintaining code quality.
 - **android/**: Android application project files and configurations.
+- **assets/**: Used to store static resources needed by the application, such as images, icons, fonts, videos, etc.
 - **ios/**: iOS application project files and configurations.
 - **lib/**: Contains Dart source files for the Flutter app, the core of the application logic.
+- **lib/theme**: Contains a style.dart with my app theme which I access in the main.dart file
+- **lib/services**: Holds some web APIs and native interaction code
+- **lib/widgets**: Contains custom widgets which are used in multiple different screens
 - **linux/**: Linux desktop application project files.
 - **macos/**: MacOS desktop application project files.
+- **module_design/**: Contains module design
 - **profile/**: Configuration files used for profiling the app's performance.
 - **pubspec.yaml** & **pubspec.lock**: Manage Flutter project dependencies and lock them to specific versions, respectively.
 - **test/**: Test code for the application ensuring functionality works as expected.
