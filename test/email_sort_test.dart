@@ -13,13 +13,16 @@ void main() {
         },
         {
           "Subject": "RE: NERC Meeting Today",
-          "Body": "There was an all day meeting of the NERC/reliability legislation group today. [...]"
+          "Body": "There was an all day meeting of the NERC/reliability legislation group today. [...]" // Ensure to replace [...] with the actual content
         }
       ];
 
       var categorizedEmails = emailSorter.categorizeEmailsList(emails);
       
       for (var email in categorizedEmails) {
+        // Print each email's subject, body, and assigned category
+        print('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${email["Category"]}');
+        
         expect(email.keys, contains('Category'));
       }
     });
