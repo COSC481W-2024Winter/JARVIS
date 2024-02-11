@@ -14,6 +14,9 @@ pubspec.lock  # Consider uncommenting if your application needs a fixed set of d
 .flutter-plugins
 .flutter-plugins-dependencies
 
+### API ###
+firebase_options.dart
+
 ### Firebase ###
 .idea
 **/node_modules/*

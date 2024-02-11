@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "278902935513",
-    "project_id": "jarvis-team-15d4b",
-    "storage_bucket": "jarvis-team-15d4b.appspot.com"
+    "project_number": "722905343138",
+    "project_id": "jarvis-3bb67",
+    "storage_bucket": "jarvis-3bb67.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:278902935513:android:30b3412cc95494710a93c8",
+        "mobilesdk_app_id": "1:722905343138:android:80cc8fe8fa42afa630e3fb",
         "android_client_info": {
           "package_name": "com.example.jarvis"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBdzkeMTs_JhlOdV9UlyfuZQDRKEYx-500"
+          "current_key": "AIzaSyBqDjax4-yVL4U587EgYhUY8b_vvZlMGnM"
         }
       ],
       "services": {
