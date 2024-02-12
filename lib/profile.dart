@@ -61,6 +61,7 @@ class _ProfileState extends State<Profile> {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue, width: 1.0),
               ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
           ),
 
@@ -80,6 +81,7 @@ class _ProfileState extends State<Profile> {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue, width: 1.0),
               ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
           ),
 
@@ -99,6 +101,7 @@ class _ProfileState extends State<Profile> {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue, width: 1.0),
               ),
+              floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
           ),
 
