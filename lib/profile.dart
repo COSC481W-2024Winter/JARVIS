@@ -1,13 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/CustomSubmitButton.dart';
 import 'widgets/CustomHeader.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
+  Profile({Key? key}) : super(key: key);
+
+  @override
+  _ProfileState createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _storyController = TextEditingController();
 
-  Profile({super.key});
+  @override
+  void initState() {
+    super.initState();
+    // Load saved data when the widget is initialized
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _fullNameController.text = prefs.getString('full_name') ?? '';
+      _ageController.text = prefs.getString('age') ?? '';
+      _storyController.text = prefs.getString('story') ?? '';
+    });
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('full_name', _fullNameController.text);
+    prefs.setString('age', _ageController.text);
+    prefs.setString('story', _storyController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +107,10 @@ class Profile extends StatelessWidget {
           // Submit button
           CustomSubmitButton(
             label: 'Submit',
-            onPressed: () {},
+            onPressed: () async {
+              await _saveData();
+              // Add any additional logic you need after saving data
+            },
           ),
         ],
       ),
