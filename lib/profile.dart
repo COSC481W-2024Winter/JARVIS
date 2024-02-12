@@ -3,21 +3,25 @@ import 'widgets/CustomSubmitButton.dart';
 import 'widgets/CustomHeader.dart';
 
 class Profile extends StatelessWidget {
-  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _storyController = TextEditingController();
+
+  Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Profile',
       ),
       body: Column(
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           // Full name text field
           TextField(
-            controller: _textController,
-            decoration: InputDecoration(
+            controller: _fullNameController,
+            decoration: const InputDecoration(
               labelText: 'Full Name',
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue),
@@ -31,12 +35,12 @@ class Profile extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // Age text field
           TextField(
-            controller: _textController,
-            decoration: InputDecoration(
+            controller: _ageController,
+            decoration: const InputDecoration(
               labelText: 'Age',
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue),
@@ -50,12 +54,12 @@ class Profile extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
-          // story text field
+          // Story text field
           TextField(
-            controller: _textController,
-            decoration: InputDecoration(
+            controller: _storyController,
+            decoration: const InputDecoration(
               labelText: 'Your Story',
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.blue),
@@ -69,7 +73,7 @@ class Profile extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // Submit button
           CustomSubmitButton(
