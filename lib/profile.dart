@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/MockGPTService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/CustomSubmitButton.dart';
 import 'widgets/CustomHeader.dart';
 
 class Profile extends StatefulWidget {
-  Profile({Key? key}) : super(key: key);
+  const Profile({Key? key}) : super(key: key);
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -14,6 +15,7 @@ class _ProfileState extends State<Profile> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _storyController = TextEditingController();
+  final MockGPTService _gptService = MockGPTService(); // Instantiate the mock GPT service
 
   @override
   void initState() {
@@ -36,6 +38,20 @@ class _ProfileState extends State<Profile> {
     prefs.setString('full_name', _fullNameController.text);
     prefs.setString('age', _ageController.text);
     prefs.setString('story', _storyController.text);
+  }
+
+  Future<void> _sendDataToGPT() async {
+  // Simulate sending data to GPT
+  String gptResponse = await _gptService.generateText(
+    fullName: _fullNameController.text,
+    age: _ageController.text,
+    story: _storyController.text,
+  );
+
+    // for debugging
+    print("");
+    print("Response from GPT: $gptResponse");
+    print("");
   }
 
   @override
@@ -112,7 +128,7 @@ class _ProfileState extends State<Profile> {
             label: 'Submit',
             onPressed: () async {
               await _saveData();
-              // Add any additional logic you need after saving data
+              await _sendDataToGPT(); // Send data to mock GPT, for debugging only
             },
           ),
         ],
