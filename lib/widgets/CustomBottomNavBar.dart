@@ -15,7 +15,7 @@ class CustomBottomNavBar extends StatefulWidget {
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   int _selectedIndex = 0; 
 
-  final List<Widget> _pages = [HomePage(), Profile(), Setting()];
+  final List<Widget> _pages = [const HomePage(), Profile(), const Setting()];
 
   void _onItemTapped(int index) {
     setState(() {

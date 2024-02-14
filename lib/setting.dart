@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/auth_gate.dart';
 import 'widgets/customButton.dart';
 import 'widgets/CustomHeader.dart';
-import 'package:jarvis/welcome_screen.dart';
 
 class Setting extends StatelessWidget {
   const Setting({super.key});
@@ -40,7 +40,7 @@ class Setting extends StatelessWidget {
                 //Go to welcome screen screen.
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                  MaterialPageRoute(builder: (context) => AuthGate()),
                 );
               },
               style: ElevatedButton.styleFrom(

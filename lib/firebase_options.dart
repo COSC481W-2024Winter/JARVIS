@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,4 +46,31 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCdscC9oEEVaGS5nP37e89xYcS7HWmFNRw',
+    appId: '1:722905343138:web:44d3f75121801a1c30e3fb',
+    messagingSenderId: '722905343138',
+    projectId: 'jarvis-3bb67',
+    authDomain: 'jarvis-3bb67.firebaseapp.com',
+    storageBucket: 'jarvis-3bb67.appspot.com',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyBqDjax4-yVL4U587EgYhUY8b_vvZlMGnM',
+    appId: '1:722905343138:android:80cc8fe8fa42afa630e3fb',
+    messagingSenderId: '722905343138',
+    projectId: 'jarvis-3bb67',
+    storageBucket: 'jarvis-3bb67.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyBuaySSj8-iT7RwiVW5bT4cyEPcxEgJr44',
+    appId: '1:722905343138:ios:385243461278cf6230e3fb',
+    messagingSenderId: '722905343138',
+    projectId: 'jarvis-3bb67',
+    storageBucket: 'jarvis-3bb67.appspot.com',
+    androidClientId: '722905343138-n6p24b7rqrl68gqf33ikjjgbvj0k09ur.apps.googleusercontent.com',
+    iosClientId: '722905343138-vhv7rgikajcbvc546c5llgcttqj4lpns.apps.googleusercontent.com',
+    iosBundleId: 'com.lunajia',
+  );
 }
