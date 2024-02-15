@@ -1,5 +1,5 @@
-// lib/backend/email_sort.dart
-import 'dart:math';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 enum EmailCategory {
   companyBusinessStrategy,
@@ -13,24 +13,50 @@ enum EmailCategory {
 }
 
 class EmailSorter {
-  final Random _random = Random();
+  // Hugging Face API URL and Authorization token
+  final String _apiUrl = "https://api-inference.huggingface.co/models/emarron/JARVIS-email-sorter";
+  final String _apiToken = API_TOKEN; // Secure your API token
 
-  // Existing method to categorize a single email (for reference)
-  EmailCategory categorizeEmailDummy(String emailContent) {
-    List<EmailCategory> categories = EmailCategory.values;
-    return categories[_random.nextInt(categories.length)];
-  }
+  // Method to categorize a list of emails
+  Future<List<Map<String, dynamic>>> categorizeEmailsList(List<Map<String, String>> emails) async {
+    var headers = {
+      'Authorization': 'Bearer $_apiToken',
+      'Content-Type': 'application/json',
+    };
 
-  // New method to categorize a list of emails
-  List<Map<String, dynamic>> categorizeEmailsList(List<Map<String, String>> emails) {
-    List<EmailCategory> categories = EmailCategory.values;
-    return emails.map((email) {
-      return {
-        "Subject": email["Subject"],
-        "Body": email["Body"],
-        "Category": categories[_random.nextInt(categories.length)].toString().split('.').last
-      };
-    }).toList();
+    List<Map<String, dynamic>> categorizedEmails = [];
+
+    for (var email in emails) {
+      // Combine subject and body with a separator for the model
+      String emailText = "${email["Subject"]} [SEP] ${email["Body"]}";
+
+      // Prepare the request body
+      var response = await http.post(
+        Uri.parse(_apiUrl),
+        headers: headers,
+        body: json.encode({"inputs": emailText}),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        // Assuming the response structure is {'label': 'category_label', ...}
+        var categoryLabel = jsonResponse['label'];
+        categorizedEmails.add({
+          "Subject": email["Subject"],
+          "Body": email["Body"],
+          "Category": categoryLabel,
+        });
+      } else {
+        // Handle error or invalid response
+        print('Request failed with status: ${response.statusCode}.');
+        categorizedEmails.add({
+          "Subject": email["Subject"],
+          "Body": email["Body"],
+          "Category": "Error or invalid response",
+        });
+      }
+    }
+
+    return categorizedEmails;
   }
 }
-

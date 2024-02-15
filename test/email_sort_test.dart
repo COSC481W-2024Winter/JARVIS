@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:jarvis/backend/email_sort.dart';
 import 'package:test/test.dart';
 import 'package:logging/logging.dart';
-// PLEASE MAKE SURE TO DOWNLOAD "uncategorized_emails_100.json" FROM THE GOOGLE DRIVE, and place in the "test/data/" folder.
+
 void main() {
   Logger.root.level = Level.ALL; // Log all messages
   Logger.root.onRecord.listen((record) {
@@ -15,7 +15,7 @@ void main() {
     final EmailSorter emailSorter = EmailSorter();
 
     // Test for categorizing a list of emails provided directly in the test
-    test('categorizeEmailsList assigns a category to each email', () {
+    test('categorizeEmailsList assigns a category to each email', () async {
       List<Map<String, String>> emails = [
         {
           "Subject": "RE: NERC Statements on Impact of Security Threats on RTOs",
@@ -27,7 +27,7 @@ void main() {
         }
       ];
 
-      var categorizedEmails = emailSorter.categorizeEmailsList(emails);
+      var categorizedEmails = await emailSorter.categorizeEmailsList(emails);
 
       for (var email in categorizedEmails) {
         logger.info('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${email["Category"]}');
@@ -48,12 +48,12 @@ void main() {
       }).toList();
 
       // Use EmailSorter to categorize emails
-      var categorizedEmails = emailSorter.categorizeEmailsList(emails);
+      var categorizedEmails = await emailSorter.categorizeEmailsList(emails);
 
       // Print and verify each categorized email
-      for (var email in categorizedEmails) {
+      for (var email in await categorizedEmails) {
         logger.info('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${email["Category"]}');
-        expect(email, contains('Category')); // Verifies that 'Category' key exists
+        expect(email.keys, contains('Category')); // Verifies that 'Category' key exists
       }
     });
   });
