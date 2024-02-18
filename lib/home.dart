@@ -1,5 +1,10 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/setting.dart';
+import 'google_sign_in_service.dart'; // Ensure this import is correct
+import 'emails_screen.dart'; // Ensure you have this file and import it
+// import 'email_service.dart'; // Ensure this file exists and import it
+import 'main.dart'; // Assuming you have a HomePage widget. Make sure this import is correct
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,28 +29,55 @@ class HomeScreen extends StatelessWidget {
                         Navigator.of(context).pop();
                       })
                     ],
-                    children: [
-                      const Divider(),
-                      Padding(
-                        padding: const EdgeInsets.all(2),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Image.asset('flutterfire_300x.png'),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               );
             },
-          )
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Redirect to Setting page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Setting()),
+              );
+            },
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final accessToken = await signInWithGoogle(); // Make sure this returns a token
+                final response = await fetchEmails(accessToken!); // This should be modified to return a list of EmailMessage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EmailsScreen(emails: response)),
+                );
+              } catch (e) {
+                // Handle errors or no emails found
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Failed to access emails: $e")),
+                );
+              }
+            },
+            child: const Text('Access Email'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Redirect to HomePage
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()), // Update this with correct HomePage navigation if necessary
+              );
+            },
+            child: const Text('Listen Email'),
+          ),
         ],
         automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
           children: [
-            Image.asset('dash.png'),
             Text(
               'Welcome!',
               style: Theme.of(context).textTheme.displaySmall,

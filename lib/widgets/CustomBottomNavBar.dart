@@ -5,7 +5,7 @@ import '../profile.dart';
 
 
 class CustomBottomNavBar extends StatefulWidget {
-  const CustomBottomNavBar({Key? key}) : super(key: key);
+  const CustomBottomNavBar({super.key});
 
   @override
   _CustomBottomNavBarState createState() => _CustomBottomNavBarState();

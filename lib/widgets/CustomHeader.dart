@@ -6,10 +6,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   // CustomAppBar constructor
   const CustomAppBar({
-    Key? key,
+    super.key,
     this.title = 'JARVIS',
     this.toolbarHeight = 80.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

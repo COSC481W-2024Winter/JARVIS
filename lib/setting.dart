@@ -40,7 +40,7 @@ class Setting extends StatelessWidget {
                 //Go to welcome screen screen.
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AuthGate()),
+                  MaterialPageRoute(builder: (context) => const AuthGate()),
                 );
               },
               style: ElevatedButton.styleFrom(
