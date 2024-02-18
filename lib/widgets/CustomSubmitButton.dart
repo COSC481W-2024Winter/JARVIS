@@ -18,8 +18,8 @@ class CustomSubmitButton extends StatelessWidget {
       ),
       style: ElevatedButton.styleFrom(
         fixedSize: Size(400, 60),
-        primary: Colors.blue, // Background color
-        onPrimary: Colors.white, // Text Color (Foreground color)
+        backgroundColor: Colors.blue, // Background color
+        foregroundColor: Colors.white, // Text Color (Foreground color)
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),

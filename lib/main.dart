@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'widgets/CustomButton.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
 import 'profile.dart';
 import 'setting.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env"); 
+  await Firebase.initializeApp(
+    options: await DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -54,7 +63,7 @@ class HomePage extends StatelessWidget {
                   fixedSize: Size(200, 200),
                   shape: CircleBorder(),
                   padding: EdgeInsets.all(20),
-                  primary: Colors.blue,
+                  backgroundColor: Colors.blue,
                 ),
               ),
 
@@ -83,7 +92,7 @@ class HomePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   shape: CircleBorder(),
                   padding: EdgeInsets.all(20),
-                  primary: Colors.blue,
+                  backgroundColor: Colors.blue,
                 ),
               ),
             ],

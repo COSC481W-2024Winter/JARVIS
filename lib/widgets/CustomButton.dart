@@ -17,8 +17,8 @@ class CustomButton extends StatelessWidget {
       ),
       style: ElevatedButton.styleFrom(
         fixedSize: Size(400, 60),
-        primary: Colors.blue, // Background color
-        onPrimary: Colors.white, // Text Color (Foreground color)
+        backgroundColor: Colors.blue, // 更新后的背景色属性
+        foregroundColor: Colors.white, // 更新后的文本色属性
       ),
     );
   }

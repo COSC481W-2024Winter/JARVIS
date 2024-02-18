@@ -5,6 +5,7 @@ build/
 pubspec.lock  # Consider uncommenting if your application needs a fixed set of dependencies
 .doc/api/
 .env*
+.env
 *.dart.js
 *.info.json
 *.js
@@ -13,9 +14,6 @@ pubspec.lock  # Consider uncommenting if your application needs a fixed set of d
 *.js.map
 .flutter-plugins
 .flutter-plugins-dependencies
-
-### API ###
-firebase_options.dart
 
 ### Firebase ###
 .idea
