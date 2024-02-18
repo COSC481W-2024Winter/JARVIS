@@ -5,15 +5,16 @@ import 'auth_gate.dart';
 import 'widgets/CustomButton.dart';
 import 'profile.dart';
 import 'setting.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
- WidgetsFlutterBinding.ensureInitialized();
- await Firebase.initializeApp(
-   options: DefaultFirebaseOptions.currentPlatform,
- );
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(
+    options: await DefaultFirebaseOptions.currentPlatform,
+  );
 
-
- runApp(const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -60,7 +61,8 @@ class HomePage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(200, 200), backgroundColor: Colors.blue,
+                  fixedSize: const Size(200, 200),
+                  backgroundColor: Colors.blue,
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(20),
                 ),
@@ -89,7 +91,8 @@ class HomePage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(), backgroundColor: Colors.blue,
+                  shape: const CircleBorder(),
+                  backgroundColor: Colors.blue,
                   padding: const EdgeInsets.all(20),
                 ),
                 child: const Icon(
