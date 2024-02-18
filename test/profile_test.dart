@@ -1,0 +1,87 @@
+import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+void main() {
+  setUpAll(() async {
+  // Load environment variables from .test_env
+    dotenv.testLoad(fileInput: File('test/data/.env.test').readAsStringSync());
+  });
+  String fullNameKey = "name";
+  String ageKey = "age";
+  String storyKey = "story";
+
+  test('shared prefs test', () async {
+    SharedPreferences.setMockInitialValues({
+      fullNameKey: 'John Doe',
+      ageKey: '30',
+      storyKey: 'My story',
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final fullName = prefs.getString(fullNameKey);
+    final age = prefs.getString(ageKey);
+    final story = prefs.getString(storyKey);
+
+    print(fullName);
+    print(age);
+    print(story);
+
+    expect(fullName, 'John Doe');
+    expect(age, '30');
+    expect(story, 'My story');
+  });
+
+  test('shared prefs to GPT test', () async {
+    SharedPreferences.setMockInitialValues({
+      fullNameKey: 'User Name',
+      ageKey: '32',
+      storyKey: 'I am a professional businessman',
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final fullName = prefs.getString(fullNameKey);
+    final age = prefs.getString(ageKey);
+    final story = prefs.getString(storyKey);
+
+    print(fullName);
+    print(age);
+    print(story);
+
+    expect(fullName, 'User Name');
+    expect(age, '32');
+    expect(story, 'I am a professional businessman');
+
+    final apiKey = dotenv.env['CHATGPT_KEY'];
+    expect(apiKey, isNotNull, reason: 'API key not found in .test_env');
+
+    // Replace the URL with the actual endpoint for OpenAI's ChatGPT
+    final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey',
+      },
+      body: jsonEncode({
+        'model': 'gpt-4-1106-preview',
+        "messages": [
+          {
+            "role": "user", 
+            "content": "My name is $fullName, I am $age years old, and here's a little about me: $story. Actual question/action implemented here"
+          }
+        ]
+      }),
+    );
+
+    final jsonResponse = jsonDecode(response.body);
+    print(jsonResponse);
+    expect(response.statusCode, 200, reason: 'Failed to get response from ChatGPT');
+  });
+}
