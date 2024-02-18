@@ -42,7 +42,6 @@ class EmailSorter {
   }
 
   String truncateText(String text, int maxLength) {
-    // Ensure the text does not exceed the maxLength
     return text.length > maxLength ? text.substring(0, maxLength) : text;
   }
 
@@ -53,41 +52,48 @@ class EmailSorter {
     };
 
     List<Map<String, dynamic>> categorizedEmails = [];
-    int delayMilliseconds = 1000; // Start with 1 second delay
-    const int minimumDelay = 100; // Minimum delay of 0.1 seconds
-    const int adjustmentAmount = 100; // Decrease delay by 100 milliseconds after each request
+    int delayMilliseconds = 1000;
+    const int minimumDelay = 100;
+    const int adjustmentAmount = 100;
 
     for (var email in emails) {
-      // Truncate the concatenated subject and body to a conservative character limit
-      // Adjust this limit as needed to approximate the model's token limit
-      String emailText = truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512); // Example limit
+      String emailText = truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512);
+      
+      bool requestSuccessful = false;
+      while (!requestSuccessful) {
+        var response = await http.post(
+          Uri.parse(_apiUrl),
+          headers: headers,
+          body: json.encode({"inputs": emailText}),
+        );
 
-      var response = await http.post(
-        Uri.parse(_apiUrl),
-        headers: headers,
-        body: json.encode({"inputs": emailText}),
-      );
-
-      if (response.statusCode == 200) {
-        var jsonResponse = json.decode(response.body);
-        var bestPrediction = jsonResponse[0][0];
-        var categoryLabel = _mapLabelToCategory(bestPrediction['label']).toString().split('.').last;
-        categorizedEmails.add({
-          "Subject": email["Subject"],
-          "Body": email["Body"],
-          "Category": categoryLabel,
-        });
-      } else {
-        print('Request failed with status: ${response.statusCode}.');
-        print('Response body: ${response.body}');
-        categorizedEmails.add({
-          "Subject": email["Subject"],
-          "Body": email["Body"],
-          "Category": "Error or invalid response",
-        });
+        if (response.statusCode == 200) {
+          var jsonResponse = json.decode(response.body);
+          var bestPrediction = jsonResponse[0][0];
+          var categoryLabel = _mapLabelToCategory(bestPrediction['label']).toString().split('.').last;
+          categorizedEmails.add({
+            "Subject": email["Subject"],
+            "Body": email["Body"],
+            "Category": categoryLabel,
+          });
+          requestSuccessful = true;
+        } else if (response.statusCode == 503) {
+          var responseBody = json.decode(response.body);
+          var estimatedWaitTime = responseBody['estimated_time'] ?? 20.0;
+          print('Model loading, waiting for $estimatedWaitTime seconds before retrying...');
+          await Future.delayed(Duration(seconds: estimatedWaitTime.round()));
+        } else {
+          print('Request failed with status: ${response.statusCode}.');
+          print('Response body: ${response.body}');
+          categorizedEmails.add({
+            "Subject": email["Subject"],
+            "Body": email["Body"],
+            "Category": "Error or invalid response",
+          });
+          requestSuccessful = true;
+        }
       }
 
-      // Dynamically adjust the delay
       await Future.delayed(Duration(milliseconds: delayMilliseconds));
       if (delayMilliseconds > minimumDelay) {
         delayMilliseconds -= adjustmentAmount;
