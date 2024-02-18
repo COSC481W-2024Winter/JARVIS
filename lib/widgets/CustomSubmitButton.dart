@@ -5,24 +5,21 @@ class CustomSubmitButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const CustomSubmitButton(
-      {Key? key, required this.label, required this.onPressed})
-      : super(key: key);
+      {super.key, required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      child: Text(
-        label,
-        style: TextStyle(fontSize: 20),
-      ),
       style: ElevatedButton.styleFrom(
-        fixedSize: Size(400, 60),
-        primary: Colors.blue, // Background color
-        onPrimary: Colors.white, // Text Color (Foreground color)
+        foregroundColor: Colors.white, backgroundColor: Colors.blue, fixedSize: const Size(400, 60), // Text Color (Foreground color)
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 20),
       ),
     );
   }
