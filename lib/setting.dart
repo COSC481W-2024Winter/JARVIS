@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:jarvis/auth_gate.dart';
 import 'widgets/customButton.dart';
 import 'widgets/CustomHeader.dart';
 
 class Setting extends StatelessWidget {
+  const Setting({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'Setting',
       ),
       body: Column(
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // Preference button
           CustomButton(
@@ -19,7 +21,7 @@ class Setting extends StatelessWidget {
             onPressed: () {},
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           // Language button
           CustomButton(
@@ -34,17 +36,23 @@ class Setting extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 20.0), // Space from bottom
             child: ElevatedButton(
-              onPressed: () {}, // Add functionality here
-              child: Text(
-                'Log out',
-                style: TextStyle(fontSize: 20), // Larger font size
-              ),
+              onPressed: () {
+                //Go to welcome screen screen.
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AuthGate()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100), // Rounded shape
                 ),
                 minimumSize:
-                    Size(double.infinity, 50), // Set the width and height
+                    const Size(double.infinity, 50), // Set the width and height
+              ), // Add functionality here
+              child: const Text(
+                'Log out',
+                style: TextStyle(fontSize: 20), // Larger font size
               ),
             ),
           ),
