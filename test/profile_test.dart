@@ -31,16 +31,16 @@ void main() {
     print(age);
     print(story);
 
-    expect(fullName, 'John Doe');
-    expect(age, '30');
-    expect(story, 'My story');
+    expect(fullName, 'Kevin');
+    expect(age, 'Unknown');
+    expect(story, 'I am an online retailer on multiple sites selling a variety of items. Some of his sales happen automatically, while others require directly communicating with interested customers.');
   });
 
   test('shared prefs to GPT test', () async {
     SharedPreferences.setMockInitialValues({
-      fullNameKey: 'User Name',
-      ageKey: '32',
-      storyKey: 'I am a professional businessman',
+      fullNameKey: 'Jimmy',
+      ageKey: '37',
+      storyKey: 'Ive been a project manager for a mid-sized tech company for the past five years.',
     });
 
     final prefs = await SharedPreferences.getInstance();
