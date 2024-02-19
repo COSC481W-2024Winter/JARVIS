@@ -16,9 +16,9 @@ void main() {
 
   test('shared prefs test', () async {
     SharedPreferences.setMockInitialValues({
-      fullNameKey: 'John Doe',
-      ageKey: '30',
-      storyKey: 'My story',
+      fullNameKey: 'Kevin',
+      ageKey: 'Unknown',
+      storyKey: 'I am an online retailer on multiple sites selling a variety of items. Some of his sales happen automatically, while others require directly communicating with interested customers.',
     });
 
     final prefs = await SharedPreferences.getInstance();
@@ -31,16 +31,16 @@ void main() {
     print(age);
     print(story);
 
-    expect(fullName, 'John Doe');
-    expect(age, '30');
-    expect(story, 'My story');
+    expect(fullName, 'Kevin');
+    expect(age, 'Unknown');
+    expect(story, 'I am an online retailer on multiple sites selling a variety of items. Some of his sales happen automatically, while others require directly communicating with interested customers.');
   });
 
   test('shared prefs to GPT test', () async {
     SharedPreferences.setMockInitialValues({
-      fullNameKey: 'User Name',
-      ageKey: '32',
-      storyKey: 'I am a professional businessman',
+      fullNameKey: 'Jimmy',
+      ageKey: '37',
+      storyKey: 'Ive been a project manager for a mid-sized tech company for the past five years.',
     });
 
     final prefs = await SharedPreferences.getInstance();
@@ -53,9 +53,9 @@ void main() {
     print(age);
     print(story);
 
-    expect(fullName, 'User Name');
-    expect(age, '32');
-    expect(story, 'I am a professional businessman');
+    expect(fullName, 'Jimmy');
+    expect(age, '37');
+    expect(story, 'Ive been a project manager for a mid-sized tech company for the past five years.');
 
     final apiKey = dotenv.env['CHATGPT_KEY'];
     expect(apiKey, isNotNull, reason: 'API key not found in .test_env');
