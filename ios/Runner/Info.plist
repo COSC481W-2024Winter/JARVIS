@@ -6,6 +6,10 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Permission required to record audio for speech recognition</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Permission required to record audio for speech recognition</string>
 	<key>CFBundleDisplayName</key>
 	<string>Jarvis</string>
 	<key>CFBundleExecutable</key>
