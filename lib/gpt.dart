@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
 
-const apiKey = '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';
+const apiKey = 'Your ApiKey Here';
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 final openai = OpenAI.instance.build(token: apiKey, baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)), enableLog: true);
 
