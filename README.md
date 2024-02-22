@@ -67,7 +67,10 @@ To modify the back-end database FlutterFire and Firebase CLI are required. To em
    ```
    This command installs all the necessary dependencies as defined in `pubspec.yaml`.
 
-4. **Open in VSCode**
+4. **Add google-services.json & GoogleService-Info.plist**
+   - The project uses Firebase, ensure you have the ```google-services.json``` for Android and ```GoogleService-Info.plist``` for iOS in the appropriate directories. (You may need to acquire these files from a project administrator or set up Firebase for your own clone.)
+
+6. **Open in VSCode**
    - Open the project folder in Visual Studio Code.
    - Ensure the Flutter and Dart extensions are installed in VSCode for the best development experience.
 
