@@ -27,6 +27,7 @@ dependencies:
   firebase_ui_auth: ^1.13.0
   google_sign_in: ^6.2.1
   firebase_ui_oauth_google: ^1.3.0
+  chat_gpt_sdk: ^2.2.8
 
   speech_to_text: ^6.6.0 #for speech to text
 
