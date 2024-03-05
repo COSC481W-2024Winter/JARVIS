@@ -77,12 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ElevatedButton(
             onPressed: () async {
               try {
-                final accessToken = await signInWithGoogle(); // Make sure this returns a token
-                final response = await fetchEmails(accessToken!); // This should be modified to return a list of EmailMessage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EmailsScreen(emails: response)),
-                );
+                // final accessToken = await signInWithGoogle(); // Make sure this returns a token
+                // final response = await fetchEmails(accessToken!); // This should be modified to return a list of EmailMessage
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => EmailsScreen(emails: response)),
+                // );
               } catch (e) {
                 // Handle errors or no emails found
                 ScaffoldMessenger.of(context).showSnackBar(
