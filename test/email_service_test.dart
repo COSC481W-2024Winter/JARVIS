@@ -1,4 +1,4 @@
-import 'package:jarvis/email_service.dart';
+import 'package:jarvis/backend/email_gmail_class.dart';
 import 'package:test/test.dart';
 
 void main() {

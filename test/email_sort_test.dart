@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:jarvis/backend/email_sort.dart';
+import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:test/test.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
