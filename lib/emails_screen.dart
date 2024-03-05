@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'email_service.dart';
+import 'backend/email_gmail_class.dart';
 
 class EmailsScreen extends StatelessWidget {
   final List<EmailMessage> emails;

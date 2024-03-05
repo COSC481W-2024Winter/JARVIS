@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jarvis/email_service.dart';
+import 'package:jarvis/backend/email_gmail_class.dart';
 import 'package:jarvis/emails_screen.dart';
 
 void main() {
