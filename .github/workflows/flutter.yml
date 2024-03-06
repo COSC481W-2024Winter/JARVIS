@@ -9,6 +9,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_API_KEY: ${{ secrets.ANDROID_API_KEY }}
+      ANDROID_APP_ID: ${{ secrets.ANDROID_APP_ID }}
+      ANDROID_MESSAGING_SENDER_ID: ${{ secrets.ANDROID_MESSAGING_SENDER_ID }}
+      ANDROID_PROJECT_ID: ${{ secrets.ANDROID_PROJECT_ID }}
+      ANDROID_STORAGE_BUCKET: ${{ secrets.ANDROID_STORAGE_BUCKET }}
+      CHATGPT_KEY: ${{ secrets.CHATGPT_KEY }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      IOS_ANDROID_CLIENT_ID: ${{ secrets.IOS_ANDROID_CLIENT_ID }}
+      IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+      IOS_IOS_CLIENT_ID: ${{ secrets.IOS_IOS_CLIENT_ID }}
+      JARVISTEST684_EMAIL_ID: ${{ secrets.JARVISTEST684_EMAIL_ID }}
+      JARVISTEST684_EMAIL_REFRESH: ${{ secrets.JARVISTEST684_EMAIL_REFRESH }}
+      JARVISTEST684_EMAIL_TEMP: ${{ secrets.JARVISTEST684_EMAIL_TEMP }}
+      SORTER_KEY: ${{ secrets.SORTER_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -20,6 +35,23 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create .env file
+        run: |
+          echo ANDROID_API_KEY=${ANDROID_API_KEY} >> .env
+          echo ANDROID_APP_ID=${ANDROID_APP_ID} >> .env
+          echo ANDROID_MESSAGING_SENDER_ID=${ANDROID_MESSAGING_SENDER_ID} >> .env
+          echo ANDROID_PROJECT_ID=${ANDROID_PROJECT_ID} >> .env
+          echo ANDROID_STORAGE_BUCKET=${ANDROID_STORAGE_BUCKET} >> .env
+          echo CHATGPT_KEY=${CHATGPT_KEY} >> .env
+          echo GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} >> .env
+          echo IOS_ANDROID_CLIENT_ID=${IOS_ANDROID_CLIENT_ID} >> .env
+          echo IOS_BUNDLE_ID=${IOS_BUNDLE_ID} >> .env
+          echo IOS_IOS_CLIENT_ID=${IOS_IOS_CLIENT_ID} >> .env
+          echo JARVISTEST684_EMAIL_ID=${JARVISTEST684_EMAIL_ID} >> .env
+          echo JARVISTEST684_EMAIL_REFRESH=${JARVISTEST684_EMAIL_REFRESH} >> .env
+          echo JARVISTEST684_EMAIL_TEMP=${JARVISTEST684_EMAIL_TEMP} >> .env
+          echo SORTER_KEY=${SORTER_KEY} >> .env
+
       - name: Analyze project source
         run: flutter analyze
         continue-on-error: true
@@ -28,4 +60,6 @@ jobs:
         run: flutter test
         continue-on-error: true
 
-        # basically, I just want to see the results of everything, some things will fail because they need the dotENV file.
+        env:
+          FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.16.9-x64
+          PUB_CACHE: /home/runner/.pub-cache
