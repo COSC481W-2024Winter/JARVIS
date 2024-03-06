@@ -1,3 +1,5 @@
+// This is basically useless, but if we had bugs before we start hammering the gmail API, this is how you would do it.
+
 import 'package:test/test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
