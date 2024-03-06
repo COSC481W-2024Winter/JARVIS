@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../lib/firebase_options.dart'; 
+import '../../lib/firebase_options.dart'; 
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
