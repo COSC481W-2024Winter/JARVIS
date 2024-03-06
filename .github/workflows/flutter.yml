@@ -18,14 +18,10 @@ jobs:
           flutter-version: '3.16.9'
           channel: 'stable'
       - name: Install dependencies
-      - run: flutter pub get
-
-      # Uncomment to verify formatting
-      # - name: Verify formatting
-      #   run: flutter format --set-exit-if-changed .
+        run: flutter pub get
 
       - name: Analyze project source
-      - run: flutter analyze
+        run: flutter analyze
 
       - name: Run tests
-      - run: flutter test
+        run: flutter test
