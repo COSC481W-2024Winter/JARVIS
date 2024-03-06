@@ -38,6 +38,7 @@ dev_dependencies:
   mockito: ^5.4.4
   google_sign_in_mocks: ^0.3.0
   firebase_auth_mocks: ^0.13.0
+  mocktail: ^1.0.3
   test: ^1.16.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
