@@ -32,6 +32,10 @@ jobs:
         with:
           flutter-version: '3.16.9'
           channel: 'stable'
+      - name: Test Environment Variables
+        run: |
+          echo "ANDROID_API_KEY=${{ secrets.ANDROID_API_KEY }}"
+          
       - name: Install dependencies
         run: flutter pub get
 
