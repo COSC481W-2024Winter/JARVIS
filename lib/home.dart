@@ -1,13 +1,37 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/setting.dart';
-import 'google_sign_in_service.dart'; // Ensure this import is correct
-import 'emails_screen.dart'; // Ensure you have this file and import it
-// import 'email_service.dart'; // Ensure this file exists and import it
-import 'main.dart'; // Assuming you have a HomePage widget. Make sure this import is correct
+import 'google_sign_in_service.dart'; // Adjusted for updated sign-in and fetching
+import 'emails_screen.dart'; // Updated for displaying subject and body
+import 'main.dart'; // Ensure correct import
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GoogleSignInService signInService = GoogleSignInService(); // Assuming signInService is updated for new requirements
+
+  void _accessEmail() async {
+    try {
+      final accessToken = await signInService.signInWithGoogle();
+      if (accessToken == null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Failed to sign in with Google")));
+        return;
+      }
+
+      final emails = await signInService.fetchEmails(accessToken);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EmailsScreen(emails: emails)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,72 +40,26 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<ProfileScreen>(
-                  builder: (context) => ProfileScreen(
-                    appBar: AppBar(
-                      title: const Text('User Profile'),
-                    ),
-                    actions: [
-                      SignedOutAction((context) {
-                        Navigator.of(context).pop();
-                      })
-                    ],
-                  ),
-                ),
-              );
-            },
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen())),
           ),
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Redirect to Setting page
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Setting()),
-              );
-            },
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting())),
           ),
           ElevatedButton(
-            onPressed: () async {
-              try {
-                final accessToken = await signInWithGoogle(); // Make sure this returns a token
-                final response = await fetchEmails(accessToken!); // This should be modified to return a list of EmailMessage
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EmailsScreen(emails: response)),
-                );
-              } catch (e) {
-                // Handle errors or no emails found
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Failed to access emails: $e")),
-                );
-              }
-            },
+            onPressed: _accessEmail,
             child: const Text('Access Email'),
           ),
           ElevatedButton(
-            onPressed: () {
-              // Redirect to HomePage
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()), // Update this with correct HomePage navigation if necessary
-              );
-            },
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())),
             child: const Text('Listen Email'),
           ),
         ],
-        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
           children: [
-            Text(
-              'Welcome!',
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
+            Text('Welcome!', style: Theme.of(context).textTheme.displaySmall),
             const SignOutButton(),
           ],
         ),
