@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
 
@@ -54,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   ElevatedButton _buildAccessEmailButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _accessEmail(context),
+      onPressed: () => _accessEmail(), // Add parentheses to call the method
       child: const Text('Access Email'),
     );
   }
@@ -117,24 +118,19 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
   }
 
-  void _accessEmail(BuildContext context) async {
-    final signInService = SignInService();
-    final emailService = EmailFetchingService();
-
+  void _accessEmail() async {
     try {
       final accessToken = await signInService.signInWithGoogle();
       if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to sign in with Google")));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Failed to sign in with Google")));
         return;
       }
 
-      final emails = await emailService.fetchEmails(accessToken, 10);
-      if (emails.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("No emails fetched")));
-        return;
-      }
-
-      Navigator.push(context, MaterialPageRoute(builder: (context) => EmailsScreen(emails: emails)));
+      final emails = await signInService.fetchEmails(accessToken);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EmailsScreen(emails: emails)),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
     }
