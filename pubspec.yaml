@@ -32,6 +32,8 @@ dependencies:
 
   http: ^1.2.0
   flutter_secure_storage: ^9.0.0 # Optional, for storing access tokens securely
+  logging: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
