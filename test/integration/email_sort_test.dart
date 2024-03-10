@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:test/test.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jarvis/backend/email_sort_service.dart'; // Update this import according to the new file structure
 
 void main() {
   Logger.root.level = Level.ALL; // Log all messages
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
-  final Logger logger = Logger('EmailSorterTests');
 
-    late EmailSorter emailSorter;
+  late EmailSorter emailSorter;
 
   group('EmailSorter Tests', () {
     setUpAll(() async {
@@ -27,46 +26,33 @@ void main() {
       // Initialize EmailSorter with the API token
       emailSorter = EmailSorter(apiToken: apiToken);
     });
-    // Test for categorizing a list of emails provided directly in the test
-    test('categorizeEmailsList assigns a category to each email', () async {
-      List<Map<String, String>> emails = [
-        {
-          "Subject": "RE: NERC Statements on Impact of Security Threats on RTOs",
-          "Body": "I agree with Joe. The IOUs will point to NERC as an objective third party on these issues."
-        },
-        {
-          "Subject": "RE: NERC Meeting Today",
-          "Body": "There was an all day meeting of the NERC/reliability legislation group today. This is a placeholder for the actual content."
-        }
-      ];
 
-      var categorizedEmails = await emailSorter.categorizeEmailsList(emails);
+    test('categorizeEmail assigns a category to a single email', () async {
+      var email = {
+        "Subject": "RE: NERC Statements on Impact of Security Threats on RTOs",
+        "Body": "I agree with Joe. The IOUs will point to NERC as an objective third party on these issues."
+      };
 
-      for (var email in categorizedEmails) {
-        logger.info('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${email["Category"]}');
-        expect(email.keys, contains('Category'));
-      }
+      var categorizedEmail = await emailSorter.categorizeEmail(email);
+
+      print('Subject: ${categorizedEmail["Subject"]}, Body: ${categorizedEmail["Body"]}, Category: ${categorizedEmail["Category"]}');
+      expect(categorizedEmail.keys, contains('Category'));
     });
 
-    // Test for reading emails from a JSON file, categorizing them, and verifying the categorization
-    test('Categorize emails from JSON file', () async {
-      var file = File('test/data/uncategorized_emails_10.json'); // Switching to 10 emails to avoid overloading the API calls alloted.
+    test('Categorize emails from JSON file and verify each email', () async {
+      var file = File('test/data/uncategorized_emails_10.json');
       var content = await file.readAsString();
       List<dynamic> emailList = json.decode(content);
 
-      // Convert the dynamic list to the expected Map<String, String> structure
-      List<Map<String, String>> emails = emailList.map<Map<String, String>>((email) => {
-        "Subject": email["Subject"],
-        "Body": email["Body"]
-      }).toList();
+      for (var emailData in emailList) {
+        Map<String, String> email = {
+          "Subject": emailData["Subject"],
+          "Body": emailData["Body"]
+        };
 
-      // Use EmailSorter to categorize emails
-      var categorizedEmails = await emailSorter.categorizeEmailsList(emails);
-
-      // Print and verify each categorized email
-      for (var email in await categorizedEmails) {
-        logger.info('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${email["Category"]}');
-        expect(email.keys, contains('Category')); // Verifies that 'Category' key exists
+        var categorizedEmail = await emailSorter.categorizeEmail(email);
+        print('Subject: ${categorizedEmail["Subject"]}, Body: ${categorizedEmail["Body"]}, Category: ${categorizedEmail["Category"]}');
+        expect(categorizedEmail.keys, contains('Category'));
       }
     });
   });
