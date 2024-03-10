@@ -17,6 +17,8 @@ class EmailSorter {
   final String _apiUrl = "https://api-inference.huggingface.co/models/emarron/JARVIS-email-sorter";
   final String _apiToken;
   final Logger _logger = Logger('EmailSorter');
+  final int minimumDelay = 100;
+  final int adjustmentAmount = 100;
 
   EmailSorter({required String apiToken}) : _apiToken = apiToken {
     _initializeLogger();
@@ -63,29 +65,48 @@ class EmailSorter {
       'Content-Type': 'application/json',
     };
 
-    var response = await http.post(
-      Uri.parse(_apiUrl),
-      headers: headers,
-      body: json.encode({"inputs": emailText}),
-    );
+    bool requestSuccessful = false;
+    int delayMilliseconds = 1000;
 
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      var predictions = jsonResponse[0];
-      var bestCategory = _getBestCategory(predictions);
-      return {
-        "Subject": email["Subject"],
-        "Body": email["Body"],
-        "Category": bestCategory?.toString().split('.').last ?? "No relevant category found",
-      };
-    } else {
-      _logger.warning('Request failed with status: ${response.statusCode}.');
-      _logger.warning('Response body: ${response.body}');
-      return {
-        "Subject": email["Subject"],
-        "Body": email["Body"],
-        "Category": "Error or invalid response",
-      };
+    while (!requestSuccessful) {
+      var response = await http.post(
+        Uri.parse(_apiUrl),
+        headers: headers,
+        body: json.encode({"inputs": emailText}),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        var predictions = jsonResponse[0];
+        var bestCategory = _getBestCategory(predictions);
+
+        return {
+          "Subject": email["Subject"],
+          "Body": email["Body"],
+          "Category": bestCategory?.toString().split('.').last ?? "No relevant category found",
+        };
+      } else if (response.statusCode == 503) {
+        var responseBody = json.decode(response.body);
+        var estimatedWaitTime = responseBody['estimated_time'] ?? 10.0;
+
+        _logger.info('Model loading, waiting for $estimatedWaitTime seconds before retrying...');
+        await Future.delayed(Duration(seconds: estimatedWaitTime.round()));
+      } else {
+        _logger.warning('Request failed with status: ${response.statusCode}.');
+        _logger.warning('Response body: ${response.body}');
+
+        return {
+          "Subject": email["Subject"],
+          "Body": email["Body"],
+          "Category": "Error or invalid response",
+        };
+      }
+
+      await Future.delayed(Duration(milliseconds: delayMilliseconds));
+
+      if (delayMilliseconds > minimumDelay) {
+        delayMilliseconds -= adjustmentAmount;
+      }
     }
   }
 
@@ -95,12 +116,20 @@ class EmailSorter {
 
     for (var prediction in predictions) {
       var category = _mapLabelToCategory(prediction['label']);
-      var probability = prediction['score'];
-      if (probability > highestProbability) {
-        highestProbability = probability;
-        bestCategory = category;
+
+      if (category == EmailCategory.companyBusinessStrategy ||
+          category == EmailCategory.purelyPersonal ||
+          category == EmailCategory.logisticArrangements ||
+          category == EmailCategory.documentEditingCheckingCollaboration) {
+        var probability = prediction['score'];
+
+        if (probability > highestProbability) {
+          highestProbability = probability;
+          bestCategory = category;
+        }
       }
     }
+
     return bestCategory;
   }
 }
