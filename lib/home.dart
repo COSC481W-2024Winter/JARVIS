@@ -1,10 +1,13 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
-import 'backend/email_fetch_service.dart';
-import 'backend/email_gmail_signin_service.dart';
-import 'emails_screen.dart';
-import 'main.dart';
-import 'setting.dart';
+import 'package:jarvis/backend/email_fetch_service.dart';
+import 'package:jarvis/backend/email_gmail_signin_service.dart';
+import 'package:jarvis/backend/email_sort_service.dart';
+import 'package:jarvis/backend/email_sorting_runner.dart';
+import 'package:jarvis/emails_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jarvis/main.dart';
+import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -55,8 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   ElevatedButton _buildAccessEmailButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _accessEmail(), // Add parentheses to call the method
-      child: const Text('Access Email'),
+      onPressed: () => _accessAndSortEmails(),
+      child: const Text('Access and Sort Emails'),
     );
   }
 
@@ -72,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('Welcome!', style: Theme.of(context).textTheme.displaySmall),
+          Text('Welcome!', style: Theme.of(context).textTheme.headline4),
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
@@ -102,6 +105,56 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _accessAndSortEmails() async {
+    // Ensure you load your environment variables where you have your API token stored
+    final accessToken = dotenv.env['JARVISTEST684_EMAIL_TEMP'];
+    final sorterApiKey = dotenv.env['SORTER_KEY'];
+
+    if (accessToken == null || sorterApiKey == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Required API tokens are not configured properly.")));
+      return;
+    }
+
+    final emailFetchingService = EmailFetchingService();
+    final emailSorter = EmailSorter(apiToken: sorterApiKey);
+    final emailSortingRunner = EmailSortingRunner(
+      emailFetchingService: emailFetchingService,
+      emailSorter: emailSorter,
+    );
+
+    try {
+      final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => EmailsScreen(emails: sortedEmails)));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
+    }
+  }
+
+  void _startListening() async {
+    bool available = await speechToText.initialize();
+    if (available) {
+      await speechToText.listen(onResult: _onSpeechResult);
+    } else {
+      print("The user has denied the use of speech recognition.");
+    }
+  }
+
+  void _navigateToHomePage(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+  }
+
+  void _stopListening() async {
+    await speechToText.stop();
+    setState(() {});
+  }
+
+  void _onSpeechResult(result) {
+    setState(() {
+      _wordsSpoken = result.recognizedWords;
+    });
+  }
+
   void _navigateToProfileScreen(BuildContext context) {
     Navigator.push(
       context,
@@ -116,47 +169,5 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _navigateToSettings(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
-  }
-
-  void _accessEmail() async {
-    try {
-      final accessToken = await signInService.signInWithGoogle();
-      if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Failed to sign in with Google")));
-        return;
-      }
-
-      final emails = await signInService.fetchEmails(accessToken);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => EmailsScreen(emails: emails)),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
-    }
-  }
-
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
-  }
-
-  void _startListening() async {
-    bool available = await speechToText.initialize();
-    if (available) {
-      await speechToText.listen(onResult: _onSpeechResult);
-    } else {
-      print("The user has denied the use of speech recognition.");
-    }
-  }
-
-  void _stopListening() async {
-    await speechToText.stop();
-    setState(() {});
-  }
-
-  void _onSpeechResult(result) {
-    setState(() {
-      _wordsSpoken = result.recognizedWords;
-    });
   }
 }
