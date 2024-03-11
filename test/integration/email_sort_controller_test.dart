@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:test/test.dart';
-import 'package:jarvis/backend/email_sort_service.dart'; // Update this import according to the new file structure
+import 'package:jarvis/backend/email_sort_service.dart';
+import 'package:jarvis/backend/email_sort_controller.dart';
 
 // Mock implementation of LocalStorageService for testing purposes
 class MockLocalStorageService {
@@ -17,10 +19,10 @@ class MockLocalStorageService {
   }
 }
 
-
 void main() {
   group('Email Sorting and Storing Integration Test', () {
     late EmailSorter emailSorter;
+    late EmailSortController emailSortController;
     late MockLocalStorageService mockStorageService;
 
     setUpAll(() async {
@@ -32,37 +34,55 @@ void main() {
         throw Exception('SORTER_KEY not found in .env file');
       }
 
-      // Initialize EmailSorter with the API token
+      // Initialize EmailSorter and EmailSortController with the API token
       emailSorter = EmailSorter(apiToken: apiToken);
+      emailSortController = EmailSortController(emailSorter: emailSorter);
 
       // Initialize the mock storage service
       mockStorageService = MockLocalStorageService();
     });
 
     test('emails are categorized and stored correctly', () async {
-      // Sample emails for testing
-      List<Map<String, String>> sampleEmails = [
-        {"Subject": "RE: NERC Statements on Impact of Security Threats on RTOs",
-        "Body": "I agree with Joe. The IOUs will point to NERC as an objective third party on these issues."},
-        {"Subject": "Strategy Meeting", "Body": "Let's discuss our business strategy."},
-        {"Subject": "Lunch?", "Body": "Are you free for lunch today?"},
-        // Add more samples as needed for testing
-      ];
+      // Read emails from the JSON file
+      var file = File('test/data/uncategorized_emails_10.json');
+      var content = await file.readAsString();
+      List<dynamic> emailList = json.decode(content);
+
+      // Convert the email list to the expected format
+      List<Map<String, String>> emails = emailList.map((email) {
+        return {
+          "Subject": email["Subject"] as String,
+          "Body": email["Body"] as String,
+        };
+      }).toList();
 
       // Categorize and store each email
-      for (var email in sampleEmails) {
-        var categorizedEmail = await emailSorter.categorizeEmail(email);
-        print('Subject: ${categorizedEmail["Subject"]}, Body: ${categorizedEmail["Body"]}, Category: ${categorizedEmail["Category"]}');
-        String categoryKey = 'emails_${categorizedEmail["Category"]}';
+      List<Map<String, dynamic>> categorizedEmails =
+          await emailSortController.categorizeEmailsList(emails);
+
+      for (var email in categorizedEmails) {
+        String categoryKey = 'emails_${email["Category"]}';
         List<Map<String, dynamic>> categoryList = mockStorageService.readJson(categoryKey) ?? [];
-        categoryList.add(categorizedEmail);
+        categoryList.add(email);
         await mockStorageService.writeJson(categoryKey, categoryList);
       }
+      print('Contents of emails_companyBusinessStrategy:');
+      print(mockStorageService.readJson('emails_companyBusinessStrategy'));
 
-      // Assertions to verify that emails are stored under correct categories
+      print('Contents of emails_purelyPersonal:');
+      print(mockStorageService.readJson('emails_purelyPersonal'));
+
+      print('Contents of emails_logisticArrangements:');
+      print(mockStorageService.readJson('emails_logisticArrangements'));
+
+      print('Contents of emails_uncategorized:');
+      print(mockStorageService.readJson('emails_uncategorized'));
+
+      // Assertions to verify that emails are stored under correct categories or marked as uncategorized
       expect(mockStorageService.readJson('emails_companyBusinessStrategy'), isNotNull);
+      // expect(mockStorageService.readJson('emails_purelyPersonal'), isNotNull);
       expect(mockStorageService.readJson('emails_logisticArrangements'), isNotNull);
-      // Add more assertions as necessary for each category
+      // expect(mockStorageService.readJson('emails_uncategorized'), isNotNull);
     });
   });
 }

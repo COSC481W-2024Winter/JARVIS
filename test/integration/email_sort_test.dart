@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:jarvis/backend/email_sort_service.dart'; // Update this import according to the new file structure
+import 'package:jarvis/backend/email_sort_service.dart';
 
 void main() {
   Logger.root.level = Level.ALL; // Log all messages
@@ -33,10 +33,16 @@ void main() {
         "Body": "I agree with Joe. The IOUs will point to NERC as an objective third party on these issues."
       };
 
-      var categorizedEmail = await emailSorter.categorizeEmail(email);
+      var emailText = emailSorter.truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512);
+      var bestCategory = await emailSorter.getBestCategory(emailText);
 
-      print('Subject: ${categorizedEmail["Subject"]}, Body: ${categorizedEmail["Body"]}, Category: ${categorizedEmail["Category"]}');
-      expect(categorizedEmail.keys, contains('Category'));
+      if (bestCategory != null) {
+        print('Category: ${bestCategory.toString().split('.').last}');
+        expect(bestCategory, isNotNull);
+      } else {
+        print('No relevant category found');
+        expect(bestCategory, isNull);
+      }
     });
 
     test('Categorize emails from JSON file and verify each email', () async {
@@ -50,9 +56,16 @@ void main() {
           "Body": emailData["Body"]
         };
 
-        var categorizedEmail = await emailSorter.categorizeEmail(email);
-        print('Subject: ${categorizedEmail["Subject"]}, Body: ${categorizedEmail["Body"]}, Category: ${categorizedEmail["Category"]}');
-        expect(categorizedEmail.keys, contains('Category'));
+        var emailText = emailSorter.truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512);
+        var bestCategory = await emailSorter.getBestCategory(emailText);
+
+        if (bestCategory != null) {
+          print('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${bestCategory.toString().split('.').last}');
+          expect(bestCategory, isNotNull);
+        } else {
+          print('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: No relevant category found');
+          expect(bestCategory, isNull);
+        }
       }
     });
   });

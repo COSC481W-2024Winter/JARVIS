@@ -58,8 +58,7 @@ class EmailSorter {
     return text.length > maxLength ? text.substring(0, maxLength) : text;
   }
 
-  Future<Map<String, dynamic>> categorizeEmail(Map<String, String> email) async {
-    String emailText = truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512);
+  Future<EmailCategory?> getBestCategory(String emailText) async {
     var headers = {
       'Authorization': 'Bearer $_apiToken',
       'Content-Type': 'application/json',
@@ -78,39 +77,29 @@ class EmailSorter {
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
         var predictions = jsonResponse[0];
-        var bestCategory = _getBestCategory(predictions);
-
-        return {
-          "Subject": email["Subject"],
-          "Body": email["Body"],
-          "Category": bestCategory?.toString().split('.').last ?? "No relevant category found",
-        };
+        var bestCategory = _selectBestCategory(predictions);
+        requestSuccessful = true;
+        return bestCategory;
       } else if (response.statusCode == 503) {
         var responseBody = json.decode(response.body);
         var estimatedWaitTime = responseBody['estimated_time'] ?? 10.0;
-
         _logger.info('Model loading, waiting for $estimatedWaitTime seconds before retrying...');
         await Future.delayed(Duration(seconds: estimatedWaitTime.round()));
       } else {
         _logger.warning('Request failed with status: ${response.statusCode}.');
         _logger.warning('Response body: ${response.body}');
-
-        return {
-          "Subject": email["Subject"],
-          "Body": email["Body"],
-          "Category": "Error or invalid response",
-        };
+        requestSuccessful = true;
+        return null;
       }
 
       await Future.delayed(Duration(milliseconds: delayMilliseconds));
-
       if (delayMilliseconds > minimumDelay) {
         delayMilliseconds -= adjustmentAmount;
       }
     }
   }
 
-  EmailCategory? _getBestCategory(List<dynamic> predictions) {
+  EmailCategory? _selectBestCategory(List<dynamic> predictions) {
     EmailCategory? bestCategory;
     double highestProbability = 0.0;
 
