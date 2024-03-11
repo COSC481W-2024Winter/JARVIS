@@ -8,10 +8,10 @@ class EmailSummarizer {
 
   EmailSummarizer({required this.storageService, required this.chatGPTService});
 
-  Future<void> summarizeEmails() async {
-    List<EmailCategory> categories = EmailCategory.values;
+  Future<Map<String, String>> summarizeEmails() async {
+    Map<String, String> summaries = {};
 
-    for (var category in categories) {
+    for (var category in EmailCategory.values) {
       String key = getCategoryKey(category);
       dynamic emailsData = await storageService.getData(key);
 
@@ -23,9 +23,9 @@ class EmailSummarizer {
         try {
           String summary = await chatGPTService.generateCompletion(prompt);
           print('Summary for $category:\n$summary');
-          
-          // Convert the summary to a Map before saving
-          await storageService.saveData('summary_$key', {'summary': summary});
+
+          // Add the summary to the map
+          summaries[getCategoryKey(category)] = summary;
         } catch (e) {
           print('Error generating summary for $category: $e');
         }
@@ -33,6 +33,8 @@ class EmailSummarizer {
         print("No emails found for category: $category");
       }
     }
+
+    return summaries;
   }
 
   String getCategoryKey(EmailCategory category) {

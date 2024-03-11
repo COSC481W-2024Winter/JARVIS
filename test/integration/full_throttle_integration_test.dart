@@ -88,18 +88,20 @@ void main() {
       }
 
       // Generate summaries for each category
-      await emailSummarizer.summarizeEmails();
+      Map<String, String> generatedSummaries = await emailSummarizer.summarizeEmails();
+      await storageService.saveData('generatedSummaries', generatedSummaries);
+      Map<String, String> savedSummaries = await storageService.getData('generatedSummaries');
 
       bool hasSummary = false;
-        for (var category in EmailCategory.values) {
-          String summaryKey = 'summary_${emailSummarizer.getCategoryKey(category)}';
-          dynamic summaryData = await storageService.getData(summaryKey);
-          if (summaryData != null && summaryData['summary'] != null && summaryData['summary'].isNotEmpty) {
-            hasSummary = true;
-            print('Summary for $category: ${summaryData['summary']}');
-          }
+      for (var category in EmailCategory.values) {
+        String summaryKey = emailSummarizer.getCategoryKey(category);
+        String? summary = savedSummaries[summaryKey];
+        if (summary != null && summary.isNotEmpty) {
+          hasSummary = true;
+          print('Summary for $category: $summary');
         }
-        expect(hasSummary, isTrue, reason: 'At least one category should have a non-null summary');
+      }
+      expect(hasSummary, isTrue, reason: 'At least one category should have a non-null summary');
       });
   });
 }
