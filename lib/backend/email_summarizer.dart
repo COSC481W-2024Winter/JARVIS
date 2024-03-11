@@ -1,10 +1,12 @@
 import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
+import 'package:jarvis/backend/chatgpt_service.dart';
 
 class EmailSummarizer {
   final LocalStorageService storageService;
+  final ChatGPTService chatGPTService;
 
-  EmailSummarizer({required this.storageService});
+  EmailSummarizer({required this.storageService, required this.chatGPTService});
 
   Future<void> summarizeEmails() async {
     List<EmailCategory> categories = EmailCategory.values;
@@ -18,8 +20,15 @@ class EmailSummarizer {
         String emailContents = emails.map((email) => "${email['Subject']}\n${email['Body']}").join("\n\n");
         String prompt = "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
 
-        // Here you would send `prompt` to ChatGPT or a similar service.
-        print(prompt); // For demonstration, we're just printing the prompt.
+        try {
+          String summary = await chatGPTService.generateCompletion(prompt);
+          print('Summary for $category:\n$summary');
+          
+          // Convert the summary to a Map before saving
+          await storageService.saveData('summary_$key', {'summary': summary});
+        } catch (e) {
+          print('Error generating summary for $category: $e');
+        }
       } else {
         print("No emails found for category: $category");
       }

@@ -1,11 +1,17 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
+import 'package:jarvis/backend/chatgpt_service.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
-import 'package:flutter/services.dart';
+
+
+class MockChatGPTService extends Mock implements ChatGPTService {}
 
 void main() {
   late EmailSummarizer emailSummarizer;
   late LocalStorageService storageService;
+  late MockChatGPTService mockChatGPTService;
 
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -19,14 +25,18 @@ void main() {
     });
 
     storageService = LocalStorageService();
-    emailSummarizer = EmailSummarizer(storageService: storageService);
+    mockChatGPTService = MockChatGPTService();
+    emailSummarizer = EmailSummarizer(
+      storageService: storageService,
+      chatGPTService: mockChatGPTService,
+    );
   });
 
   tearDown(() async {
     await storageService.clearAllData();
   });
 
-  test('summarizeEmails should retrieve data and mock send to ChatGPT', () async {
+  test('summarizeEmails should retrieve data, generate summaries, and save them to local storage', () async {
     // Arrange
     List<Map<String, dynamic>> companyBusinessStrategyEmails = [
       {'Subject': 'Business Strategy 1', 'Body': 'Content of email 1'},
@@ -47,10 +57,17 @@ void main() {
     await storageService.saveData('emails_logisticArrangements', {'emails': logisticArrangementsEmails});
     await storageService.saveData('emails_documentEditingCheckingCollaboration', {'emails': documentEditingEmails});
 
+    when(() => mockChatGPTService.generateCompletion(any())).thenAnswer((_) async => 'Mocked summary');
+
     // Act
     await emailSummarizer.summarizeEmails();
 
     // Assert
-    // Add assertions based on the expected prompt content
+    verify(() => mockChatGPTService.generateCompletion(any())).called(4);
+
+    expect((await storageService.getData('summary_emails_companyBusinessStrategy'))['summary'], equals('Mocked summary'));
+  expect((await storageService.getData('summary_emails_purelyPersonal'))['summary'], equals('Mocked summary'));
+  expect((await storageService.getData('summary_emails_logisticArrangements'))['summary'], equals('Mocked summary'));
+  expect((await storageService.getData('summary_emails_documentEditingCheckingCollaboration'))['summary'], equals('Mocked summary'));
   });
 }
