@@ -13,8 +13,8 @@ class EmailSummarizer {
       String key = getCategoryKey(category);
       dynamic emailsData = await storageService.getData(key);
 
-      if (emailsData != null) {
-        List<Map<String, dynamic>> emails = List<Map<String, dynamic>>.from(emailsData);
+      if (emailsData != null && emailsData is Map<String, dynamic>) {
+        List<Map<String, dynamic>> emails = List<Map<String, dynamic>>.from(emailsData['emails'] ?? []);
         String emailContents = emails.map((email) => "${email['Subject']}\n${email['Body']}").join("\n\n");
         String prompt = "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
 
