@@ -30,10 +30,12 @@ void main() {
     test('categorizeEmail assigns a category to a single email', () async {
       var email = {
         "Subject": "RE: NERC Statements on Impact of Security Threats on RTOs",
-        "Body": "I agree with Joe. The IOUs will point to NERC as an objective third party on these issues."
+        "Body":
+            "I agree with Joe. The IOUs will point to NERC as an objective third party on these issues."
       };
 
-      var emailText = emailSorter.truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512);
+      var emailText = emailSorter.truncateText(
+          "${email["Subject"]} [SEP] ${email["Body"]}", 512);
       var bestCategory = await emailSorter.getBestCategory(emailText);
 
       if (bestCategory != null) {
@@ -56,14 +58,17 @@ void main() {
           "Body": emailData["Body"]
         };
 
-        var emailText = emailSorter.truncateText("${email["Subject"]} [SEP] ${email["Body"]}", 512);
+        var emailText = emailSorter.truncateText(
+            "${email["Subject"]} [SEP] ${email["Body"]}", 512);
         var bestCategory = await emailSorter.getBestCategory(emailText);
 
         if (bestCategory != null) {
-          print('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${bestCategory.toString().split('.').last}');
+          print(
+              'Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: ${bestCategory.toString().split('.').last}');
           expect(bestCategory, isNotNull);
         } else {
-          print('Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: No relevant category found');
+          print(
+              'Subject: ${email["Subject"]}, Body: ${email["Body"]}, Category: No relevant category found');
           expect(bestCategory, isNull);
         }
       }

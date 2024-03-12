@@ -44,52 +44,59 @@ void main() {
 
     test('emails are categorized and stored correctly', () async {
       // Read emails from the JSON file
-      var file = File('test/data/uncategorized_emails_10.json');
-      var content = await file.readAsString();
-      List<dynamic> emailList = json.decode(content);
+      await Future.delayed(Duration.zero, () async {
+        var file = File('test/data/uncategorized_emails_10.json');
+        var content = await file.readAsString();
+        List<dynamic> emailList = json.decode(content);
 
-      // Convert the email list to the expected format
-      List<Map<String, String>> emails = emailList.map((email) {
-        return {
-          "Subject": email["Subject"] as String,
-          "Body": email["Body"] as String,
-        };
-      }).toList();
+        // Convert the email list to the expected format
+        List<Map<String, String>> emails = emailList.map((email) {
+          return {
+            "Subject": email["Subject"] as String,
+            "Body": email["Body"] as String,
+          };
+        }).toList();
+        // Categorize and store each email
+        List<Map<String, dynamic>> categorizedEmails =
+            await emailSortController.categorizeEmailsList(emails);
 
-      // Categorize and store each email
-      List<Map<String, dynamic>> categorizedEmails =
-          await emailSortController.categorizeEmailsList(emails);
-
-      for (var email in categorizedEmails) {
-        String categoryKey = 'emails_${email["Category"]}';
-        List<Map<String, dynamic>> categoryList = mockStorageService.readJson(categoryKey) ?? [];
-        categoryList.add(email);
-        await mockStorageService.writeJson(categoryKey, categoryList);
-      }
-      print('Contents of emails_companyBusinessStrategy:');
-      print(mockStorageService.readJson('emails_companyBusinessStrategy'));
-
-      print('Contents of emails_purelyPersonal:');
-      print(mockStorageService.readJson('emails_purelyPersonal'));
-
-      print('Contents of emails_logisticArrangements:');
-      print(mockStorageService.readJson('emails_logisticArrangements'));
-
-      print('Contents of emails_uncategorized:');
-      print(mockStorageService.readJson('emails_uncategorized'));
-
-
-      bool hasCategorizedEmails = false;
-      for (var category in EmailCategory.values) {
-        String categoryKey = 'emails_${category.toString().split('.').last}';
-        List<Map<String, dynamic>>? emailList = mockStorageService.readJson(categoryKey);
-        if (emailList != null && emailList.isNotEmpty) {
-          hasCategorizedEmails = true;
-          break;
+        for (var email in categorizedEmails) {
+          String categoryKey = 'emails_${email["Category"]}';
+          List<Map<String, dynamic>> categoryList =
+              mockStorageService.readJson(categoryKey) ?? [];
+          categoryList.add(email);
+          await mockStorageService.writeJson(categoryKey, categoryList);
         }
-      }
+        print('Contents of emails_companyBusinessStrategy:');
+        print(mockStorageService.readJson('emails_companyBusinessStrategy'));
 
-      expect(hasCategorizedEmails, isTrue, reason: 'At least one category should have categorized emails');
-});
+        print('Contents of emails_purelyPersonal:');
+        print(mockStorageService.readJson('emails_purelyPersonal'));
+
+        print('Contents of emails_logisticArrangements:');
+        print(mockStorageService.readJson('emails_logisticArrangements'));
+
+        print('Contents of emails_documentEditingCheckingCollaboration:');
+        print(mockStorageService
+            .readJson('emails_documentEditingCheckingCollaboration'));
+
+        print('Contents of emails_uncategorized:');
+        print(mockStorageService.readJson('emails_uncategorized'));
+
+        bool hasCategorizedEmails = false;
+        for (var category in EmailCategory.values) {
+          String categoryKey = 'emails_${category.toString().split('.').last}';
+          List<Map<String, dynamic>>? emailList =
+              mockStorageService.readJson(categoryKey);
+          if (emailList != null && emailList.isNotEmpty) {
+            hasCategorizedEmails = true;
+            break;
+          }
+        }
+
+        expect(hasCategorizedEmails, isTrue,
+            reason: 'At least one category should have categorized emails');
+      });
+    }, timeout: const Timeout(Duration(minutes: 15)));
   });
 }

@@ -12,7 +12,8 @@ class SignInService {
     try {
       final GoogleSignInAccount? account = await _googleSignIn.signIn();
       if (account != null) {
-        final GoogleSignInAuthentication googleAuth = await account.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await account.authentication;
         return googleAuth.accessToken; // Return the access token
       }
       return null; // Return null if account is null

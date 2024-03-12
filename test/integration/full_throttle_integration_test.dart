@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jarvis/backend/email_sort_service.dart';
@@ -62,46 +62,53 @@ void main() {
     });
 
     test('emails are categorized, stored, and summarized correctly', () async {
-      // Read emails from the JSON file
-      var file = File('test/data/uncategorized_emails_10.json');
-      var content = await file.readAsString();
-      List<dynamic> emailList = json.decode(content);
+      await Future.delayed(Duration.zero, () async {
+        // Read emails from the JSON file
+        var file = File('test/data/uncategorized_emails_10.json');
+        var content = await file.readAsString();
+        List<dynamic> emailList = json.decode(content);
 
-      // Convert the email list to the expected format
-      List<Map<String, String>> emails = emailList.map((email) {
-        return {
-          "Subject": email["Subject"] as String,
-          "Body": email["Body"] as String,
-        };
-      }).toList();
+        // Convert the email list to the expected format
+        List<Map<String, String>> emails = emailList.map((email) {
+          return {
+            "Subject": email["Subject"] as String,
+            "Body": email["Body"] as String,
+          };
+        }).toList();
 
-      // Categorize and store each email
-      List<Map<String, dynamic>> categorizedEmails =
-          await emailSortController.categorizeEmailsList(emails);
+        // Categorize and store each email
+        List<Map<String, dynamic>> categorizedEmails =
+            await emailSortController.categorizeEmailsList(emails);
 
-      for (var email in categorizedEmails) {
-        String categoryKey = 'emails_${email["Category"]}';
-        List<Map<String, dynamic>> categoryList =
-            (await storageService.getData(categoryKey))?['emails']?.cast<Map<String, dynamic>>() ?? [];
-        categoryList.add(email);
-        await storageService.saveData(categoryKey, {'emails': categoryList});
-      }
-
-      // Generate summaries for each category
-      Map<String, String> generatedSummaries = await emailSummarizer.summarizeEmails();
-      await storageService.saveData('generatedSummaries', generatedSummaries);
-      Map<String, String> savedSummaries = await storageService.getData('generatedSummaries');
-
-      bool hasSummary = false;
-      for (var category in EmailCategory.values) {
-        String summaryKey = emailSummarizer.getCategoryKey(category);
-        String? summary = savedSummaries[summaryKey];
-        if (summary != null && summary.isNotEmpty) {
-          hasSummary = true;
-          print('Summary for $category: $summary');
+        for (var email in categorizedEmails) {
+          String categoryKey = 'emails_${email["Category"]}';
+          List<Map<String, dynamic>> categoryList =
+              (await storageService.getData(categoryKey))?['emails']
+                      ?.cast<Map<String, dynamic>>() ??
+                  [];
+          categoryList.add(email);
+          await storageService.saveData(categoryKey, {'emails': categoryList});
         }
-      }
-      expect(hasSummary, isTrue, reason: 'At least one category should have a non-null summary');
+
+        // Generate summaries for each category
+        Map<String, String> generatedSummaries =
+            await emailSummarizer.summarizeEmails();
+        await storageService.saveData('generatedSummaries', generatedSummaries);
+        Map<String, String> savedSummaries =
+            await storageService.getData('generatedSummaries');
+
+        bool hasSummary = false;
+        for (var category in EmailCategory.values) {
+          String summaryKey = emailSummarizer.getCategoryKey(category);
+          String? summary = savedSummaries[summaryKey];
+          if (summary != null && summary.isNotEmpty) {
+            hasSummary = true;
+            //print('Summary for $category: $summary');
+          }
+        }
+        expect(hasSummary, isTrue,
+            reason: 'At least one category should have a non-null summary');
       });
+    }, timeout: const Timeout(Duration(minutes: 15)));
   });
 }

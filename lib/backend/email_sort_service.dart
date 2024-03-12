@@ -14,7 +14,8 @@ enum EmailCategory {
 }
 
 class EmailSorter {
-  final String _apiUrl = "https://api-inference.huggingface.co/models/emarron/JARVIS-email-sorter";
+  final String _apiUrl =
+      "https://api-inference.huggingface.co/models/emarron/JARVIS-email-sorter";
   final String _apiToken;
   final Logger _logger = Logger('EmailSorter');
   final int minimumDelay = 100;
@@ -83,7 +84,8 @@ class EmailSorter {
       } else if (response.statusCode == 503) {
         var responseBody = json.decode(response.body);
         var estimatedWaitTime = responseBody['estimated_time'] ?? 10.0;
-        _logger.info('Model loading, waiting for $estimatedWaitTime seconds before retrying...');
+        _logger.info(
+            'Model loading, waiting for $estimatedWaitTime seconds before retrying...');
         await Future.delayed(Duration(seconds: estimatedWaitTime.round()));
       } else {
         _logger.warning('Request failed with status: ${response.statusCode}.');

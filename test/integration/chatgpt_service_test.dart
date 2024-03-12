@@ -19,7 +19,9 @@ void main() {
     chatGPTService = ChatGPTService(apiKey: apiToken!);
   });
 
-  test('generateCompletion should send "Hello, World!" to ChatGPT API and return a response', () async {
+  test(
+      'generateCompletion should send "Hello, World!" to ChatGPT API and return a response',
+      () async {
     // Arrange
     final prompt = 'Hello, World!';
 

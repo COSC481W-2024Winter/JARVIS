@@ -16,9 +16,18 @@ class EmailSummarizer {
       dynamic emailsData = await storageService.getData(key);
 
       if (emailsData != null && emailsData is Map<String, dynamic>) {
-        List<Map<String, dynamic>> emails = List<Map<String, dynamic>>.from(emailsData['emails'] ?? []);
-        String emailContents = emails.map((email) => "${email['Subject']}\n${email['Body']}").join("\n\n");
-        String prompt = "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
+        List<Map<String, dynamic>> emails =
+            List<Map<String, dynamic>>.from(emailsData['emails'] ?? []);
+
+        // Truncate email contents to a maximum of 512 characters
+        String emailContents = emails.map((email) {
+          String subject = email['Subject'] ?? '';
+          String body = truncateText(email['Body'] ?? '', 512);
+          return "$subject\n$body";
+        }).join("\n\n");
+
+        String prompt =
+            "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
 
         try {
           String summary = await chatGPTService.generateCompletion(prompt);
@@ -50,5 +59,9 @@ class EmailSummarizer {
       default:
         return 'emails_other';
     }
+  }
+
+  String truncateText(String text, int maxLength) {
+    return text.length > maxLength ? text.substring(0, maxLength) : text;
   }
 }
