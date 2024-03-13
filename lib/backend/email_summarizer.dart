@@ -1,6 +1,4 @@
-//todo: seperate each category to use %given API%, also if over token limit, seperate into two requests at a logical break between emails.
-// todo: (if possible), get empty emails to stop showing up in other categories.
-
+import 'package:flutter_gpt_tokenizer/flutter_gpt_tokenizer.dart';
 import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
@@ -9,7 +7,6 @@ class EmailSummarizer {
   final LocalStorageService storageService;
   final ChatGPTService chatGPTService;
 
-
   EmailSummarizer({
     required this.storageService,
     required this.chatGPTService,
@@ -17,7 +14,6 @@ class EmailSummarizer {
 
   Future<Map<String, String>> summarizeEmails() async {
     Map<String, String> summaries = {};
-
     List<Future> futures = [];
 
     for (var category in EmailCategory.values) {
@@ -28,32 +24,84 @@ class EmailSummarizer {
         List<Map<String, dynamic>> emails =
             List<Map<String, dynamic>>.from(emailsData['emails'] ?? []);
 
-        String emailContents = emails.map((email) {
+        List<String> emailContentList = emails.map((email) {
           String subject = email['Subject'] ?? '';
           String body = truncateText(email['Body'] ?? '', 512);
           return "$subject\n$body";
-        }).join("\n\n");
-
-        String prompt =
-            "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
+        }).toList();
 
         String apiKey = getApiKeyForCategory(category);
 
-        futures.add(
-            chatGPTService.generateCompletion(prompt, apiKey).then((summary) {
-          print('Summary for $category:\n$summary');
-          summaries[getCategoryKey(category)] = summary;
-        }).catchError((e) {
-          print('Error generating summary for $category: $e');
-        }));
+        futures.add(generateSummaryWithTokenLimit(
+          category,
+          emailContentList,
+          apiKey,
+          summaries,
+        ));
       } else {
         print("No emails found for category: $category");
       }
     }
 
     await Future.wait(futures);
-
     return summaries;
+  }
+
+  Future<void> generateSummaryWithTokenLimit(
+    EmailCategory category,
+    List<String> emailContentList,
+    String apiKey,
+    Map<String, String> summaries,
+  ) async {
+    final tokenizer = Tokenizer();
+    int maxTokens = 14000;
+    List<String> currentChunk = [];
+    int currentTokenCount = 0;
+
+    for (String emailContent in emailContentList) {
+      int emailTokenCount = await tokenizer.count(
+        emailContent,
+        modelName: "gpt-3.5-turbo",
+      );
+
+      if (currentTokenCount + emailTokenCount <= maxTokens) {
+        currentChunk.add(emailContent);
+        currentTokenCount += emailTokenCount;
+      } else {
+        await generateSummaryForChunk(
+            category, currentChunk, apiKey, summaries);
+        currentChunk = [emailContent];
+        currentTokenCount = emailTokenCount;
+      }
+    }
+
+    if (currentChunk.isNotEmpty) {
+      await generateSummaryForChunk(category, currentChunk, apiKey, summaries);
+    }
+
+    tokenizer.dispose();
+  }
+
+  Future<void> generateSummaryForChunk(
+    EmailCategory category,
+    List<String> emailChunk,
+    String apiKey,
+    Map<String, String> summaries,
+  ) async {
+    String emailContents = emailChunk.join("\n\n");
+    String prompt =
+        "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
+
+    try {
+      String summary = await chatGPTService.generateCompletion(prompt, apiKey);
+      print('Summary for $category:\n$summary');
+      summaries[getCategoryKey(category)] =
+          summaries.containsKey(getCategoryKey(category))
+              ? '${summaries[getCategoryKey(category)]!} $summary'
+              : summary;
+    } catch (e) {
+      print('Error generating summary for $category: $e');
+    }
   }
 
   String getCategoryKey(EmailCategory category) {
