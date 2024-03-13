@@ -2,19 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ChatGPTService {
-  final String apiKey;
+  final Map<String, String> apiKeys;
   final String apiUrl;
 
   ChatGPTService(
-      {required this.apiKey,
+      {required this.apiKeys,
       this.apiUrl = 'https://api.openai.com/v1/chat/completions'});
 
-  Future<String> generateCompletion(String prompt) async {
+  Future<String> generateCompletion(String prompt, String apiKey) async {
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey',
+        'Authorization': 'Bearer ${apiKeys[apiKey]}',
       },
       body: jsonEncode({
         'model': 'gpt-3.5-turbo-16k',

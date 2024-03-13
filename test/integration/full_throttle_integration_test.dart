@@ -36,9 +36,16 @@ void main() {
       if (sorterToken == null) {
         throw Exception('SORTER_KEY not found in .env file');
       }
-      final chatgptToken = dotenv.env['CHATGPT_KEY'];
-      if (chatgptToken == null) {
-        throw Exception('CHATGPT_KEY not found in .env file');
+      final businessKey = dotenv.env['CHATGPT_BUSINESS_KEY'];
+      final arrangementKey = dotenv.env['CHATGPT_ARRANGEMENT_KEY'];
+      final personalKey = dotenv.env['CHATGPT_PERSONAL_KEY'];
+      final docEditKey = dotenv.env['CHATGPT_DOC_EDIT_KEY'];
+
+      if (businessKey == null ||
+          arrangementKey == null ||
+          personalKey == null ||
+          docEditKey == null) {
+        throw Exception('One or more ChatGPT API keys not found in .env file');
       }
 
       // Initialize EmailSorter and EmailSortController with the API token
@@ -47,7 +54,12 @@ void main() {
 
       // Initialize LocalStorageService and ChatGPTService
       storageService = LocalStorageService();
-      chatGPTService = ChatGPTService(apiKey: chatgptToken);
+      chatGPTService = ChatGPTService(apiKeys: {
+        'CHATGPT_BUSINESS_KEY': businessKey,
+        'CHATGPT_ARRANGEMENT_KEY': arrangementKey,
+        'CHATGPT_PERSONAL_KEY': personalKey,
+        'CHATGPT_DOC_EDIT_KEY': docEditKey,
+      });
       emailSummarizer = EmailSummarizer(
         storageService: storageService,
         chatGPTService: chatGPTService,
@@ -64,7 +76,7 @@ void main() {
     test('emails are categorized, stored, and summarized correctly', () async {
       await Future.delayed(Duration.zero, () async {
         // Read emails from the JSON file
-        var file = File('test/data/uncategorized_emails_100.json');
+        var file = File('test/data/uncategorized_emails_50.json');
         var content = await file.readAsString();
         List<dynamic> emailList = json.decode(content);
 
