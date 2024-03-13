@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_localizations/firebase_ui_localizations.dart';
@@ -804,16 +805,31 @@ class ProfileScreenJarvis extends MultiProviderScreen {
   }
 
   Widget buildPage(BuildContext context) {
+    final TextEditingController _fullNameController = TextEditingController();
+    final TextEditingController _ageController = TextEditingController();
+    final TextEditingController _storyController = TextEditingController();
+
     final isCupertino = CupertinoUserInterfaceLevel.maybeOf(context) != null;
     final providersScopeKey = RebuildScopeKey();
     final mfaScopeKey = RebuildScopeKey();
     final emailVerificationScopeKey = RebuildScopeKey();
 
-    final TextEditingController _fullNameController = TextEditingController();
-    final TextEditingController _ageController = TextEditingController();
-    final TextEditingController _storyController = TextEditingController();
-
     final user = auth.currentUser!;
+
+    Future<void> _saveData() async {
+      final user = fba.FirebaseAuth.instance.currentUser;
+      final userData = {
+        'fullName': _fullNameController.text,
+        'age': _ageController.text,
+        'story': _storyController.text,
+      };
+
+      if (user != null) {
+        final userDoc =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+        await userDoc.set(userData, SetOptions(merge: true));
+      }
+    }
 
     final avatarWidget = avatar ??
         Align(
@@ -845,7 +861,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
             scopeKey: emailVerificationScopeKey,
           ),
         ],
-                const SizedBox(height: 10),
+        const SizedBox(height: 10),
         // Full name text field
         TextField(
           controller: _fullNameController,
@@ -910,7 +926,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         CustomSubmitButton(
           label: 'Submit',
           onPressed: () async {
-            // await _saveData();
+            await _saveData();
           },
         ),
         RebuildScope(
@@ -934,7 +950,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
           },
           scopeKey: providersScopeKey,
         ),
-        
+
         RebuildScope(
           builder: (context) {
             final user = auth.currentUser!;
@@ -1042,4 +1058,3 @@ class ProfileScreenJarvis extends MultiProviderScreen {
     );
   }
 }
-
