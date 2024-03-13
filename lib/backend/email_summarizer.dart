@@ -6,11 +6,14 @@ import 'package:jarvis/backend/chatgpt_service.dart';
 class EmailSummarizer {
   final LocalStorageService storageService;
   final ChatGPTService chatGPTService;
+  late final Tokenizer _tokenizer;
 
   EmailSummarizer({
     required this.storageService,
     required this.chatGPTService,
-  });
+  }) {
+    _tokenizer = Tokenizer();
+  }
 
   Future<Map<String, String>> summarizeEmails() async {
     Map<String, String> summaries = {};
@@ -53,16 +56,12 @@ class EmailSummarizer {
     String apiKey,
     Map<String, String> summaries,
   ) async {
-    final tokenizer = Tokenizer();
-    int maxTokens = 14000;
+    int maxTokens = 1000;
     List<String> currentChunk = [];
     int currentTokenCount = 0;
 
     for (String emailContent in emailContentList) {
-      int emailTokenCount = await tokenizer.count(
-        emailContent,
-        modelName: "gpt-3.5-turbo",
-      );
+      int emailTokenCount = await _getTokenCount(emailContent);
 
       if (currentTokenCount + emailTokenCount <= maxTokens) {
         currentChunk.add(emailContent);
@@ -78,8 +77,10 @@ class EmailSummarizer {
     if (currentChunk.isNotEmpty) {
       await generateSummaryForChunk(category, currentChunk, apiKey, summaries);
     }
+  }
 
-    tokenizer.dispose();
+  Future<int> _getTokenCount(String text) async {
+    return await _tokenizer.count(text, modelName: "gpt-3.5-turbo");
   }
 
   Future<void> generateSummaryForChunk(
@@ -136,5 +137,9 @@ class EmailSummarizer {
       default:
         return 'CHATGPT_BUSINESS_KEY';
     }
+  }
+
+  void dispose() {
+    _tokenizer.dispose();
   }
 }
