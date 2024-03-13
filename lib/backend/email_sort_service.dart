@@ -111,12 +111,20 @@ class EmailSorter {
       if (category == EmailCategory.companyBusinessStrategy ||
           category == EmailCategory.purelyPersonal ||
           category == EmailCategory.logisticArrangements ||
-          category == EmailCategory.documentEditingCheckingCollaboration) {
+          category == EmailCategory.documentEditingCheckingCollaboration ||
+          category == EmailCategory.emptyMessage) {
         var probability = prediction['score'];
 
         if (probability > highestProbability) {
           highestProbability = probability;
           bestCategory = category;
+        }
+      } else if (category == EmailCategory.personalButProfessional) {
+        var probability = prediction['score'];
+
+        if (probability > highestProbability) {
+          highestProbability = probability;
+          bestCategory = EmailCategory.purelyPersonal;
         }
       }
     }

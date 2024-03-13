@@ -1,3 +1,6 @@
+//todo: seperate each category to use %given API%, also if over token limit, seperate into two requests at a logical break between emails.
+// todo: (if possible), get empty emails to stop showing up in other categories.
+
 import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
@@ -28,7 +31,7 @@ class EmailSummarizer {
 
         String prompt =
             "These are ${category.toString().split('.').last} emails, please summarize the contents in 500 words or less:\n$emailContents";
-
+        //print(prompt);
         try {
           String summary = await chatGPTService.generateCompletion(prompt);
           print('Summary for $category:\n$summary');

@@ -17,11 +17,11 @@ class ChatGPTService {
         'Authorization': 'Bearer $apiKey',
       },
       body: jsonEncode({
-        'model': 'gpt-3.5-turbo',
+        'model': 'gpt-3.5-turbo-16k',
         'messages': [
           {'role': 'user', 'content': prompt}
         ],
-        'max_tokens': 500,
+        'max_tokens': 14000,
       }),
     );
 

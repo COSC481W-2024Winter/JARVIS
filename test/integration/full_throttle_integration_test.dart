@@ -64,7 +64,7 @@ void main() {
     test('emails are categorized, stored, and summarized correctly', () async {
       await Future.delayed(Duration.zero, () async {
         // Read emails from the JSON file
-        var file = File('test/data/uncategorized_emails_10.json');
+        var file = File('test/data/uncategorized_emails_100.json');
         var content = await file.readAsString();
         List<dynamic> emailList = json.decode(content);
 
