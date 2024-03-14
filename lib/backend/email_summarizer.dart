@@ -56,7 +56,7 @@ class EmailSummarizer {
     String apiKey,
     Map<String, String> summaries,
   ) async {
-    int maxTokens = 1000;
+    int maxTokens = 10000;
     List<String> currentChunk = [];
     int currentTokenCount = 0;
 
