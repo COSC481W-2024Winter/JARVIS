@@ -9,8 +9,9 @@ class EmailMessage {
   final String id;
   final String subject;
   final String body; // Plain text or HTML
+  final String category;
 
-  EmailMessage({required this.id, required this.subject, required this.body, required threadId, required String content});
+  EmailMessage({required this.id, required this.subject, required this.body,required this.category,});
 
   factory EmailMessage.fromJson(Map<String, dynamic> json) {
     // Initialize subject and body with default values
@@ -40,6 +41,6 @@ class EmailMessage {
       }
     }
 
-    return EmailMessage(id: json['id'], subject: subject, body: body, threadId: null, content: '');
+    return EmailMessage(id: json['id'], subject: subject, body: body, category: '');
   }
 }

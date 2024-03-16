@@ -10,19 +10,19 @@ class EmailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Emails'),
+        title: const Text('Sorted Emails'),
       ),
       body: ListView.builder(
         itemCount: emails.length,
         itemBuilder: (context, index) {
           return ListTile(
-            //title: Text('Email ID: ${emails[index].id}'),
-            //subtitle: Text('Thread ID: ${emails[index].threadId}'),
-            title: Text(emails[index].subject), // Display subject
-            subtitle: Text(emails[index].body), // Display body snippet or full body
+            title: Text(emails[index].subject),
+            subtitle: Text(emails[index].body),
+            trailing: Text(emails[index].category),  // Display category here
           );
         },
       ),
     );
   }
 }
+
