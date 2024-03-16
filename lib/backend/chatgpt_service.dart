@@ -21,7 +21,7 @@ class ChatGPTService {
         'messages': [
           {'role': 'user', 'content': prompt}
         ],
-        'max_tokens': 14000,
+        'max_tokens': 1000,
       }),
     );
 
