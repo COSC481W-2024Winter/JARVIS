@@ -19,7 +19,6 @@ import 'widgets/universal_icon_button.dart';
 import 'internal/multi_provider_screen.dart';
 
 import 'widgets/CustomSubmitButton.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class _AvailableProvidersRow extends StatefulWidget {
   /// {@macro ui.auth.auth_controller.auth}
@@ -685,6 +684,9 @@ class _MFAToggleState extends State<_MFAToggle> {
 /// contain a user-defined content.
 /// {@endtemplate}
 class ProfileScreenJarvis extends MultiProviderScreen {
+  /// Creates a new profile screen.
+  final ProfileScreenState state = ProfileScreenState();
+
   /// A user-defined content of the screen.
   final List<Widget> children;
 
@@ -745,7 +747,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
   /// {@macro ui.auth.widgets.delete_account_button.show_delete_confirmation_dialog}
   final bool showDeleteConfirmationDialog;
 
-  const ProfileScreenJarvis({
+  ProfileScreenJarvis({
     super.key,
     super.auth,
     super.providers,
@@ -805,9 +807,10 @@ class ProfileScreenJarvis extends MultiProviderScreen {
   }
 
   Widget buildPage(BuildContext context) {
-    final TextEditingController _fullNameController = TextEditingController();
-    final TextEditingController _ageController = TextEditingController();
-    final TextEditingController _storyController = TextEditingController();
+    // Use state to access TextEditingControllers and other state variables
+    final fullNameController = state.fullNameController;
+    final ageController = state.ageController;
+    final storyController = state.storyController;
 
     final isCupertino = CupertinoUserInterfaceLevel.maybeOf(context) != null;
     final providersScopeKey = RebuildScopeKey();
@@ -815,21 +818,6 @@ class ProfileScreenJarvis extends MultiProviderScreen {
     final emailVerificationScopeKey = RebuildScopeKey();
 
     final user = auth.currentUser!;
-
-    Future<void> _saveData() async {
-      final user = fba.FirebaseAuth.instance.currentUser;
-      final userData = {
-        'fullName': _fullNameController.text,
-        'age': _ageController.text,
-        'story': _storyController.text,
-      };
-
-      if (user != null) {
-        final userDoc =
-            FirebaseFirestore.instance.collection('users').doc(user.uid);
-        await userDoc.set(userData, SetOptions(merge: true));
-      }
-    }
 
     final avatarWidget = avatar ??
         Align(
@@ -864,7 +852,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         const SizedBox(height: 10),
         // Full name text field
         TextField(
-          controller: _fullNameController,
+          controller: fullNameController,
           decoration: const InputDecoration(
             labelText: 'Full Name',
             border: OutlineInputBorder(
@@ -884,7 +872,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
 
         // Age text field
         TextField(
-          controller: _ageController,
+          controller: ageController,
           decoration: const InputDecoration(
             labelText: 'Age',
             border: OutlineInputBorder(
@@ -904,7 +892,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
 
         // Story text field
         TextField(
-          controller: _storyController,
+          controller: storyController,
           decoration: const InputDecoration(
             labelText: 'Your Story',
             border: OutlineInputBorder(
@@ -926,9 +914,10 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         CustomSubmitButton(
           label: 'Submit',
           onPressed: () async {
-            await _saveData();
+            await state.saveData();
           },
         ),
+
         RebuildScope(
           builder: (context) {
             final user = auth.currentUser!;
@@ -1056,5 +1045,57 @@ class ProfileScreenJarvis extends MultiProviderScreen {
       actions: actions ?? const [],
       child: child,
     );
+  }
+}
+
+class ProfileScreenState extends ChangeNotifier {
+  // Define TextEditingController variables here
+  late final TextEditingController _fullNameController;
+  late final TextEditingController _ageController;
+  late final TextEditingController _storyController;
+
+  ProfileScreenState() {
+    _fullNameController = TextEditingController();
+    _ageController = TextEditingController();
+    _storyController = TextEditingController();
+
+    // Load data when the state is initialized
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final user = fba.FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final userData = await userDoc.get();
+      if (userData.exists) {
+        _fullNameController.text = userData.get('fullName') ?? '';
+        _ageController.text = userData.get('age') ?? '';
+        _storyController.text = userData.get('story') ?? '';
+        notifyListeners();
+      }
+    }
+  }
+
+  // Add getters for TextEditingControllers to access them from ProfileScreenJarvis
+
+  TextEditingController get fullNameController => _fullNameController;
+  TextEditingController get ageController => _ageController;
+  TextEditingController get storyController => _storyController;
+
+  Future<void> saveData() async {
+    final user = fba.FirebaseAuth.instance.currentUser;
+    final userData = {
+      'fullName': _fullNameController.text,
+      'age': _ageController.text,
+      'story': _storyController.text,
+    };
+
+    if (user != null) {
+      final userDoc =
+          FirebaseFirestore.instance.collection('users').doc(user.uid);
+      await userDoc.set(userData, SetOptions(merge: true));
+    }
   }
 }
