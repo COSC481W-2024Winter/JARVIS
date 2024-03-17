@@ -1,12 +1,7 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/email_categorization_screen.dart';
-import 'package:jarvis/backend/email_fetch_service.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
-import 'package:jarvis/backend/email_sort_service.dart';
-import 'package:jarvis/backend/email_sorting_runner.dart';
-import 'package:jarvis/emails_screen.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jarvis/main.dart';
 import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
