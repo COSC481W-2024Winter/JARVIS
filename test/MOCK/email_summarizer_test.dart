@@ -2,7 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
-import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
 
@@ -17,6 +16,7 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
 
     const MethodChannel('plugins.flutter.io/path_provider')
+        // ignore: deprecated_member_use
         .setMockMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'getApplicationDocumentsDirectory') {
         return '.';

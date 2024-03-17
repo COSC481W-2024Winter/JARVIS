@@ -1,5 +1,6 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/email_categorization_screen.dart';
 import 'backend/email_fetch_service.dart';
 import 'backend/email_gmail_signin_service.dart';
 import 'emails_screen.dart';
@@ -33,8 +34,23 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildSettingsButton(context),
         _buildAccessEmailButton(context),
         _buildListenEmailButton(context),
+        _buildCategorizationButton(context),
       ],
       automaticallyImplyLeading: false,
+    );
+  }
+
+  ElevatedButton _buildCategorizationButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _navigateToCategorizationScreen(context),
+      child: const Text('Categorize Emails'),
+    );
+  }
+
+  void _navigateToCategorizationScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
     );
   }
 
@@ -114,7 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToSettings(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Setting()));
   }
 
   void _accessEmail(BuildContext context) async {
@@ -124,24 +141,31 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final accessToken = await signInService.signInWithGoogle();
       if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to sign in with Google")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to sign in with Google")));
         return;
       }
 
       final emails = await emailService.fetchEmails(accessToken, 10);
       if (emails.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("No emails fetched")));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("No emails fetched")));
         return;
       }
 
-      Navigator.push(context, MaterialPageRoute(builder: (context) => EmailsScreen(emails: emails)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => EmailsScreen(emails: emails)));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
     }
   }
 
   void _navigateToHomePage(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 
   void _startListening() async {

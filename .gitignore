@@ -110,4 +110,8 @@ web
 windows
 macos
 
-
+# stuff emily needs out
+!assets/data/uncategorized_emails_10.json
+!test/data/uncategorized_emails_10.json
+!test/data/uncategorized_emails_100.json
+!test/data/uncategorized_emails_50.json

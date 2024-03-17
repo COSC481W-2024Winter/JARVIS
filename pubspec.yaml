@@ -62,4 +62,4 @@ flutter:
     - assets/Icon-192 copy.png
     - assets/dash.png
     - .env
-
+    - assets/data/uncategorized_emails_10.json
