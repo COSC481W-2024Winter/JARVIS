@@ -2,7 +2,9 @@ import 'dart:convert';
 
 List<EmailMessage> parseEmails(String responseBody) {
   final parsed = json.decode(responseBody);
-  return parsed['messages'].map<EmailMessage>((json) => EmailMessage.fromJson(json)).toList();
+  return parsed['messages']
+      .map<EmailMessage>((json) => EmailMessage.fromJson(json))
+      .toList();
 }
 
 class EmailMessage {

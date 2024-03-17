@@ -1,5 +1,6 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/email_categorization_screen.dart';
 import 'package:jarvis/backend/email_fetch_service.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
 import 'package:jarvis/backend/email_sort_service.dart';
@@ -37,8 +38,23 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildSettingsButton(context),
         _buildAccessEmailButton(context),
         _buildListenEmailButton(context),
+        _buildCategorizationButton(context),
       ],
       automaticallyImplyLeading: false,
+    );
+  }
+
+  ElevatedButton _buildCategorizationButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _navigateToCategorizationScreen(context),
+      child: const Text('Categorize Emails'),
+    );
+  }
+
+  void _navigateToCategorizationScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
     );
   }
 
@@ -75,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('Welcome!', style: Theme.of(context).textTheme.headline4),
+          Text('Welcome!', style: Theme.of(context).textTheme.displaySmall),
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
@@ -106,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _accessAndSortEmails() async {
-    // Ensure you load your environment variables where you have your API token stored
     final accessToken = dotenv.env['JARVISTEST684_EMAIL_TEMP'];
     final sorterApiKey = dotenv.env['SORTER_KEY'];
 
@@ -140,10 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
-  }
-
   void _stopListening() async {
     await speechToText.stop();
     setState(() {});
@@ -169,5 +180,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _navigateToSettings(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+  }
+
+  void _navigateToHomePage(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 }
