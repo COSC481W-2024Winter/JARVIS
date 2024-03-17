@@ -115,4 +115,6 @@ macos
 !test/data/uncategorized_emails_10.json
 !test/data/uncategorized_emails_100.json
 !test/data/uncategorized_emails_50.json
+
+# because this is generated and annoying
 pubspec.lock

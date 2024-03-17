@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jarvis/backend/email_fetch_service.dart';
+import 'package:jarvis/backend/email_gmail_signin_service.dart';
 import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:jarvis/backend/email_sort_controller.dart';
 import 'package:jarvis/backend/email_sorting_runner.dart';
@@ -44,12 +46,31 @@ class EmailCategorizationScreen extends StatelessWidget {
 }
 
 Future<void> _accessAndSortEmails(BuildContext context) async {
-  final accessToken = dotenv.env['JARVISTEST684_EMAIL_TEMP'];
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("No user logged in.")),
+    );
+    return;
+  }
+
+  final GoogleSignInService googleSignInService = GoogleSignInService();
+  final String? accessToken = await googleSignInService.signInWithGoogle();
+
+  if (accessToken == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Failed to retrieve access token.")),
+    );
+    return;
+  }
+
   final sorterApiKey = dotenv.env['SORTER_KEY'];
 
-  if (accessToken == null || sorterApiKey == null) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Required API tokens are not configured properly.")));
+  if (sorterApiKey == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Required API tokens are not configured properly.")),
+    );
     return;
   }
 
@@ -64,12 +85,13 @@ Future<void> _accessAndSortEmails(BuildContext context) async {
   try {
     final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => EmailsScreen(emails: sortedEmails)));
+      context,
+      MaterialPageRoute(builder: (context) => EmailsScreen(emails: sortedEmails)),
+    );
   } catch (e) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Failed to access emails: $e")),
+    );
   }
 }
 
