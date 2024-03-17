@@ -1049,6 +1049,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
 }
 
 class ProfileScreenState extends ChangeNotifier {
+  
   // Define TextEditingController variables here
   late final TextEditingController _fullNameController;
   late final TextEditingController _ageController;
@@ -1060,10 +1061,10 @@ class ProfileScreenState extends ChangeNotifier {
     _storyController = TextEditingController();
 
     // Load data when the state is initialized
-    _loadData();
+    loadData();
   }
 
-  Future<void> _loadData() async {
+  Future<void> loadData() async {
     final user = fba.FirebaseAuth.instance.currentUser;
     if (user != null) {
       final userDoc =
