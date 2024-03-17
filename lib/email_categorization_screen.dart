@@ -1,14 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jarvis/backend/email_fetch_service.dart';
 import 'package:jarvis/backend/email_sort_service.dart';
 import 'package:jarvis/backend/email_sort_controller.dart';
+import 'package:jarvis/backend/email_sorting_runner.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
+import 'package:jarvis/emails_screen.dart';
 
 class EmailCategorizationScreen extends StatelessWidget {
   @override
@@ -16,14 +18,56 @@ class EmailCategorizationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Email Categorization and Summarization')),
       body: Center(
-        child: ElevatedButton(
-          child: Text('Start Process'),
-          onPressed: () async {
-            await categorizeAndSummarizeEmails();
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              child: Text('Access and Sort Emails'),
+              onPressed: () async {
+                await _accessAndSortEmails(context);
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              child: Text('Categorize and Summarize Emails'),
+              onPressed: () async {
+                await categorizeAndSummarizeEmails();
+              },
+            ),
+          ],
         ),
       ),
     );
+  }
+}
+
+Future<void> _accessAndSortEmails(BuildContext context) async {
+  final accessToken = dotenv.env['JARVISTEST684_EMAIL_TEMP'];
+  final sorterApiKey = dotenv.env['SORTER_KEY'];
+
+  if (accessToken == null || sorterApiKey == null) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Required API tokens are not configured properly.")));
+    return;
+  }
+
+  final emailFetchingService = EmailFetchingService();
+  final emailSorter = EmailSorter(apiToken: sorterApiKey);
+  final emailSortController = EmailSortController(emailSorter: emailSorter);
+  final emailSortingRunner = EmailSortingRunner(
+    emailFetchingService: emailFetchingService,
+    emailSortController: emailSortController,
+  );
+
+  try {
+    final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EmailsScreen(emails: sortedEmails)));
+  } catch (e) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
   }
 }
 

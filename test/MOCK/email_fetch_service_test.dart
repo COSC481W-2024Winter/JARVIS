@@ -29,7 +29,8 @@ void main() {
       const accessToken = 'fake_access_token';
       // Define expected JSON response
       const messagesJson = '{"messages": [{"id": "123", "threadId": "abc"}]}';
-      const messageDetailJson = '{"id": "123", "threadId": "abc", "payload": {"headers": [{"name": "Subject", "value": "Test Subject"}], "body": {"data": "VGVzdCBCb2R5"}}}';
+      const messageDetailJson =
+          '{"id": "123", "threadId": "abc", "payload": {"headers": [{"name": "Subject", "value": "Test Subject"}], "body": {"data": "VGVzdCBCb2R5"}}}';
 
       // Stub the HTTP calls
       when(() => client.get(
@@ -38,7 +39,8 @@ void main() {
           )).thenAnswer((_) async => http.Response(messagesJson, 200));
 
       when(() => client.get(
-            Uri.parse('https://gmail.googleapis.com/gmail/v1/users/me/messages/123'),
+            Uri.parse(
+                'https://gmail.googleapis.com/gmail/v1/users/me/messages/123'),
             headers: any(named: 'headers'),
           )).thenAnswer((_) async => http.Response(messageDetailJson, 200));
 

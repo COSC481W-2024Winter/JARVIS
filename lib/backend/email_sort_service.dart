@@ -81,15 +81,15 @@ class EmailSorter {
         var bestCategory = _selectBestCategory(predictions);
         requestSuccessful = true;
         return bestCategory;
-      // } else if (response.statusCode == 503) {
-      //   _logger.info('Model loading, waiting for 10 seconds before retrying...');
-      //   await Future.delayed(const Duration(seconds: 10)); // Wait for 10 seconds instead of whatever huggingfaces tells us.
-        } else if (response.statusCode == 503) {
-          var responseBody = json.decode(response.body);
-          var estimatedWaitTime = responseBody['estimated_time'] ?? 10.0;
-          _logger.info(
-              'Model loading, waiting for $estimatedWaitTime seconds before retrying...');
-          await Future.delayed(Duration(seconds: estimatedWaitTime.round()));
+        // } else if (response.statusCode == 503) {
+        //   _logger.info('Model loading, waiting for 10 seconds before retrying...');
+        //   await Future.delayed(const Duration(seconds: 10)); // Wait for 10 seconds instead of whatever huggingfaces tells us.
+      } else if (response.statusCode == 503) {
+        var responseBody = json.decode(response.body);
+        var estimatedWaitTime = responseBody['estimated_time'] ?? 10.0;
+        _logger.info(
+            'Model loading, waiting for $estimatedWaitTime seconds before retrying...');
+        await Future.delayed(Duration(seconds: estimatedWaitTime.round()));
       } else {
         _logger.warning('Request failed with status: ${response.statusCode}.');
         _logger.warning('Response body: ${response.body}');

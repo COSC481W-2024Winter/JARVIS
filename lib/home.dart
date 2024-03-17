@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: <Widget>[
         _buildProfileButton(context),
         _buildSettingsButton(context),
-        _buildAccessEmailButton(context),
         _buildListenEmailButton(context),
         _buildCategorizationButton(context),
       ],
@@ -51,11 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _navigateToCategorizationScreen(BuildContext context) {
-    Navigator.push(
+  void _navigateToCategorizationScreen(BuildContext context) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
     );
+    setState(() {}); // Refresh the UI after returning from EmailCategorizationScreen
   }
 
   IconButton _buildProfileButton(BuildContext context) {
@@ -69,13 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return IconButton(
       icon: const Icon(Icons.settings),
       onPressed: () => _navigateToSettings(context),
-    );
-  }
-
-  ElevatedButton _buildAccessEmailButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _accessAndSortEmails(),
-      child: const Text('Access and Sort Emails'),
     );
   }
 
@@ -119,31 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
         style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w300),
       ),
     );
-  }
-
-  void _accessAndSortEmails() async {
-    final accessToken = dotenv.env['JARVISTEST684_EMAIL_TEMP'];
-    final sorterApiKey = dotenv.env['SORTER_KEY'];
-
-    if (accessToken == null || sorterApiKey == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Required API tokens are not configured properly.")));
-      return;
-    }
-
-    final emailFetchingService = EmailFetchingService();
-    final emailSorter = EmailSorter(apiToken: sorterApiKey);
-    final emailSortingRunner = EmailSortingRunner(
-      emailFetchingService: emailFetchingService,
-      emailSorter: emailSorter,
-    );
-
-    try {
-      final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => EmailsScreen(emails: sortedEmails)));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
-    }
   }
 
   void _startListening() async {

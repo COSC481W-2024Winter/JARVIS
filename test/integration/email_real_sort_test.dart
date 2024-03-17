@@ -3,12 +3,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:test/test.dart';
 import 'package:jarvis/backend/email_fetch_service.dart';
 import 'package:jarvis/backend/email_gmail_class.dart';
+import 'package:jarvis/backend/email_sort_controller.dart';
 import 'package:jarvis/backend/email_sort_service.dart';
+import 'package:jarvis/backend/email_sorting_runner.dart';
 
 void main() {
   group('EmailFetch and Sort Integration Tests', () {
     late EmailFetchingService emailFetchingService;
-    late EmailSorter emailSorter;
+    late EmailSortController emailSortController;
+    late EmailSortingRunner emailSortingRunner;
     late String accessToken;
     late String apiToken;
 
@@ -26,33 +29,28 @@ void main() {
 
       // Initialize services
       emailFetchingService = EmailFetchingService();
-      emailSorter = EmailSorter(apiToken: apiToken);
+      emailSortController = EmailSortController(emailSorter: EmailSorter(apiToken: apiToken));
+      emailSortingRunner = EmailSortingRunner(
+        emailFetchingService: emailFetchingService,
+        emailSortController: emailSortController,
+      );
     });
 
     test('Fetch and sort emails successfully', () async {
-      // Fetch emails
-      final fetchedEmails = await emailFetchingService.fetchEmails(accessToken, 10);
-      expect(fetchedEmails, isA<List<EmailMessage>>());
-
-      // Prepare emails for sorting
-      List<Map<String, String>> emailsToCategorize = fetchedEmails.map((email) => {
-        "Subject": email.subject,
-        "Body": email.body
-      }).toList();
-
-      // Sort emails
-      final categorizedEmails = await emailSorter.categorizeEmailsList(emailsToCategorize);
+      // Fetch and sort emails
+      final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
 
       // Check results
-      for (var email in categorizedEmails) {
-        expect(email.keys, contains('Category'));
+      for (var email in sortedEmails) {
+        expect(email, isA<EmailMessage>());
+        expect(email.category, isNotNull);
         // Output results for debug purposes
-        print('Subject: ${email["Subject"]}, Category: ${email["Category"]}');
+        print('Subject: ${email.subject}, Category: ${email.category}');
       }
 
       // Assert that all emails have a category assigned
-      for (var email in categorizedEmails) {
-        expect(email['Category'], isNotNull);
+      for (var email in sortedEmails) {
+        expect(email.category, isNotEmpty);
       }
     });
   });

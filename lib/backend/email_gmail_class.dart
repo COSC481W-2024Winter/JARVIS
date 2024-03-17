@@ -13,7 +13,12 @@ class EmailMessage {
   final String body; // Plain text or HTML
   final String category;
 
-  EmailMessage({required this.id, required this.subject, required this.body,required this.category,});
+  EmailMessage({
+    required this.id,
+    required this.subject,
+    required this.body,
+    required this.category,
+  });
 
   factory EmailMessage.fromJson(Map<String, dynamic> json) {
     // Initialize subject and body with default values
@@ -33,7 +38,7 @@ class EmailMessage {
     // Check if body exists and extract body content
     var bodySize = json['payload']?['body']?['size'];
     if (bodySize != null && bodySize > 0) {
-        body = utf8.decode(base64Url.decode(json['payload']['body']['data']));
+      body = utf8.decode(base64Url.decode(json['payload']['body']['data']));
     } else if (json['payload']?.containsKey('parts') == true) {
       for (var part in json['payload']['parts']) {
         if (part['mimeType'] == 'text/plain' && part['body']['size'] > 0) {
@@ -43,6 +48,7 @@ class EmailMessage {
       }
     }
 
-    return EmailMessage(id: json['id'], subject: subject, body: body, category: '');
+    return EmailMessage(
+        id: json['id'], subject: subject, body: body, category: '');
   }
 }

@@ -32,19 +32,24 @@ class GoogleSignInService {
   Future<List<EmailMessage>> fetchEmails(String accessToken) async {
     List<EmailMessage> emails = [];
     // Fetch list of emails (IDs)
-    final listUrl = Uri.parse('https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=10');
-    final listResponse = await http.get(listUrl, headers: {'Authorization': 'Bearer $accessToken'});
+    final listUrl = Uri.parse(
+        'https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=10');
+    final listResponse = await http
+        .get(listUrl, headers: {'Authorization': 'Bearer $accessToken'});
     if (listResponse.statusCode == 200) {
       final listData = json.decode(listResponse.body);
       for (var messageSummary in listData['messages']) {
         // Fetch details for each email by ID to get subject and body
-        final detailUrl = Uri.parse('https://www.googleapis.com/gmail/v1/users/me/messages/${messageSummary['id']}');
-        final detailResponse = await http.get(detailUrl, headers: {'Authorization': 'Bearer $accessToken'});
+        final detailUrl = Uri.parse(
+            'https://www.googleapis.com/gmail/v1/users/me/messages/${messageSummary['id']}');
+        final detailResponse = await http
+            .get(detailUrl, headers: {'Authorization': 'Bearer $accessToken'});
         if (detailResponse.statusCode == 200) {
           final detailData = json.decode(detailResponse.body);
-        
+
           // Debug print statement here
-          print(jsonEncode(detailData['payload'])); // Debug the payload structure
+          print(
+              jsonEncode(detailData['payload'])); // Debug the payload structure
 
           emails.add(EmailMessage.fromJson(detailData));
         }
