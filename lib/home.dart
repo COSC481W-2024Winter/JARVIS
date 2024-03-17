@@ -1,11 +1,14 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/email_categorization_screen.dart';
-import 'backend/email_fetch_service.dart';
-import 'backend/email_gmail_signin_service.dart';
-import 'emails_screen.dart';
-import 'main.dart';
-import 'setting.dart';
+import 'package:jarvis/backend/email_fetch_service.dart';
+import 'package:jarvis/backend/email_gmail_signin_service.dart';
+import 'package:jarvis/backend/email_sort_service.dart';
+import 'package:jarvis/backend/email_sorting_runner.dart';
+import 'package:jarvis/emails_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jarvis/main.dart';
+import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
 
@@ -70,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   ElevatedButton _buildAccessEmailButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _accessEmail(context),
-      child: const Text('Access Email'),
+      onPressed: () => _accessAndSortEmails(),
+      child: const Text('Access and Sort Emails'),
     );
   }
 
@@ -117,55 +121,29 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _navigateToProfileScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<ProfileScreen>(
-        builder: (context) => ProfileScreen(
-          appBar: AppBar(title: const Text('User Profile')),
-          actions: [SignedOutAction((context) => Navigator.of(context).pop())],
-        ),
-      ),
+  void _accessAndSortEmails() async {
+    final accessToken = dotenv.env['JARVISTEST684_EMAIL_TEMP'];
+    final sorterApiKey = dotenv.env['SORTER_KEY'];
+
+    if (accessToken == null || sorterApiKey == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Required API tokens are not configured properly.")));
+      return;
+    }
+
+    final emailFetchingService = EmailFetchingService();
+    final emailSorter = EmailSorter(apiToken: sorterApiKey);
+    final emailSortingRunner = EmailSortingRunner(
+      emailFetchingService: emailFetchingService,
+      emailSorter: emailSorter,
     );
-  }
-
-  void _navigateToSettings(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const Setting()));
-  }
-
-  void _accessEmail(BuildContext context) async {
-    final signInService = SignInService();
-    final emailService = EmailFetchingService();
 
     try {
-      final accessToken = await signInService.signInWithGoogle();
-      if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to sign in with Google")));
-        return;
-      }
-
-      final emails = await emailService.fetchEmails(accessToken, 10);
-      if (emails.isEmpty) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("No emails fetched")));
-        return;
-      }
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => EmailsScreen(emails: emails)));
+      final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => EmailsScreen(emails: sortedEmails)));
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
     }
-  }
-
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 
   void _startListening() async {
@@ -186,5 +164,25 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _wordsSpoken = result.recognizedWords;
     });
+  }
+
+  void _navigateToProfileScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<ProfileScreen>(
+        builder: (context) => ProfileScreen(
+          appBar: AppBar(title: const Text('User Profile')),
+          actions: [SignedOutAction((context) => Navigator.of(context).pop())],
+        ),
+      ),
+    );
+  }
+
+  void _navigateToSettings(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+  }
+
+  void _navigateToHomePage(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 }

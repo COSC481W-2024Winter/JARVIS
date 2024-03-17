@@ -38,6 +38,7 @@ dependencies:
   plugin_platform_interface: ^2.1.8
   flutter_gpt_tokenizer: ^0.1.1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -53,6 +54,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.1
   logging: ^1.0.0
+  build_runner: ^2.4.8
 
 flutter:
 

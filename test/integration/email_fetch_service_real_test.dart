@@ -28,7 +28,7 @@ void main() {
         expect(emails, isA<List<EmailMessage>>());
         expect(emails.length, isNonZero);
         for (var email in emails) {
-          print('Email ID: ${email.id}, Thread ID: ${email.threadId}');
+          print('Email ID: ${email.id},Subject: ${email.subject}, Body: ${email.body}');
           // You can print more details or perform other checks here
         }
         // You can add more assertions here based on your expected outcomes
