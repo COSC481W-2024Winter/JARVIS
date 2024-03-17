@@ -5,6 +5,7 @@ import 'auth_gate.dart';
 import 'widgets/CustomButton.dart';
 import 'profile.dart';
 import 'setting.dart';
+import 'email_summary.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -82,13 +83,13 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 50),
 
-              // Setting button
+             // Setting button
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const Setting()),
-                  );
+                  ); 
                 },
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
@@ -100,6 +101,25 @@ class HomePage extends StatelessWidget {
                   size: 30.0,
                 ),
               ),
+              // Email Summary button
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EmailSum()),
+                  ); 
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.all(20),
+                ),
+                child: const Icon(
+                  Icons.settings,
+                  size: 30.0,
+                ),
+              ),
+              
             ],
           ),
         ),
