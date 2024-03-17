@@ -11,6 +11,8 @@ import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
 import 'package:jarvis/emails_screen.dart';
+import 'package:jarvis/emails_summaries_screen.dart';
+
 
 class EmailCategorizationScreen extends StatelessWidget {
   @override
@@ -31,7 +33,7 @@ class EmailCategorizationScreen extends StatelessWidget {
             ElevatedButton(
               child: Text('Categorize and Summarize Emails'),
               onPressed: () async {
-                await categorizeAndSummarizeEmails();
+                await categorizeAndSummarizeEmails(context);
               },
             ),
           ],
@@ -71,7 +73,7 @@ Future<void> _accessAndSortEmails(BuildContext context) async {
   }
 }
 
-Future<void> categorizeAndSummarizeEmails() async {
+Future<void> categorizeAndSummarizeEmails(BuildContext context) async {
   final sorterToken = dotenv.env['SORTER_KEY'];
   final businessKey = dotenv.env['CHATGPT_BUSINESS_KEY'];
   final arrangementKey = dotenv.env['CHATGPT_ARRANGEMENT_KEY'];
@@ -83,7 +85,9 @@ Future<void> categorizeAndSummarizeEmails() async {
       arrangementKey == null ||
       personalKey == null ||
       docEditKey == null) {
-    throw Exception('One or more required API keys not found in .env file');
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text("One or more required API keys not found in .env file")));
+    return;
   }
 
   EmailSorter emailSorter = EmailSorter(apiToken: sorterToken);
@@ -128,4 +132,12 @@ Future<void> categorizeAndSummarizeEmails() async {
   Map<String, String> generatedSummaries =
       await emailSummarizer.summarizeEmails();
   await storageService.saveData('generatedSummaries', generatedSummaries);
+
+  // Display the generated summaries to the user
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => EmailSummariesScreen(summaries: generatedSummaries),
+    ),
+  );
 }
