@@ -4,12 +4,10 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 
 void main() {
   group('ProfileScreenState', () {
-    late MockFirebaseAuth auth;
     late FakeFirebaseFirestore firestore;
 
     setUp(() {
       firestore = FakeFirebaseFirestore();
-      auth = MockFirebaseAuth(mockUser: MockUser(uid: 'test'));
     });
 
     test('loads and saves profile data correctly', () async {
@@ -20,7 +18,9 @@ void main() {
             'I am an online retailer on multiple sites selling a variety of items. Some of his sales happen automatically, while others require directly communicating with interested customers.',
       };
 
-      final userDoc = firestore.collection('users').doc(auth as String);
+      final mockUser = MockUser(uid: 'test');
+      final auth = MockFirebaseAuth(mockUser: mockUser);
+      final userDoc = firestore.collection('users').doc(auth.currentUser?.uid);
       await userDoc.set(userData);
 
       // Act: Load the profile data
