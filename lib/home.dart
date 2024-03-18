@@ -1,11 +1,11 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/profile_screen_jarvis.dart';
-import 'backend/email_fetch_service.dart';
-import 'backend/email_gmail_signin_service.dart';
-import 'emails_screen.dart';
-import 'main.dart';
-import 'setting.dart';
+import 'package:jarvis/email_categorization_screen.dart';
+import 'package:jarvis/backend/email_gmail_signin_service.dart';
+import 'package:jarvis/email_summary.dart';
+import 'package:jarvis/main.dart';
+import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
 
@@ -32,11 +33,26 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: <Widget>[
         _buildProfileButton(context),
         _buildSettingsButton(context),
-        _buildAccessEmailButton(context),
         _buildListenEmailButton(context),
+        _buildCategorizationButton(context),
       ],
       automaticallyImplyLeading: false,
     );
+  }
+
+  ElevatedButton _buildCategorizationButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _navigateToCategorizationScreen(context),
+      child: const Text('Categorize Emails'),
+    );
+  }
+
+  void _navigateToCategorizationScreen(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
+    );
+    setState(() {}); // Refresh the UI after returning from EmailCategorizationScreen
   }
 
   IconButton _buildProfileButton(BuildContext context) {
@@ -53,17 +69,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  ElevatedButton _buildAccessEmailButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _accessEmail(context),
-      child: const Text('Access Email'),
-    );
-  }
-
   ElevatedButton _buildListenEmailButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () => _navigateToHomePage(context),
       child: const Text('Listen Email'),
+    );
+  }
+
+  ElevatedButton _buildEmailSumButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _navigateToEmailSumButtonsScreen(context),
+      child: const Text('Email Summary'),
     );
   }
 
@@ -76,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
+          _buildEmailSumButton(context),
         ],
       ),
     );
@@ -102,49 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _navigateToProfileScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<ProfileScreenJarvis>(
-        builder: (context) => ProfileScreenJarvis(
-          appBar: AppBar(title: const Text('User Profile')),
-          actions: [SignedOutAction((context) => Navigator.of(context).pop())],
-        ),
-      ),
-    );
-  }
-
-  void _navigateToSettings(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
-  }
-
-  void _accessEmail(BuildContext context) async {
-    final signInService = SignInService();
-    final emailService = EmailFetchingService();
-
-    try {
-      final accessToken = await signInService.signInWithGoogle();
-      if (accessToken == null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to sign in with Google")));
-        return;
-      }
-
-      final emails = await emailService.fetchEmails(accessToken, 10);
-      if (emails.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("No emails fetched")));
-        return;
-      }
-
-      Navigator.push(context, MaterialPageRoute(builder: (context) => EmailsScreen(emails: emails)));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Failed to access emails: $e")));
-    }
-  }
-
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
-  }
-
   void _startListening() async {
     bool available = await speechToText.initialize();
     if (available) {
@@ -163,5 +137,29 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _wordsSpoken = result.recognizedWords;
     });
+  }
+
+  void _navigateToProfileScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<ProfileScreenJarvis>(
+        builder: (context) => ProfileScreenJarvis(
+          appBar: AppBar(title: const Text('User Profile')),
+          actions: [SignedOutAction((context) => Navigator.of(context).pop())],
+        ),
+      ),
+    );
+  }
+
+  void _navigateToEmailSumButtonsScreen(BuildContext context) {
+   Navigator.push(context, MaterialPageRoute(builder: (context) => const EmailSum()));
+  }
+
+  void _navigateToSettings(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+  }
+
+  void _navigateToHomePage(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 }
