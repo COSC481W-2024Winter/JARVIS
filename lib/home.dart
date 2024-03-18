@@ -2,6 +2,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/email_categorization_screen.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
+import 'package:jarvis/email_summary.dart';
 import 'package:jarvis/main.dart';
 import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -74,6 +75,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  ElevatedButton _buildEmailSumButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _navigateToEmailSumButtonsScreen(context),
+      child: const Text('Email Summary'),
+    );
+  }
+
   Center _buildBody(BuildContext context) {
     return Center(
       child: Column(
@@ -83,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
+          _buildEmailSumButton(context),
         ],
       ),
     );
@@ -139,6 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _navigateToEmailSumButtonsScreen(BuildContext context) {
+   Navigator.push(context, MaterialPageRoute(builder: (context) => const EmailSum()));
   }
 
   void _navigateToSettings(BuildContext context) {
