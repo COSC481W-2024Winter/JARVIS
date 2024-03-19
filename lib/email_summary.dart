@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/auth_gate.dart';
-import 'widgets/customButton.dart';
-import 'widgets/CustomHeader.dart';
-import 'z_personal.dart';
-import 'z_arrangements.dart';
-import 'z_others.dart';
-import 'z_promotions.dart';
+import 'package:jarvis/widgets/customButton.dart';
+import 'package:jarvis/widgets/email_buttons.dart';
 
 class EmailSum extends StatelessWidget {
   const EmailSum({Key? key}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Email Summary',
+      appBar: AppBar(
+        title: const Text('Email Summary'),
       ),
       body: Column(
         children: [
@@ -28,7 +24,7 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Personal()),
+                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Personal')),
                 );
               },
             ),
@@ -42,7 +38,7 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Promotions()),
+                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Promotions')),
                 );
               },
             ),
@@ -56,7 +52,7 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Arrangements()),
+                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Arrangements')),
                 );
               },
             ),
@@ -70,7 +66,7 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Others()),
+                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Others')),
                 );
               },
             ),
@@ -79,13 +75,12 @@ class EmailSum extends StatelessWidget {
           Expanded(
             child: Container(),
           ),
-          
+
           // Log out button with padding
           Padding(
-            padding: const EdgeInsets.only(bottom: 20.0), // Space from bottom
+            padding: const EdgeInsets.only(bottom: 20.0),
             child: ElevatedButton(
               onPressed: () {
-                //Go to welcome screen screen.
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AuthGate()),
@@ -93,13 +88,13 @@ class EmailSum extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100), // Rounded shape
+                  borderRadius: BorderRadius.circular(100),
                 ),
-                minimumSize: const Size(double.infinity, 50), // Set the width and height
-              ), // Add functionality here
+                minimumSize: const Size(double.infinity, 50),
+              ),
               child: const Text(
                 'Log out',
-                style: TextStyle(fontSize: 20), // Larger font size
+                style: TextStyle(fontSize: 20),
               ),
             ),
           ),

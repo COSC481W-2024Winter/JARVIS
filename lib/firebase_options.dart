@@ -7,7 +7,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DefaultFirebaseOptions {
   static Future<FirebaseOptions> get currentPlatform async {
-    await dotenv.load(fileName: ".env"); // Load the .env file（please place env file in the root directory of the project）
+    await dotenv.load(
+        fileName:
+            ".env"); // Load the .env file（please place env file in the root directory of the project）
 
     if (kIsWeb) {
       throw UnsupportedError(

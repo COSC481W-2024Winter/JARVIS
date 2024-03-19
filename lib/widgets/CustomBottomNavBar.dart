@@ -3,7 +3,6 @@ import '../main.dart';
 import '../setting.dart';
 import '../profile.dart';
 
-
 class CustomBottomNavBar extends StatefulWidget {
   const CustomBottomNavBar({super.key});
 
@@ -11,9 +10,8 @@ class CustomBottomNavBar extends StatefulWidget {
   _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
 }
 
-
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
-  int _selectedIndex = 0; 
+  int _selectedIndex = 0;
 
   final List<Widget> _pages = [const HomePage(), Profile(), const Setting()];
 

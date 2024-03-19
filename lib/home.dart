@@ -52,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
     );
-    setState(() {}); // Refresh the UI after returning from EmailCategorizationScreen
+    setState(
+        () {}); // Refresh the UI after returning from EmailCategorizationScreen
   }
 
   IconButton _buildProfileButton(BuildContext context) {
@@ -152,14 +153,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToEmailSumButtonsScreen(BuildContext context) {
-   Navigator.push(context, MaterialPageRoute(builder: (context) => const EmailSum()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const EmailSum()));
   }
 
   void _navigateToSettings(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const Setting()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Setting()));
   }
 
   void _navigateToHomePage(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const HomePage()));
   }
 }

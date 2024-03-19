@@ -15,7 +15,6 @@ import 'package:jarvis/backend/email_summarizer.dart';
 import 'package:jarvis/emails_screen.dart';
 import 'package:jarvis/emails_summaries_screen.dart';
 
-
 class EmailCategorizationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -69,7 +68,8 @@ Future<void> _accessAndSortEmails(BuildContext context) async {
 
   if (sorterApiKey == null) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Required API tokens are not configured properly.")),
+      const SnackBar(
+          content: Text("Required API tokens are not configured properly.")),
     );
     return;
   }
@@ -86,7 +86,8 @@ Future<void> _accessAndSortEmails(BuildContext context) async {
     final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => EmailsScreen(emails: sortedEmails)),
+      MaterialPageRoute(
+          builder: (context) => EmailsScreen(emails: sortedEmails)),
     );
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -107,8 +108,8 @@ Future<void> categorizeAndSummarizeEmails(BuildContext context) async {
       arrangementKey == null ||
       personalKey == null ||
       docEditKey == null) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("One or more required API keys not found in .env file")));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("One or more required API keys not found in .env file")));
     return;
   }
 

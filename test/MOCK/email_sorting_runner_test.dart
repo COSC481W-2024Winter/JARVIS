@@ -41,7 +41,8 @@ void main() {
     when(mockEmailSortController.categorizeEmailsList(any))
         .thenAnswer((_) async => mockCategorizedEmails);
 
-    final sortedEmails = await emailSortingRunner.sortEmails("dummyAccessToken", 10);
+    final sortedEmails =
+        await emailSortingRunner.sortEmails("dummyAccessToken", 10);
 
     // Verify the results
     expect(sortedEmails, isA<List<EmailMessage>>());

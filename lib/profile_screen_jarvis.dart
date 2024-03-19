@@ -1049,7 +1049,6 @@ class ProfileScreenJarvis extends MultiProviderScreen {
 }
 
 class ProfileScreenState extends ChangeNotifier {
-  
   // Define TextEditingController variables here
   late final TextEditingController _fullNameController;
   late final TextEditingController _ageController;

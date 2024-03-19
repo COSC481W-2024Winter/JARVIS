@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class EmailSummariesScreen extends StatelessWidget {
   final Map<String, String> summaries;
 
-  const EmailSummariesScreen({Key? key, required this.summaries}) : super(key: key);
+  const EmailSummariesScreen({Key? key, required this.summaries})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
