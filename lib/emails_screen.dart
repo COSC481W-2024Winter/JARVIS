@@ -18,11 +18,10 @@ class EmailsScreen extends StatelessWidget {
           return ListTile(
             title: Text(emails[index].subject),
             subtitle: Text(emails[index].body),
-            trailing: Text(emails[index].category),  // Display category here
+            trailing: Text(emails[index].category), // Display category here
           );
         },
       ),
     );
   }
 }
-

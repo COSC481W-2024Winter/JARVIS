@@ -29,7 +29,8 @@ void main() {
 
       // Initialize services
       emailFetchingService = EmailFetchingService();
-      emailSortController = EmailSortController(emailSorter: EmailSorter(apiToken: apiToken));
+      emailSortController =
+          EmailSortController(emailSorter: EmailSorter(apiToken: apiToken));
       emailSortingRunner = EmailSortingRunner(
         emailFetchingService: emailFetchingService,
         emailSortController: emailSortController,
