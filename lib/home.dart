@@ -1,5 +1,6 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/profile_screen_jarvis.dart';
 import 'package:jarvis/email_categorization_screen.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
 import 'package:jarvis/email_summary.dart';
@@ -141,8 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigateToProfileScreen(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute<ProfileScreen>(
-        builder: (context) => ProfileScreen(
+      MaterialPageRoute<ProfileScreenJarvis>(
+        builder: (context) => ProfileScreenJarvis(
           appBar: AppBar(title: const Text('User Profile')),
           actions: [SignedOutAction((context) => Navigator.of(context).pop())],
         ),
