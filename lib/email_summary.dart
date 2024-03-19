@@ -18,10 +18,46 @@ class EmailSum extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 10),
+          const SizedBox(height: 30),
 
-          // Personal button with padding
-          Padding(
+          // Personal button
+          ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Personal()),
+                  ); 
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Personal',
+                      style: TextStyle(
+                        
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 70.0)),
+                    Icon(
+                      Icons.volume_up,
+                      size: 30.0,
+                      color: Colors.white,
+                      ),
+                    SizedBox(width: 8),
+                    
+                  ],
+                ),
+              ),
+
+          /*Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
               label: 'Personal',
@@ -32,10 +68,45 @@ class EmailSum extends StatelessWidget {
                 );
               },
             ),
-          ),
-
-          // Promotion button with padding
-          Padding(
+          ),*/
+          const SizedBox(height: 40),
+          // Promotion button
+          ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Promotions()),
+                  ); 
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Promotions',
+                      style: TextStyle(
+                        
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 60.0)),
+                    Icon(
+                      Icons.volume_up,
+                      size: 30.0,
+                      color: Colors.white,
+                      ),
+                    SizedBox(width: 8),
+                    
+                  ],
+                ),
+              ),
+          /*Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
               label: 'Promotions',
@@ -46,9 +117,9 @@ class EmailSum extends StatelessWidget {
                 );
               },
             ),
-          ),
-
-          // Arrangements button with padding
+          ),*/
+          const SizedBox(height: 40),
+          /*// Arrangements button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
@@ -60,21 +131,83 @@ class EmailSum extends StatelessWidget {
                 );
               },
             ),
-          ),
+          ),*/
 
-          // Others button with padding
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: CustomButton(
-              label: 'Others',
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Others()),
-                );
-              },
-            ),
-          ),
+          ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Arrangements()),
+                  ); 
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Arrangements',
+                      style: TextStyle(
+                        
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 50.0)),
+                    Icon(
+                      Icons.volume_up,
+                      size: 30.0,
+                      color: Colors.white,
+                      ),
+                    SizedBox(width: 8),
+                    
+                  ],
+                ),
+              ),
+
+          
+          const SizedBox(height: 40),
+          
+          // Others button
+          ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Others()),
+                  ); 
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Others',
+                      style: TextStyle(
+                        
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 85.0)),
+                    Icon(
+                      Icons.volume_up,
+                      size: 30.0,
+                      color: Colors.white,
+                      ),
+                    SizedBox(width: 8),
+                    
+                  ],
+                ),
+              ),
 
           Expanded(
             child: Container(),

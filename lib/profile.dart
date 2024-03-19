@@ -53,13 +53,13 @@ class _ProfileState extends State<Profile> {
             decoration: const InputDecoration(
               labelText: 'Full Name',
               border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD)),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD), width: 2.0),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD), width: 1.0),
               ),
               floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
@@ -73,13 +73,13 @@ class _ProfileState extends State<Profile> {
             decoration: const InputDecoration(
               labelText: 'Age',
               border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD)),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD), width: 2.0),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD), width: 1.0),
               ),
               floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
@@ -93,13 +93,13 @@ class _ProfileState extends State<Profile> {
             decoration: const InputDecoration(
               labelText: 'Your Story',
               border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD)),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD), width: 2.0),
               ),
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                borderSide: BorderSide(color: const Color(0xFF8FA5FD), width: 1.0),
               ),
               floatingLabelBehavior: FloatingLabelBehavior.always,
             ),
@@ -114,6 +114,7 @@ class _ProfileState extends State<Profile> {
               await _saveData();
             },
           ),
+          
         ],
       ),
     );

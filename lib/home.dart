@@ -56,14 +56,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.person),
+      icon: const Icon(Icons.person, color: const Color(0xFF8FA5FD)),
       onPressed: () => _navigateToProfileScreen(context),
     );
   }
 
   IconButton _buildSettingsButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.settings),
+      icon: const Icon(Icons.settings, color: const Color(0xFF8FA5FD)),
       onPressed: () => _navigateToSettings(context),
     );
   }
@@ -71,16 +71,42 @@ class _HomeScreenState extends State<HomeScreen> {
   ElevatedButton _buildListenEmailButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () => _navigateToHomePage(context),
-      child: const Text('Listen Email'),
+      child: const Text('Sample'),
     );
   }
 
   ElevatedButton _buildEmailSumButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _navigateToEmailSumButtonsScreen(context),
-      child: const Text('Email Summary'),
-    );
+                onPressed: () => _navigateToEmailSumButtonsScreen(context),
+                style: ElevatedButton.styleFrom(
+                  //shape: const CircleBorder(),
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Email Summaries',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
+                    Icon(
+                      Icons.mail,
+                      size: 30.0,
+                      color: Colors.white,
+                      ),
+                    SizedBox(width: 8),
+                    
+                  ],
+                ),
+              );
   }
+  
 
   Center _buildBody(BuildContext context) {
     return Center(
@@ -102,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
       icon: Icon(
         speechToText.isListening ? Icons.mic : Icons.mic_none,
         size: 50.0,
-        color: Colors.blue,
+        color: const Color(0xFF8FA5FD)
       ),
       onPressed: speechToText.isListening ? _stopListening : _startListening,
     );

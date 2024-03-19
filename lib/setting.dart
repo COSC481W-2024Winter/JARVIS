@@ -9,7 +9,7 @@ class Setting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(
-        title: 'Setting',
+        title: 'Settings',
       ),
       body: Column(
         children: [
@@ -17,7 +17,7 @@ class Setting extends StatelessWidget {
 
           // Preference button
           CustomButton(
-            label: 'Preference',
+            label: 'Preferences',
             onPressed: () {},
           ),
 
