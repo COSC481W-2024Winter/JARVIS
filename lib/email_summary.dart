@@ -14,9 +14,10 @@ class EmailSum extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 10),
+          const SizedBox(height: 30),
 
-          // Personal button with padding
+          // Personal button
+
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
@@ -24,13 +25,15 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Personal')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Personal')),
                 );
               },
             ),
           ),
-
-          // Promotion button with padding
+          const SizedBox(height: 40),
+          // Promotion button
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
@@ -38,12 +41,14 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Promotions')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Promotions')),
                 );
               },
             ),
           ),
-
+          const SizedBox(height: 40),
           // Arrangements button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -52,12 +57,14 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Arrangements')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Arrangements')),
                 );
               },
             ),
           ),
-
+          const SizedBox(height: 40),
           // Others button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -66,7 +73,9 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Others')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Others')),
                 );
               },
             ),

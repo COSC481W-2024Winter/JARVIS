@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/firebase_options.dart';
 import 'auth_gate.dart';
-import 'widgets/CustomButton.dart';
 import 'profile.dart';
 import 'setting.dart';
 import 'email_summary.dart';
@@ -45,6 +44,7 @@ class HomePage extends StatelessWidget {
             IconButton(
               iconSize: 40,
               icon: const Icon(Icons.account_circle),
+              color: const Color(0xFF8FA5FD),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -63,22 +63,52 @@ class HomePage extends StatelessWidget {
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   fixedSize: const Size(200, 200),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: const Color(0xFF8FA5FD),
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
                 ),
                 child: const Icon(
                   Icons.mic,
                   size: 60.0,
+                  color: Colors.white,
                 ),
               ),
 
               const SizedBox(height: 50),
 
-              // Email Summary buttons
-              CustomButton(
-                label: 'Click to listen email summary',
-                onPressed: () {},
+              // Email Summary button
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EmailSum()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  //shape: const CircleBorder(),
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Emails',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
+                    Icon(
+                      Icons.mail,
+                      size: 30.0,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 8),
+                  ],
+                ),
               ),
 
               const SizedBox(height: 50),
@@ -92,31 +122,26 @@ class HomePage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: const Color(0xFF8FA5FD),
                   padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
                 ),
-                child: const Icon(
-                  Icons.settings,
-                  size: 30.0,
-                ),
-              ),
-              // Email Summary button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const EmailSum()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.all(20),
-                ),
-                child: const Icon(
-                  Icons.settings,
-                  size: 30.0,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Settings',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
+                    Icon(
+                      Icons.settings,
+                      size: 30.0,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 8),
+                  ],
                 ),
               ),
             ],

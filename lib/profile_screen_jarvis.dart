@@ -856,13 +856,13 @@ class ProfileScreenJarvis extends MultiProviderScreen {
           decoration: const InputDecoration(
             labelText: 'Full Name',
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue, width: 2.0),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD), width: 2.0),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD), width: 1.0),
             ),
             floatingLabelBehavior: FloatingLabelBehavior.always,
           ),
@@ -876,13 +876,13 @@ class ProfileScreenJarvis extends MultiProviderScreen {
           decoration: const InputDecoration(
             labelText: 'Age',
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue, width: 2.0),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD), width: 2.0),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD), width: 1.0),
             ),
             floatingLabelBehavior: FloatingLabelBehavior.always,
           ),
@@ -896,13 +896,13 @@ class ProfileScreenJarvis extends MultiProviderScreen {
           decoration: const InputDecoration(
             labelText: 'Your Story',
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD)),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue, width: 2.0),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD), width: 2.0),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              borderSide: BorderSide(color: Color(0xFF8FA5FD), width: 1.0),
             ),
             floatingLabelBehavior: FloatingLabelBehavior.always,
           ),
