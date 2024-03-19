@@ -6,7 +6,6 @@ import 'package:jarvis/z_others.dart';
 import 'package:jarvis/z_personal.dart';
 import 'package:jarvis/z_promotions.dart';
 import 'package:jarvis/email_summary.dart';
-import 'package:jarvis/auth_gate.dart';
 
 void main() {
 
@@ -57,17 +56,4 @@ testWidgets('Tap Personal button navigates to Personal screen', (WidgetTester te
     // Verify if Others screen is pushed
     expect(find.byType(Others), findsOneWidget);
   });
-
-/* testWidgets('Tap Log out button navigates to AuthGate screen', (WidgetTester tester) async {
-    // Build EmailSum widget
-    await tester.pumpWidget(MaterialApp(home: EmailSum()));
-
-    // Tap Log out button
-    await tester.tap(find.text('Log out'));
-    await tester.pumpAndSettle();
-
-    // Verify if AuthGate screen is pushed
-   expect(find.byType(AuthGate), findsOneWidget);
-  });
-  */
 }
