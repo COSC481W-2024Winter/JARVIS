@@ -17,43 +17,8 @@ class EmailSum extends StatelessWidget {
           const SizedBox(height: 30),
 
           // Personal button
-          ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Personal()),
-                  ); 
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8FA5FD),
-                  padding: const EdgeInsets.all(20),
-                  shadowColor: Colors.blueGrey,
-                  elevation: 10,
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Personal',
-                      style: TextStyle(
-                        
-                        color: Colors.white,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 70.0)),
-                    Icon(
-                      Icons.volume_up,
-                      size: 30.0,
-                      color: Colors.white,
-                      ),
-                    SizedBox(width: 8),
-                    
-                  ],
-                ),
-              ),
 
-          /*Padding(
+          Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
               label: 'Personal',
@@ -64,45 +29,10 @@ class EmailSum extends StatelessWidget {
                 );
               },
             ),
-          ),*/
+          ),
           const SizedBox(height: 40),
           // Promotion button
-          ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Promotions()),
-                  ); 
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8FA5FD),
-                  padding: const EdgeInsets.all(20),
-                  shadowColor: Colors.blueGrey,
-                  elevation: 10,
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Promotions',
-                      style: TextStyle(
-                        
-                        color: Colors.white,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 60.0)),
-                    Icon(
-                      Icons.volume_up,
-                      size: 30.0,
-                      color: Colors.white,
-                      ),
-                    SizedBox(width: 8),
-                    
-                  ],
-                ),
-              ),
-          /*Padding(
+          Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
               label: 'Promotions',
@@ -113,9 +43,9 @@ class EmailSum extends StatelessWidget {
                 );
               },
             ),
-          ),*/
+          ),
           const SizedBox(height: 40),
-          /*// Arrangements button with padding
+          // Arrangements button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: CustomButton(
@@ -127,8 +57,8 @@ class EmailSum extends StatelessWidget {
                 );
               },
             ),
-          ),*/
-
+          ),
+          const SizedBox(height: 40),
           // Others button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),

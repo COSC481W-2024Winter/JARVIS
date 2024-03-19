@@ -130,24 +130,26 @@ class HomePage extends StatelessWidget {
                   shadowColor: Colors.blueGrey,
                   elevation: 10,
                 ),
-              ),
-              // Email Summary button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const EmailSum()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.all(20),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Settings',
+                      style: TextStyle(
+                        color: Colors.white
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
+                    Icon(
+                      Icons.settings,
+                      size: 30.0,
+                      color: Colors.white,
+                      ),
+                    SizedBox(width: 8),
+                    
+                  ],
                 ),
-                child: const Icon(
-                  Icons.settings,
-                  size: 30.0,
-                ),
+
               ),
             ],
           ),
