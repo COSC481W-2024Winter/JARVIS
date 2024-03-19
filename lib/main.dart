@@ -84,7 +84,7 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const EmailSum()),
-                  ); 
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   //shape: const CircleBorder(),
@@ -98,18 +98,15 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'Emails',
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
+                      style: TextStyle(color: Colors.white),
                     ),
                     Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
                     Icon(
                       Icons.mail,
                       size: 30.0,
                       color: Colors.white,
-                      ),
+                    ),
                     SizedBox(width: 8),
-                    
                   ],
                 ),
               ),
@@ -135,21 +132,17 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'Settings',
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
+                      style: TextStyle(color: Colors.white),
                     ),
                     Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
                     Icon(
                       Icons.settings,
                       size: 30.0,
                       color: Colors.white,
-                      ),
+                    ),
                     SizedBox(width: 8),
-                    
                   ],
                 ),
-
               ),
             ],
           ),

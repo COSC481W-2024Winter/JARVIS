@@ -25,7 +25,9 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Personal')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Personal')),
                 );
               },
             ),
@@ -39,7 +41,9 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Promotions')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Promotions')),
                 );
               },
             ),
@@ -53,7 +57,9 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Arrangements')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Arrangements')),
                 );
               },
             ),
@@ -67,7 +73,9 @@ class EmailSum extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CombinedScreen(title: 'Others')),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const CombinedScreen(title: 'Others')),
                 );
               },
             ),

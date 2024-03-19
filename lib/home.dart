@@ -44,17 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return ElevatedButton(
       onPressed: () => _navigateToCategorizationScreen(context),
       style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8FA5FD),
-                  padding: const EdgeInsets.all(20),
-                  shadowColor: Colors.blueGrey,
-                  elevation: 1,
-                ),
+        backgroundColor: const Color(0xFF8FA5FD),
+        padding: const EdgeInsets.all(20),
+        shadowColor: Colors.blueGrey,
+        elevation: 1,
+      ),
       child: const Text(
         'Categorize Emails',
-          style: TextStyle(
-          color: Colors.white
-          ),
-        ),
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
 
@@ -85,52 +83,46 @@ class _HomeScreenState extends State<HomeScreen> {
     return ElevatedButton(
       onPressed: () => _navigateToHomePage(context),
       style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8FA5FD),
-                  padding: const EdgeInsets.all(20),
-                  shadowColor: Colors.blueGrey,
-                  elevation: 1,
-                ),
+        backgroundColor: const Color(0xFF8FA5FD),
+        padding: const EdgeInsets.all(20),
+        shadowColor: Colors.blueGrey,
+        elevation: 1,
+      ),
       child: const Text(
-                        'Sample',
-                        style: TextStyle(
-                        color: Colors.white
-                      ),
+        'Sample',
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
 
   ElevatedButton _buildEmailSumButton(BuildContext context) {
     return ElevatedButton(
-                onPressed: () => _navigateToEmailSumButtonsScreen(context),
-                style: ElevatedButton.styleFrom(
-                  //shape: const CircleBorder(),
-                  backgroundColor: const Color(0xFF8FA5FD),
-                  padding: const EdgeInsets.all(20),
-                  shadowColor: Colors.blueGrey,
-                  elevation: 10,
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Email Summaries',
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
-                    Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
-                    Icon(
-                      Icons.mail,
-                      size: 30.0,
-                      color: Colors.white,
-                      ),
-                    SizedBox(width: 8),
-                    
-                  ],
-                ),
-              );
+      onPressed: () => _navigateToEmailSumButtonsScreen(context),
+      style: ElevatedButton.styleFrom(
+        //shape: const CircleBorder(),
+        backgroundColor: const Color(0xFF8FA5FD),
+        padding: const EdgeInsets.all(20),
+        shadowColor: Colors.blueGrey,
+        elevation: 10,
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Email Summaries',
+            style: TextStyle(color: Colors.white),
+          ),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
+          Icon(
+            Icons.mail,
+            size: 30.0,
+            color: Colors.white,
+          ),
+          SizedBox(width: 8),
+        ],
+      ),
+    );
   }
-  
 
   Center _buildBody(BuildContext context) {
     return Center(
@@ -149,11 +141,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton _buildMicrophoneButton() {
     return IconButton(
-      icon: Icon(
-        speechToText.isListening ? Icons.mic : Icons.mic_none,
-        size: 50.0,
-        color: const Color(0xFF8FA5FD)
-      ),
+      icon: Icon(speechToText.isListening ? Icons.mic : Icons.mic_none,
+          size: 50.0, color: const Color(0xFF8FA5FD)),
       onPressed: speechToText.isListening ? _stopListening : _startListening,
     );
   }
