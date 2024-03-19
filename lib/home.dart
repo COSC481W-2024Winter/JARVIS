@@ -42,7 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
   ElevatedButton _buildCategorizationButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () => _navigateToCategorizationScreen(context),
-      child: const Text('Categorize Emails'),
+      style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 1,
+                ),
+      child: const Text(
+        'Categorize Emails',
+          style: TextStyle(
+          color: Colors.white
+          ),
+        ),
     );
   }
 
@@ -71,7 +82,18 @@ class _HomeScreenState extends State<HomeScreen> {
   ElevatedButton _buildListenEmailButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () => _navigateToHomePage(context),
-      child: const Text('Sample'),
+      style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 1,
+                ),
+      child: const Text(
+                        'Sample',
+                        style: TextStyle(
+                        color: Colors.white
+                      ),
+      ),
     );
   }
 

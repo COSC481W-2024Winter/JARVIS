@@ -26,17 +26,39 @@ class EmailCategorizationScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              child: Text('Access and Sort Emails'),
               onPressed: () async {
                 await _accessAndSortEmails(context);
               },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+              child: const Text(
+                'Access and Sort Emails',
+                style: TextStyle(
+          color: Colors.white
+                  ),
+          ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              child: Text('Categorize and Summarize Emails'),
               onPressed: () async {
                 await categorizeAndSummarizeEmails(context);
               },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8FA5FD),
+                  padding: const EdgeInsets.all(20),
+                  shadowColor: Colors.blueGrey,
+                  elevation: 10,
+                ),
+              child: const Text(
+                'Categorize and Summarize Emails',
+                style: TextStyle(
+          color: Colors.white
+          ),
+                ),
             ),
           ],
         ),
