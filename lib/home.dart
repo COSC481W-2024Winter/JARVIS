@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: const Text(
         'Categorize Emails',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontSize: 12.0),
       ),
     );
   }
@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: const Text(
         'Sample',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontSize: 12.0),
       ),
     );
   }
@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             'Email Summaries',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white, fontSize: 20.0),
           ),
           Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
           Icon(
