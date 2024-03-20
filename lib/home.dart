@@ -32,32 +32,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      actions: <Widget>[
-        _buildProfileButton(context),
-        _buildSettingsButton(context),
-        _buildListenEmailButton(context),
-        _buildCategorizationButton(context),
-      ],
-      automaticallyImplyLeading: false,
-    );
-  }
+  return AppBar(
+    leading: Padding(
+      padding: const EdgeInsets.only(left: 15.0),
+      child: _buildSettingsButton(context),
+    ),
+    actions: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(right: 15.0),
+        child: _buildProfileButton(context),
+      ),
+    ],
+    title: _buildCategorizationButton(context),
+    centerTitle: true,
+    automaticallyImplyLeading: false,
+  );
+}
 
   ElevatedButton _buildCategorizationButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _navigateToCategorizationScreen(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD),
-        padding: const EdgeInsets.all(20),
-        shadowColor: Colors.blueGrey,
-        elevation: 1,
+  return ElevatedButton(
+    onPressed: () => _navigateToCategorizationScreen(context),
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF8FA5FD),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      minimumSize: Size(200, 40), 
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100), 
       ),
-      child: const Text(
-        'Categorize Emails',
-        style: TextStyle(color: Colors.white, fontSize: 12.0),
-      ),
-    );
-  }
+      elevation: 0, 
+    ),
+    child: const Text(
+      'Categorize Emails',
+      style: TextStyle(color: Colors.white, fontSize: 16.0),
+    ),
+  );
+}
 
   void _navigateToCategorizationScreen(BuildContext context) async {
     await Navigator.push(
@@ -71,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.person, color: const Color(0xFF8FA5FD)),
+      iconSize: 40,
       onPressed: () => _navigateToProfileScreen(context),
     );
   }
@@ -78,23 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
   IconButton _buildSettingsButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.settings, color: const Color(0xFF8FA5FD)),
+      iconSize: 40,
       onPressed: () => _navigateToSettings(context),
-    );
-  }
-
-  ElevatedButton _buildListenEmailButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _navigateToHomePage(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD),
-        padding: const EdgeInsets.all(20),
-        shadowColor: Colors.blueGrey,
-        elevation: 1,
-      ),
-      child: const Text(
-        'Sample',
-        style: TextStyle(color: Colors.white, fontSize: 12.0),
-      ),
     );
   }
 
@@ -105,8 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
         //shape: const CircleBorder(),
         backgroundColor: const Color(0xFF8FA5FD),
         padding: const EdgeInsets.all(20),
-        shadowColor: Colors.blueGrey,
-        elevation: 10,
+        shadowColor: Color.fromRGBO(255, 255, 255, 1),
+        elevation: 7,
       ),
       child: const Row(
         mainAxisSize: MainAxisSize.min,
@@ -236,8 +231,4 @@ class _HomeScreenState extends State<HomeScreen> {
         context, MaterialPageRoute(builder: (context) => const Setting()));
   }
 
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HomePage()));
-  }
 }
