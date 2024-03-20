@@ -21,7 +21,7 @@ class Setting extends StatelessWidget {
             onPressed: () {},
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 30),
 
           // Language button
           CustomButton(

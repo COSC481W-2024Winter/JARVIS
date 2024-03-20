@@ -31,8 +31,8 @@ class EmailCategorizationScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8FA5FD),
                 padding: const EdgeInsets.all(20),
-                shadowColor: Colors.blueGrey,
-                elevation: 10,
+                shadowColor: Color.fromRGBO(255, 255, 255, 1),
+                elevation: 7,
               ),
               child: const Text(
                 'Access and Sort Emails',
@@ -47,8 +47,8 @@ class EmailCategorizationScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8FA5FD),
                 padding: const EdgeInsets.all(20),
-                shadowColor: Colors.blueGrey,
-                elevation: 10,
+                shadowColor: Color.fromRGBO(255, 255, 255, 1),
+                elevation: 7,
               ),
               child: const Text(
                 'Categorize and Summarize Emails',

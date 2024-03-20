@@ -32,7 +32,7 @@ class EmailSum extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 30),
           // Promotion button
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -48,7 +48,7 @@ class EmailSum extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 30),
           // Arrangements button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -64,7 +64,7 @@ class EmailSum extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 30),
           // Others button with padding
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -85,28 +85,6 @@ class EmailSum extends StatelessWidget {
             child: Container(),
           ),
 
-          // Log out button with padding
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AuthGate()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text(
-                'Log out',
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-          ),
         ],
       ),
     );
