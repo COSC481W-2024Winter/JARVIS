@@ -7,6 +7,7 @@ import 'package:jarvis/email_summary.dart';
 import 'package:jarvis/main.dart';
 import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:jarvis/backend/text_to_gpt_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
+  String _gptResponse = "";
 
   @override
   Widget build(BuildContext context) {
@@ -150,9 +152,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Padding _buildTranscriptionText() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Text(
-        _wordsSpoken,
-        style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w300),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _wordsSpoken,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            _gptResponse,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -164,10 +179,14 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       print("The user has denied the use of speech recognition.");
     }
+    setState(() {});
   }
 
   void _stopListening() async {
     await speechToText.stop();
+    Future.delayed(Duration(milliseconds: 200), () {
+      processing();
+    });
     setState(() {});
   }
 
@@ -175,6 +194,23 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _wordsSpoken = result.recognizedWords;
     });
+
+    if (speechToText.isNotListening) {
+      Future.delayed(Duration(milliseconds: 200), () {
+        processing();
+      });
+    }
+  }
+
+  void processing() async {
+    String generatedText =
+        await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
+    setState(() {
+      _gptResponse = generatedText;
+      _wordsSpoken = "";
+    });
+
+    //text_to_speech().speak(generatedText);
   }
 
   void _navigateToProfileScreen(BuildContext context) {
