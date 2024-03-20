@@ -8,6 +8,7 @@ import 'package:jarvis/main.dart';
 import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:jarvis/backend/text_to_gpt_service.dart';
+import 'package:jarvis/backend/text_to_speech.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -210,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _wordsSpoken = "";
     });
 
-    //text_to_speech().speak(generatedText);
+    text_to_speech().speak(generatedText);
   }
 
   void _navigateToProfileScreen(BuildContext context) {
