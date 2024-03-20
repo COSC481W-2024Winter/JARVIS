@@ -40,6 +40,8 @@ dependencies:
   flutter_gpt_tokenizer: ^0.1.1
   firebase_ui_shared: ^1.4.1
 
+  flutter_tts: ^4.0.1
+
 
 dev_dependencies:
   flutter_test:
