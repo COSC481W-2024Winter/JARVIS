@@ -1,10 +1,10 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jarvis/backend/weather_service.dart';
 import 'package:jarvis/profile_screen_jarvis.dart';
 import 'package:jarvis/email_categorization_screen.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
 import 'package:jarvis/email_summary.dart';
-import 'package:jarvis/main.dart';
 import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:jarvis/backend/text_to_gpt_service.dart';
@@ -22,6 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
   String _gptResponse = "";
+  String weatherCondition = "";
+  String temperature = "";
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +70,20 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 }
+
+// Example widget method to display weather data
+  Widget _displayWeather() {
+    if (weatherCondition.isEmpty) return SizedBox.shrink(); // Don't display if no data
+    return Column(
+      children: [
+        
+        Text(temperature, style: TextStyle(fontSize: 16)),
+        Text(weatherCondition, style: TextStyle(fontSize: 16)),
+        
+
+      ],
+    );
+  }
 
   void _navigateToCategorizationScreen(BuildContext context) async {
     await Navigator.push(
@@ -122,6 +139,39 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // luna - new button for weather 
+  ElevatedButton _buildWeatherButton(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () async {
+      //WeatherService().fetchWeather('Ypsilanti');
+      // This currently prints the weather to the console. Later, you can update the UI accordingly.
+      final weatherData = await WeatherService().fetchWeather('Ypsilanti');
+        setState(() {
+          // Assuming fetchWeather returns a string like "Cloudy, 23°C"
+          // You'll need to adjust based on your actual return type and format
+          List<String> parts = weatherData.split(" ");
+          weatherCondition = parts[6];
+          temperature = parts[12];
+
+        });
+
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF8FA5FD), // Adjust the color as needed
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+      elevation: 0,
+    ),
+    child: const Text(
+      'Weather',
+      style: TextStyle(color: Colors.white, fontSize: 16.0),
+    ),
+  );
+}
+
+
   Center _buildBody(BuildContext context) {
     return Center(
       child: Column(
@@ -132,6 +182,10 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
           _buildEmailSumButton(context),
+          const SizedBox(height: 40), 
+          _buildWeatherButton(context),
+          const SizedBox(height: 20), // Adjust spacing as needed
+          _displayWeather(), // Display the weather data
         ],
       ),
     );
