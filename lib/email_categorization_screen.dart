@@ -26,7 +26,7 @@ class EmailCategorizationScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () async {
-                await _accessAndSortEmails(context);
+                await accessSortCategorizeAndSummarizeEmails(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8FA5FD),
@@ -35,23 +35,7 @@ class EmailCategorizationScreen extends StatelessWidget {
                 elevation: 7,
               ),
               child: const Text(
-                'Access and Sort Emails',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await categorizeAndSummarizeEmails(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8FA5FD),
-                padding: const EdgeInsets.all(20),
-                shadowColor: Color.fromRGBO(255, 255, 255, 1),
-                elevation: 7,
-              ),
-              child: const Text(
-                'Categorize and Summarize Emails',
+                'Access, Sort, Categorize, and Summarize Emails',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -62,7 +46,8 @@ class EmailCategorizationScreen extends StatelessWidget {
   }
 }
 
-Future<void> _accessAndSortEmails(BuildContext context) async {
+Future<void> accessSortCategorizeAndSummarizeEmails(
+    BuildContext context) async {
   User? user = FirebaseAuth.instance.currentUser;
 
   if (user == null) {
@@ -83,8 +68,16 @@ Future<void> _accessAndSortEmails(BuildContext context) async {
   }
 
   final sorterApiKey = dotenv.env['SORTER_KEY'];
+  final businessKey = dotenv.env['CHATGPT_BUSINESS_KEY'];
+  final arrangementKey = dotenv.env['CHATGPT_ARRANGEMENT_KEY'];
+  final personalKey = dotenv.env['CHATGPT_PERSONAL_KEY'];
+  final docEditKey = dotenv.env['CHATGPT_DOC_EDIT_KEY'];
 
-  if (sorterApiKey == null) {
+  if (sorterApiKey == null ||
+      businessKey == null ||
+      arrangementKey == null ||
+      personalKey == null ||
+      docEditKey == null) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
           content: Text("Required API tokens are not configured properly.")),
@@ -99,86 +92,52 @@ Future<void> _accessAndSortEmails(BuildContext context) async {
     emailFetchingService: emailFetchingService,
     emailSortController: emailSortController,
   );
-
-  try {
-    final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => EmailsScreen(emails: sortedEmails)),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Failed to access emails: $e")),
-    );
-  }
-}
-
-Future<void> categorizeAndSummarizeEmails(BuildContext context) async {
-  final sorterToken = dotenv.env['SORTER_KEY'];
-  final businessKey = dotenv.env['CHATGPT_BUSINESS_KEY'];
-  final arrangementKey = dotenv.env['CHATGPT_ARRANGEMENT_KEY'];
-  final personalKey = dotenv.env['CHATGPT_PERSONAL_KEY'];
-  final docEditKey = dotenv.env['CHATGPT_DOC_EDIT_KEY'];
-
-  if (sorterToken == null ||
-      businessKey == null ||
-      arrangementKey == null ||
-      personalKey == null ||
-      docEditKey == null) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("One or more required API keys not found in .env file")));
-    return;
-  }
-
-  EmailSorter emailSorter = EmailSorter(apiToken: sorterToken);
-  EmailSortController emailSortController =
-      EmailSortController(emailSorter: emailSorter);
-  LocalStorageService storageService = LocalStorageService();
-  ChatGPTService chatGPTService = ChatGPTService(apiKeys: {
+  final storageService = LocalStorageService();
+  final chatGPTService = ChatGPTService(apiKeys: {
     'CHATGPT_BUSINESS_KEY': businessKey,
     'CHATGPT_ARRANGEMENT_KEY': arrangementKey,
     'CHATGPT_PERSONAL_KEY': personalKey,
     'CHATGPT_DOC_EDIT_KEY': docEditKey,
   });
-  EmailSummarizer emailSummarizer = EmailSummarizer(
+  final emailSummarizer = EmailSummarizer(
     storageService: storageService,
     chatGPTService: chatGPTService,
   );
 
-  var jsonString =
-      await rootBundle.loadString('assets/data/uncategorized_emails_10.json');
-  List<dynamic> emailList = json.decode(jsonString);
+  try {
+    final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
+    final emailList = sortedEmails.map((email) {
+      return {
+        "Subject": email.subject,
+        "Body": email.body,
+      };
+    }).toList();
+    final categorizedEmails =
+        await emailSortController.categorizeEmailsList(emailList);
+    for (var email in categorizedEmails) {
+      String categoryKey = 'emails_${email["Category"]}';
+      List<Map<String, dynamic>> categoryList =
+          (await storageService.getData(categoryKey))?['emails']
+                  ?.cast<Map<String, dynamic>>() ??
+              [];
+      categoryList.add(email);
+      await storageService.saveData(categoryKey, {'emails': categoryList});
+    }
 
-  List<Map<String, String>> emails = emailList.map((email) {
-    return {
-      "Subject": email["Subject"] as String,
-      "Body": email["Body"] as String,
-    };
-  }).toList();
+    final generatedSummaries = await emailSummarizer.summarizeEmails();
+    await storageService.saveData('generatedSummaries', generatedSummaries);
 
-  List<Map<String, dynamic>> categorizedEmails =
-      await emailSortController.categorizeEmailsList(emails);
-
-  for (var email in categorizedEmails) {
-    String categoryKey = 'emails_${email["Category"]}';
-    List<Map<String, dynamic>> categoryList =
-        (await storageService.getData(categoryKey))?['emails']
-                ?.cast<Map<String, dynamic>>() ??
-            [];
-    categoryList.add(email);
-    await storageService.saveData(categoryKey, {'emails': categoryList});
+    // Display the generated summaries to the user
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            EmailSummariesScreen(summaries: generatedSummaries),
+      ),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Failed to process emails: $e")),
+    );
   }
-
-  Map<String, String> generatedSummaries =
-      await emailSummarizer.summarizeEmails();
-  await storageService.saveData('generatedSummaries', generatedSummaries);
-
-  // Display the generated summaries to the user
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => EmailSummariesScreen(summaries: generatedSummaries),
-    ),
-  );
 }
