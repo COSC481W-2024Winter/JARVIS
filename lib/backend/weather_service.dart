@@ -16,7 +16,7 @@ class WeatherService {
     final apiKey = dotenv.env['OPENWEATHERMAP_API_KEY'];
     if (apiKey == null) throw Exception('API key not found.');
 
-    final url = 'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=metric';
+    final url = 'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey&units=imperial';
 
     final response = await this.client.get(Uri.parse(url));
 
@@ -38,6 +38,6 @@ class WeatherService {
     final temp = data['main']['temp'].toStringAsFixed(1);
     final windSpeed = data['wind']['speed'].toStringAsFixed(1);
 
-    return "Today in $city, the sky is $condition . The current temperature is $temp°C , Wind speed is at $windSpeed meters per second.";
+    return "Today in $city, the sky is $condition . The current temperature is $temp°F , Wind speed is at $windSpeed meters per second.";
   }
 }
