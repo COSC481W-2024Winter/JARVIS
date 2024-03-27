@@ -43,6 +43,7 @@ class EmailFetchingService {
       return emails;
     } else {
       print('Failed to fetch emails. Status code: ${response.statusCode}');
+      print('Error response: ${response.body}');
       throw Exception(
           'Failed to fetch emails with status code: ${response.statusCode}');
     }
