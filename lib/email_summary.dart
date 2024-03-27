@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jarvis/auth_gate.dart';
 import 'package:jarvis/widgets/customButton.dart';
 import 'package:jarvis/widgets/email_buttons.dart';
 
