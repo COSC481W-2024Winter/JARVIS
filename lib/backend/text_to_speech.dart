@@ -11,4 +11,8 @@ class text_to_speech {
     await flutterTts.setPitch(1.0);
     await flutterTts.speak(text);
   }
+
+  Future<void> stop() async {
+    await flutterTts.stop();
+  }
 }

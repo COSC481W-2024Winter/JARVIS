@@ -10,6 +10,8 @@ import 'package:jarvis/backend/email_sorting_runner.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
+import 'package:jarvis/widgets/custom_toast_widget.dart';
+import 'package:jarvis/backend/text_to_speech.dart';
 
 class EmailCategorizationScreen extends StatefulWidget {
   @override
@@ -43,7 +45,15 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Email Categorization and Summarization')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text('Email Categorization'),
+        centerTitle: true,
+        backgroundColor: Color(0xFF8FA5FD),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,26 +63,50 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
                   _isProcessing ? null : () => _showEmailCountDialog(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8FA5FD),
-                padding: const EdgeInsets.all(20),
-                shadowColor: Color.fromRGBO(255, 255, 255, 1),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
                 elevation: 7,
               ),
               child: const Text(
                 'Generate Summaries',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),
             SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _clearSummaries,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                elevation: 5,
+              ),
+              child: Text(
+                'Clear Summaries',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+            SizedBox(height: 40),
             _buildCategoryButton(context, 'Company Business/Strategy',
                 'emails_companyBusinessStrategy'),
+            SizedBox(height: 20),
             _buildCategoryButton(context, 'Logistic Arrangements',
                 'emails_logisticArrangements'),
+            SizedBox(height: 20),
             _buildCategoryButton(
                 context, 'Purely Personal', 'emails_purelyPersonal'),
+            SizedBox(height: 20),
             _buildCategoryButton(
-                context,
-                'Document editing/checking/collaboration',
-                'emails_documentEditingCheckingCollaboration'),
+              context,
+              'Document Editing/Checking/Collaboration',
+              'emails_documentEditingCheckingCollaboration',
+            ),
           ],
         ),
       ),
@@ -81,27 +115,41 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
 
   Widget _buildCategoryButton(
       BuildContext context, String label, String categoryKey) {
-    return FutureBuilder<bool>(
-      future: _hasCategoryData(categoryKey),
-      builder: (context, snapshot) {
-        final hasData = snapshot.data ?? false;
-        return ElevatedButton(
-          onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: hasData ? Colors.blue : Colors.grey,
-            padding: const EdgeInsets.all(10),
-          ),
-          child: Text(label),
-        );
-      },
+    final hasData = _categoriesWithData[categoryKey] ?? false;
+    return ElevatedButton(
+      onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: hasData ? Color(0xFF8FA5FD) : Colors.grey,
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 5,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
     );
   }
 
+  Future<void> _clearSummaries() async {
+    await storageService.removeData('generatedSummaries');
+    setState(() {
+      _categoriesWithData.clear();
+    });
+  }
+
+  Map<String, bool> _categoriesWithData = {};
   Future<bool> _hasCategoryData(String categoryKey) async {
     final generatedSummaries =
         await storageService.getData('generatedSummaries');
-    return generatedSummaries != null &&
-        generatedSummaries[categoryKey] != null;
+    final hasData =
+        generatedSummaries != null && generatedSummaries[categoryKey] != null;
+    setState(() {
+      _categoriesWithData[categoryKey] = hasData;
+    });
+    return hasData;
   }
 
   Future<void> _showEmailCountDialog(BuildContext context) async {
@@ -160,10 +208,33 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       return;
     }
 
+    OverlayEntry? toastEntry;
+    String? currentToastMessage;
+
+    void showProcessingToast(String message) {
+      if (toastEntry == null || currentToastMessage != message) {
+        currentToastMessage = message;
+        toastEntry?.remove();
+        toastEntry = OverlayEntry(
+          builder: (context) => Positioned(
+            bottom: 50,
+            left: 50,
+            right: 50,
+            child: ToastWidget(message: message),
+          ),
+        );
+        Overlay.of(context)!.insert(toastEntry!);
+      }
+    }
+
+    void dismissToast() {
+      toastEntry?.remove();
+      toastEntry = null;
+      currentToastMessage = null;
+    }
+
     try {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fetching emails...')),
-      );
+      showProcessingToast('Fetching emails...');
       final sortedEmails =
           await emailSortingRunner.sortEmails(accessToken, emailCount);
       final emailList = sortedEmails.map((email) {
@@ -173,26 +244,44 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         };
       }).toList();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Categorizing emails...')),
-      );
+      showProcessingToast('Categorizing emails...');
       final categorizedEmails =
           await emailSortController.categorizeEmailsList(emailList);
+      await _clearEmailCategories();
+
       await _saveEmailsToStorage(categorizedEmails);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Generating summaries...')),
-      );
+      showProcessingToast('Generating summaries...');
       final generatedSummaries = await emailSummarizer.summarizeEmails();
       await storageService.saveData('generatedSummaries', generatedSummaries);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Summaries generated successfully!')),
-      );
+      // Update the _categoriesWithData map after generating summaries
+      setState(() {
+        generatedSummaries.forEach((category, _) {
+          _categoriesWithData[category] = true;
+        });
+      });
+
+      dismissToast();
+      showToast(context, 'Summaries generated successfully!',
+          duration: Duration(seconds: 5));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to process emails: $e")),
-      );
+      dismissToast();
+      showToast(context, "Failed to process emails: $e",
+          duration: Duration(seconds: 5));
+    }
+  }
+
+  Future<void> _clearEmailCategories() async {
+    final categories = [
+      'emails_companyBusinessStrategy',
+      'emails_logisticArrangements',
+      'emails_purelyPersonal',
+      'emails_documentEditingCheckingCollaboration',
+    ];
+
+    for (var category in categories) {
+      await storageService.removeData(category);
     }
   }
 
@@ -228,18 +317,38 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
 
     final summary = generatedSummaries[categoryKey];
+    final tts = text_to_speech();
+    bool isSpeaking = false;
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Summary'),
-          content: Text(summary),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close'),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Summary'),
+              content: Text(summary),
+              actions: [
+                IconButton(
+                  icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),
+                  onPressed: () async {
+                    if (isSpeaking) {
+                      await tts.stop();
+                    } else {
+                      await tts.speak(summary);
+                    }
+                    setState(() {
+                      isSpeaking = !isSpeaking;
+                    });
+                  },
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Close'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

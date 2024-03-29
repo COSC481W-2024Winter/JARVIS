@@ -21,6 +21,10 @@ class EmailFetchingService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      print('Email API Response: $data');
+      print('Number of messages in response: ${data['messages']?.length ?? 0}');
+      print('Next Page Token: ${data['nextPageToken'] ?? 'N/A'}');
+
       List<EmailMessage> emails = [];
       for (var message in data['messages']) {
         final emailDetailsResponse = await client.get(
@@ -35,11 +39,14 @@ class EmailFetchingService {
         if (emailDetailsResponse.statusCode == 200) {
           final emailData = json.decode(emailDetailsResponse.body);
           emails.add(EmailMessage.fromJson(emailData));
+          print('Fetched email: ${message['id']}');
         } else {
           print(
               'Failed to fetch email details with status code: ${emailDetailsResponse.statusCode}');
         }
       }
+
+      print('Total emails fetched: ${emails.length}');
       return emails;
     } else {
       print('Failed to fetch emails. Status code: ${response.statusCode}');
