@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jarvis/backend/email_fetch_service.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
@@ -145,8 +144,20 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return hasData;
   }
 
+  Future<bool> _hasSummaryData() async {
+    final generatedSummaries =
+        await storageService.getData('generatedSummaries');
+    return generatedSummaries != null && generatedSummaries.isNotEmpty;
+  }
+
   Future<void> _showClearSummariesConfirmationDialog(
       BuildContext context) async {
+    final hasSummaryData = await _hasSummaryData();
+
+    if (!hasSummaryData) {
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -174,61 +185,67 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   }
 
   Future<void> _showEmailCountDialog(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Confirmation'),
-          content: Text(
-              'Are you sure you want to generate new summaries? The previous data will be lost.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text('No'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Yes'),
-            ),
-          ],
-        );
-      },
-    );
+    final hasSummaryData = await _hasSummaryData();
 
-    if (confirmed == true) {
-      final emailCount = await showDialog<int>(
+    if (hasSummaryData) {
+      final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) {
-          String value = '';
           return AlertDialog(
-            title: Text('Enter the number of emails to fetch'),
-            content: TextField(
-              keyboardType: TextInputType.number,
-              onChanged: (v) => value = v,
-            ),
+            title: Text('Confirmation'),
+            content: Text(
+                'Are you sure you want to generate new summaries? The previous data will be lost.'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
               ),
               TextButton(
-                onPressed: () => Navigator.of(context).pop(int.tryParse(value)),
-                child: Text('OK'),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Yes'),
               ),
             ],
           );
         },
       );
 
-      if (emailCount != null && emailCount > 0) {
-        setState(() {
-          _isProcessing = true;
-        });
-        await _processEmails(context, emailCount);
-        setState(() {
-          _isProcessing = false;
-        });
+      if (confirmed != true) {
+        return;
       }
+    }
+
+    final emailCount = await showDialog<int>(
+      context: context,
+      builder: (context) {
+        String value = '';
+        return AlertDialog(
+          title: Text('Enter the number of emails to fetch'),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            onChanged: (v) => value = v,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(int.tryParse(value)),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (emailCount != null && emailCount > 0) {
+      setState(() {
+        _isProcessing = true;
+      });
+      await _processEmails(context, emailCount);
+      setState(() {
+        _isProcessing = false;
+      });
     }
   }
 
