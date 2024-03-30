@@ -40,80 +40,103 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     storageService: storageService,
     chatGPTService: chatGPTService,
   );
+  Map<String, bool> _categoriesWithData = {};
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text('Email Categorization'),
-        centerTitle: true,
-        backgroundColor: Color(0xFF8FA5FD),
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+    );
+  }
+
+  // Builds the app bar for the email categorization screen
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.of(context).pop(),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed:
-                  _isProcessing ? null : () => _showEmailCountDialog(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8FA5FD),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                elevation: 7,
-              ),
-              child: const Text(
-                'Generate Summaries',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _showClearSummariesConfirmationDialog(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                elevation: 5,
-              ),
-              child: Text(
-                'Clear Summaries',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ),
-            SizedBox(height: 40),
-            _buildCategoryButton(context, 'Company Business/Strategy',
-                'emails_companyBusinessStrategy'),
-            SizedBox(height: 20),
-            _buildCategoryButton(context, 'Logistic Arrangements',
-                'emails_logisticArrangements'),
-            SizedBox(height: 20),
-            _buildCategoryButton(
-                context, 'Purely Personal', 'emails_purelyPersonal'),
-            SizedBox(height: 20),
-            _buildCategoryButton(
-              context,
-              'Document Editing/Checking/Collaboration',
-              'emails_documentEditingCheckingCollaboration',
-            ),
-          ],
-        ),
+      title: Text('Email Categorization'),
+      centerTitle: true,
+      backgroundColor: Color(0xFF8FA5FD),
+    );
+  }
+
+  // Builds the body of the email categorization screen
+  Widget _buildBody() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildGenerateSummariesButton(),
+          SizedBox(height: 20),
+          _buildClearSummariesButton(),
+          SizedBox(height: 40),
+          _buildCategoryButton(
+            'Company Business/Strategy',
+            'emails_companyBusinessStrategy',
+          ),
+          SizedBox(height: 20),
+          _buildCategoryButton(
+            'Logistic Arrangements',
+            'emails_logisticArrangements',
+          ),
+          SizedBox(height: 20),
+          _buildCategoryButton(
+            'Purely Personal',
+            'emails_purelyPersonal',
+          ),
+          SizedBox(height: 20),
+          _buildCategoryButton(
+            'Document Editing/Checking/Collaboration',
+            'emails_documentEditingCheckingCollaboration',
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildCategoryButton(
-      BuildContext context, String label, String categoryKey) {
+  // Builds the "Generate Summaries" button
+  Widget _buildGenerateSummariesButton() {
+    return ElevatedButton(
+      onPressed: _isProcessing ? null : () => _showEmailCountDialog(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF8FA5FD),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 7,
+      ),
+      child: const Text(
+        'Generate Summaries',
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    );
+  }
+
+  // Builds the "Clear Summaries" button
+  Widget _buildClearSummariesButton() {
+    return ElevatedButton(
+      onPressed: () => _showClearSummariesConfirmationDialog(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 5,
+      ),
+      child: Text(
+        'Clear Summaries',
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+    );
+  }
+
+  // Builds a category button with the given label and category key
+  Widget _buildCategoryButton(String label, String categoryKey) {
     final hasData = _categoriesWithData[categoryKey] ?? false;
     return ElevatedButton(
       onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
@@ -132,7 +155,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     );
   }
 
-  Map<String, bool> _categoriesWithData = {};
+  // Checks if there is data available for the given category key
   Future<bool> _hasCategoryData(String categoryKey) async {
     final generatedSummaries =
         await storageService.getData('generatedSummaries');
@@ -144,12 +167,14 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return hasData;
   }
 
+  // Checks if there is any summary data available
   Future<bool> _hasSummaryData() async {
     final generatedSummaries =
         await storageService.getData('generatedSummaries');
     return generatedSummaries != null && generatedSummaries.isNotEmpty;
   }
 
+  // Shows a confirmation dialog for clearing the summaries
   Future<void> _showClearSummariesConfirmationDialog(
       BuildContext context) async {
     final hasSummaryData = await _hasSummaryData();
@@ -184,6 +209,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
   }
 
+  // Shows a dialog for entering the number of emails to fetch
   Future<void> _showEmailCountDialog(BuildContext context) async {
     final hasSummaryData = await _hasSummaryData();
 
@@ -249,6 +275,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
   }
 
+  // Processes the emails by fetching, categorizing, and generating summaries
   Future<void> _processEmails(BuildContext context, int emailCount) async {
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -333,6 +360,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
   }
 
+  // Clears the email categories and summaries data
   Future<void> _clearEmailCategoriesAndSummaries() async {
     final categories = [
       'emails_companyBusinessStrategy',
@@ -352,6 +380,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     });
   }
 
+  // Saves the categorized emails to storage
   Future<void> _saveEmailsToStorage(
       List<Map<String, dynamic>> categorizedEmails) async {
     for (var email in categorizedEmails) {
@@ -365,6 +394,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
   }
 
+  // Shows the summary for the given category key
   Future<void> _showSummary(BuildContext context, String categoryKey) async {
     if (_isProcessing) {
       ScaffoldMessenger.of(context).showSnackBar(
