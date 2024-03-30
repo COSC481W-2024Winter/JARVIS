@@ -43,6 +43,32 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   Map<String, bool> _categoriesWithData = {};
 
   @override
+  void initState() {
+    super.initState();
+    _updateCategoryButtonStates();
+  }
+
+  Future<void> _updateCategoryButtonStates() async {
+    final categories = [
+      'emails_companyBusinessStrategy',
+      'emails_logisticArrangements',
+      'emails_purelyPersonal',
+      'emails_documentEditingCheckingCollaboration',
+    ];
+
+    final updatedCategoriesWithData = <String, bool>{};
+
+    for (var category in categories) {
+      final hasData = await _hasCategoryData(category);
+      updatedCategoriesWithData[category] = hasData;
+    }
+
+    setState(() {
+      _categoriesWithData = updatedCategoriesWithData;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
@@ -54,12 +80,12 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: Icon(Icons.arrow_back, color: Colors.white),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: const Text('Email Categorization'),
+      title: Text('Email Categorization'),
       centerTitle: true,
-      backgroundColor: const Color(0xFF8FA5FD),
+      backgroundColor: Color(0xFF8FA5FD),
     );
   }
 
@@ -70,24 +96,24 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildGenerateSummariesButton(),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _buildClearSummariesButton(),
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           _buildCategoryButton(
             'Company Business/Strategy',
             'emails_companyBusinessStrategy',
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _buildCategoryButton(
             'Logistic Arrangements',
             'emails_logisticArrangements',
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _buildCategoryButton(
             'Purely Personal',
             'emails_purelyPersonal',
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           _buildCategoryButton(
             'Document Editing/Checking/Collaboration',
             'emails_documentEditingCheckingCollaboration',
@@ -128,7 +154,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         ),
         elevation: 5,
       ),
-      child: const Text(
+      child: Text(
         'Clear Summaries',
         style: TextStyle(color: Colors.white, fontSize: 16),
       ),
@@ -141,7 +167,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return ElevatedButton(
       onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: hasData ? const Color(0xFF8FA5FD) : Colors.grey,
+        backgroundColor: hasData ? Color(0xFF8FA5FD) : Colors.grey,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -150,7 +176,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       ),
       child: Text(
         label,
-        style: const TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(color: Colors.white, fontSize: 16),
       ),
     );
   }
@@ -161,9 +187,6 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         await storageService.getData('generatedSummaries');
     final hasData =
         generatedSummaries != null && generatedSummaries[categoryKey] != null;
-    setState(() {
-      _categoriesWithData[categoryKey] = hasData;
-    });
     return hasData;
   }
 
@@ -187,17 +210,17 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Confirmation'),
-          content: const Text(
+          title: Text('Confirmation'),
+          content: Text(
               'Are you sure you want to clear summaries? The previous data will be lost.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('No'),
+              child: Text('No'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Yes'),
+              child: Text('Yes'),
             ),
           ],
         );
@@ -218,17 +241,17 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Confirmation'),
-            content: const Text(
+            title: Text('Confirmation'),
+            content: Text(
                 'Are you sure you want to generate new summaries? The previous data will be lost.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
+                child: Text('No'),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Yes'),
+                child: Text('Yes'),
               ),
             ],
           );
@@ -245,7 +268,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       builder: (context) {
         String value = '';
         return AlertDialog(
-          title: const Text('Enter the number of emails to fetch'),
+          title: Text('Enter the number of emails to fetch'),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (v) => value = v,
@@ -253,11 +276,11 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(int.tryParse(value)),
-              child: const Text('OK'),
+              child: Text('OK'),
             ),
           ],
         );
@@ -352,11 +375,11 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
 
       dismissToast();
       showToast(context, 'Summaries generated successfully!',
-          duration: const Duration(seconds: 5));
+          duration: Duration(seconds: 5));
     } catch (e) {
       dismissToast();
       showToast(context, "Failed to process emails: $e",
-          duration: const Duration(seconds: 5));
+          duration: Duration(seconds: 5));
     }
   }
 
@@ -398,7 +421,8 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   Future<void> _showSummary(BuildContext context, String categoryKey) async {
     if (_isProcessing) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please be patient. Processing in progress.')),
+        const SnackBar(
+            content: Text('Please be patient. Processing in progress.')),
       );
       return;
     }
@@ -408,7 +432,8 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
 
     if (generatedSummaries == null || generatedSummaries[categoryKey] == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No data available. Generate summaries first.')),
+        const SnackBar(
+            content: Text('No data available. Generate summaries first.')),
       );
       return;
     }
