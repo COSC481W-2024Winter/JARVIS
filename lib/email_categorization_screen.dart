@@ -77,7 +77,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _clearSummaries,
+              onPressed: _clearEmailCategoriesAndSummaries,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 padding:
@@ -131,13 +131,6 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         style: TextStyle(color: Colors.white, fontSize: 16),
       ),
     );
-  }
-
-  Future<void> _clearSummaries() async {
-    await storageService.removeData('generatedSummaries');
-    setState(() {
-      _categoriesWithData.clear();
-    });
   }
 
   Map<String, bool> _categoriesWithData = {};
@@ -234,6 +227,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
 
     try {
+      await _clearEmailCategoriesAndSummaries();
       showProcessingToast('Fetching emails...');
       final sortedEmails =
           await emailSortingRunner.sortEmails(accessToken, emailCount);
@@ -247,7 +241,6 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       showProcessingToast('Categorizing emails...');
       final categorizedEmails =
           await emailSortController.categorizeEmailsList(emailList);
-      await _clearEmailCategories();
 
       await _saveEmailsToStorage(categorizedEmails);
 
@@ -272,7 +265,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     }
   }
 
-  Future<void> _clearEmailCategories() async {
+  Future<void> _clearEmailCategoriesAndSummaries() async {
     final categories = [
       'emails_companyBusinessStrategy',
       'emails_logisticArrangements',
@@ -283,6 +276,12 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     for (var category in categories) {
       await storageService.removeData(category);
     }
+
+    await storageService.removeData('generatedSummaries');
+
+    setState(() {
+      _categoriesWithData.clear();
+    });
   }
 
   Future<void> _saveEmailsToStorage(
