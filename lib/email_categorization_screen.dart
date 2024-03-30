@@ -77,7 +77,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _clearEmailCategoriesAndSummaries,
+              onPressed: () => _showClearSummariesConfirmationDialog(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 padding:
@@ -145,39 +145,90 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return hasData;
   }
 
-  Future<void> _showEmailCountDialog(BuildContext context) async {
-    final emailCount = await showDialog<int>(
+  Future<void> _showClearSummariesConfirmationDialog(
+      BuildContext context) async {
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
-        String value = '';
         return AlertDialog(
-          title: Text('Enter the number of emails to fetch'),
-          content: TextField(
-            keyboardType: TextInputType.number,
-            onChanged: (v) => value = v,
-          ),
+          title: Text('Confirmation'),
+          content: Text(
+              'Are you sure you want to clear summaries? The previous data will be lost.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('No'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(int.tryParse(value)),
-              child: Text('OK'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Yes'),
             ),
           ],
         );
       },
     );
 
-    if (emailCount != null && emailCount > 0) {
-      setState(() {
-        _isProcessing = true;
-      });
-      await _processEmails(context, emailCount);
-      setState(() {
-        _isProcessing = false;
-      });
+    if (confirmed == true) {
+      await _clearEmailCategoriesAndSummaries();
+    }
+  }
+
+  Future<void> _showEmailCountDialog(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: Text(
+              'Are you sure you want to generate new summaries? The previous data will be lost.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      final emailCount = await showDialog<int>(
+        context: context,
+        builder: (context) {
+          String value = '';
+          return AlertDialog(
+            title: Text('Enter the number of emails to fetch'),
+            content: TextField(
+              keyboardType: TextInputType.number,
+              onChanged: (v) => value = v,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(int.tryParse(value)),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (emailCount != null && emailCount > 0) {
+        setState(() {
+          _isProcessing = true;
+        });
+        await _processEmails(context, emailCount);
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 
