@@ -284,7 +284,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
             child: ToastWidget(message: message),
           ),
         );
-        Overlay.of(context)!.insert(toastEntry!);
+        Overlay.of(context).insert(toastEntry!);
       }
     }
 
