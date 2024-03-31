@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jarvis/backend/email_fetch_service.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
@@ -12,173 +9,470 @@ import 'package:jarvis/backend/email_sorting_runner.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
-import 'package:jarvis/emails_screen.dart';
-import 'package:jarvis/emails_summaries_screen.dart';
+import 'package:jarvis/widgets/custom_toast_widget.dart';
+import 'package:jarvis/backend/text_to_speech.dart';
 
-class EmailCategorizationScreen extends StatelessWidget {
+class EmailCategorizationScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Email Categorization and Summarization')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                await _accessAndSortEmails(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8FA5FD),
-                padding: const EdgeInsets.all(20),
-                shadowColor: Color.fromRGBO(255, 255, 255, 1),
-                elevation: 7,
-              ),
-              child: const Text(
-                'Access and Sort Emails',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await categorizeAndSummarizeEmails(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8FA5FD),
-                padding: const EdgeInsets.all(20),
-                shadowColor: Color.fromRGBO(255, 255, 255, 1),
-                elevation: 7,
-              ),
-              child: const Text(
-                'Categorize and Summarize Emails',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  _EmailCategorizationScreenState createState() =>
+      _EmailCategorizationScreenState();
 }
 
-Future<void> _accessAndSortEmails(BuildContext context) async {
-  User? user = FirebaseAuth.instance.currentUser;
-
-  if (user == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("No user logged in.")),
-    );
-    return;
-  }
-
-  final GoogleSignInService googleSignInService = GoogleSignInService();
-  final String? accessToken = await googleSignInService.signInWithGoogle();
-
-  if (accessToken == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Failed to retrieve access token.")),
-    );
-    return;
-  }
-
-  final sorterApiKey = dotenv.env['SORTER_KEY'];
-
-  if (sorterApiKey == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text("Required API tokens are not configured properly.")),
-    );
-    return;
-  }
-
+class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
+  bool _isProcessing = false;
   final emailFetchingService = EmailFetchingService();
-  final emailSorter = EmailSorter(apiToken: sorterApiKey);
-  final emailSortController = EmailSortController(emailSorter: emailSorter);
-  final emailSortingRunner = EmailSortingRunner(
+  late final emailSorter =
+      EmailSorter(apiToken: dotenv.env['SORTER_KEY'] ?? '');
+  late final emailSortController =
+      EmailSortController(emailSorter: emailSorter);
+  late final emailSortingRunner = EmailSortingRunner(
     emailFetchingService: emailFetchingService,
     emailSortController: emailSortController,
   );
-
-  try {
-    final sortedEmails = await emailSortingRunner.sortEmails(accessToken, 10);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => EmailsScreen(emails: sortedEmails)),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Failed to access emails: $e")),
-    );
-  }
-}
-
-Future<void> categorizeAndSummarizeEmails(BuildContext context) async {
-  final sorterToken = dotenv.env['SORTER_KEY'];
-  final businessKey = dotenv.env['CHATGPT_BUSINESS_KEY'];
-  final arrangementKey = dotenv.env['CHATGPT_ARRANGEMENT_KEY'];
-  final personalKey = dotenv.env['CHATGPT_PERSONAL_KEY'];
-  final docEditKey = dotenv.env['CHATGPT_DOC_EDIT_KEY'];
-
-  if (sorterToken == null ||
-      businessKey == null ||
-      arrangementKey == null ||
-      personalKey == null ||
-      docEditKey == null) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("One or more required API keys not found in .env file")));
-    return;
-  }
-
-  EmailSorter emailSorter = EmailSorter(apiToken: sorterToken);
-  EmailSortController emailSortController =
-      EmailSortController(emailSorter: emailSorter);
-  LocalStorageService storageService = LocalStorageService();
-  ChatGPTService chatGPTService = ChatGPTService(apiKeys: {
-    'CHATGPT_BUSINESS_KEY': businessKey,
-    'CHATGPT_ARRANGEMENT_KEY': arrangementKey,
-    'CHATGPT_PERSONAL_KEY': personalKey,
-    'CHATGPT_DOC_EDIT_KEY': docEditKey,
+  final storageService = LocalStorageService();
+  final chatGPTService = ChatGPTService(apiKeys: {
+    'CHATGPT_BUSINESS_KEY': dotenv.env['CHATGPT_BUSINESS_KEY'] ?? '',
+    'CHATGPT_ARRANGEMENT_KEY': dotenv.env['CHATGPT_ARRANGEMENT_KEY'] ?? '',
+    'CHATGPT_PERSONAL_KEY': dotenv.env['CHATGPT_PERSONAL_KEY'] ?? '',
+    'CHATGPT_DOC_EDIT_KEY': dotenv.env['CHATGPT_DOC_EDIT_KEY'] ?? '',
   });
-  EmailSummarizer emailSummarizer = EmailSummarizer(
+  late final emailSummarizer = EmailSummarizer(
     storageService: storageService,
     chatGPTService: chatGPTService,
   );
+  Map<String, bool> _categoriesWithData = {};
 
-  var jsonString =
-      await rootBundle.loadString('assets/data/uncategorized_emails_10.json');
-  List<dynamic> emailList = json.decode(jsonString);
-
-  List<Map<String, String>> emails = emailList.map((email) {
-    return {
-      "Subject": email["Subject"] as String,
-      "Body": email["Body"] as String,
-    };
-  }).toList();
-
-  List<Map<String, dynamic>> categorizedEmails =
-      await emailSortController.categorizeEmailsList(emails);
-
-  for (var email in categorizedEmails) {
-    String categoryKey = 'emails_${email["Category"]}';
-    List<Map<String, dynamic>> categoryList =
-        (await storageService.getData(categoryKey))?['emails']
-                ?.cast<Map<String, dynamic>>() ??
-            [];
-    categoryList.add(email);
-    await storageService.saveData(categoryKey, {'emails': categoryList});
+  @override
+  void initState() {
+    super.initState();
+    _updateCategoryButtonStates();
   }
 
-  Map<String, String> generatedSummaries =
-      await emailSummarizer.summarizeEmails();
-  await storageService.saveData('generatedSummaries', generatedSummaries);
+  Future<void> _updateCategoryButtonStates() async {
+    final categories = [
+      'emails_companyBusinessStrategy',
+      'emails_logisticArrangements',
+      'emails_purelyPersonal',
+      'emails_documentEditingCheckingCollaboration',
+    ];
 
-  // Display the generated summaries to the user
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => EmailSummariesScreen(summaries: generatedSummaries),
-    ),
-  );
+    final updatedCategoriesWithData = <String, bool>{};
+
+    for (var category in categories) {
+      final hasData = await _hasCategoryData(category);
+      updatedCategoriesWithData[category] = hasData;
+    }
+
+    setState(() {
+      _categoriesWithData = updatedCategoriesWithData;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+    );
+  }
+
+  // Builds the app bar for the email categorization screen
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: Text('Email Categorization'),
+      centerTitle: true,
+      backgroundColor: Color(0xFF8FA5FD),
+    );
+  }
+
+  // Builds the body of the email categorization screen
+  Widget _buildBody() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildGenerateSummariesButton(),
+          SizedBox(height: 20),
+          _buildClearSummariesButton(),
+          SizedBox(height: 40),
+          _buildCategoryButton(
+            'Company Business/Strategy',
+            'emails_companyBusinessStrategy',
+          ),
+          SizedBox(height: 20),
+          _buildCategoryButton(
+            'Logistic Arrangements',
+            'emails_logisticArrangements',
+          ),
+          SizedBox(height: 20),
+          _buildCategoryButton(
+            'Purely Personal',
+            'emails_purelyPersonal',
+          ),
+          SizedBox(height: 20),
+          _buildCategoryButton(
+            'Document Editing/Checking/Collaboration',
+            'emails_documentEditingCheckingCollaboration',
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Builds the "Generate Summaries" button
+  Widget _buildGenerateSummariesButton() {
+    return ElevatedButton(
+      onPressed: _isProcessing ? null : () => _showEmailCountDialog(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF8FA5FD),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 7,
+      ),
+      child: const Text(
+        'Generate Summaries',
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    );
+  }
+
+  // Builds the "Clear Summaries" button
+  Widget _buildClearSummariesButton() {
+    return ElevatedButton(
+      onPressed: () => _showClearSummariesConfirmationDialog(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 5,
+      ),
+      child: Text(
+        'Clear Summaries',
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+    );
+  }
+
+  // Builds a category button with the given label and category key
+  Widget _buildCategoryButton(String label, String categoryKey) {
+    final hasData = _categoriesWithData[categoryKey] ?? false;
+    return ElevatedButton(
+      onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: hasData ? Color(0xFF8FA5FD) : Colors.grey,
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 5,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+    );
+  }
+
+  // Checks if there is data available for the given category key
+  Future<bool> _hasCategoryData(String categoryKey) async {
+    final generatedSummaries =
+        await storageService.getData('generatedSummaries');
+    final hasData =
+        generatedSummaries != null && generatedSummaries[categoryKey] != null;
+    return hasData;
+  }
+
+  // Checks if there is any summary data available
+  Future<bool> _hasSummaryData() async {
+    final generatedSummaries =
+        await storageService.getData('generatedSummaries');
+    return generatedSummaries != null && generatedSummaries.isNotEmpty;
+  }
+
+  // Shows a confirmation dialog for clearing the summaries
+  Future<void> _showClearSummariesConfirmationDialog(
+      BuildContext context) async {
+    final hasSummaryData = await _hasSummaryData();
+
+    if (!hasSummaryData) {
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: Text(
+              'Are you sure you want to clear summaries? The previous data will be lost.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await _clearEmailCategoriesAndSummaries();
+    }
+  }
+
+  // Shows a dialog for entering the number of emails to fetch
+  Future<void> _showEmailCountDialog(BuildContext context) async {
+    final hasSummaryData = await _hasSummaryData();
+
+    if (hasSummaryData) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Confirmation'),
+            content: Text(
+                'Are you sure you want to generate new summaries? The previous data will be lost.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text('Yes'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (confirmed != true) {
+        return;
+      }
+    }
+
+    final emailCount = await showDialog<int>(
+      context: context,
+      builder: (context) {
+        String value = '';
+        return AlertDialog(
+          title: Text('Enter the number of emails to fetch'),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            onChanged: (v) => value = v,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(int.tryParse(value)),
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (emailCount != null && emailCount > 0) {
+      setState(() {
+        _isProcessing = true;
+      });
+      await _processEmails(context, emailCount);
+      setState(() {
+        _isProcessing = false;
+      });
+    }
+  }
+
+  // Processes the emails by fetching, categorizing, and generating summaries
+  Future<void> _processEmails(BuildContext context, int emailCount) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No user logged in.")),
+      );
+      return;
+    }
+
+    final GoogleSignInService googleSignInService = GoogleSignInService();
+    final String? accessToken = await googleSignInService.signInWithGoogle();
+
+    if (accessToken == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to retrieve access token.")),
+      );
+      return;
+    }
+
+    OverlayEntry? toastEntry;
+    String? currentToastMessage;
+
+    void showProcessingToast(String message) {
+      if (toastEntry == null || currentToastMessage != message) {
+        currentToastMessage = message;
+        toastEntry?.remove();
+        toastEntry = OverlayEntry(
+          builder: (context) => Positioned(
+            bottom: 50,
+            left: 50,
+            right: 50,
+            child: ToastWidget(message: message),
+          ),
+        );
+        Overlay.of(context).insert(toastEntry!);
+      }
+    }
+
+    void dismissToast() {
+      toastEntry?.remove();
+      toastEntry = null;
+      currentToastMessage = null;
+    }
+
+    try {
+      await _clearEmailCategoriesAndSummaries();
+      showProcessingToast('Fetching emails...');
+      final sortedEmails =
+          await emailSortingRunner.sortEmails(accessToken, emailCount);
+      final emailList = sortedEmails.map((email) {
+        return {
+          "Subject": email.subject,
+          "Body": email.body,
+        };
+      }).toList();
+
+      showProcessingToast('Categorizing emails...');
+      final categorizedEmails =
+          await emailSortController.categorizeEmailsList(emailList);
+
+      await _saveEmailsToStorage(categorizedEmails);
+
+      showProcessingToast('Generating summaries...');
+      final generatedSummaries = await emailSummarizer.summarizeEmails();
+      await storageService.saveData('generatedSummaries', generatedSummaries);
+
+      // Update the _categoriesWithData map after generating summaries
+      setState(() {
+        generatedSummaries.forEach((category, _) {
+          _categoriesWithData[category] = true;
+        });
+      });
+
+      dismissToast();
+      showToast(context, 'Summaries generated successfully!',
+          duration: Duration(seconds: 5));
+    } catch (e) {
+      dismissToast();
+      showToast(context, "Failed to process emails: $e",
+          duration: Duration(seconds: 5));
+    }
+  }
+
+  // Clears the email categories and summaries data
+  Future<void> _clearEmailCategoriesAndSummaries() async {
+    final categories = [
+      'emails_companyBusinessStrategy',
+      'emails_logisticArrangements',
+      'emails_purelyPersonal',
+      'emails_documentEditingCheckingCollaboration',
+    ];
+
+    for (var category in categories) {
+      await storageService.removeData(category);
+    }
+
+    await storageService.removeData('generatedSummaries');
+
+    setState(() {
+      _categoriesWithData.clear();
+    });
+  }
+
+  // Saves the categorized emails to storage
+  Future<void> _saveEmailsToStorage(
+      List<Map<String, dynamic>> categorizedEmails) async {
+    for (var email in categorizedEmails) {
+      String categoryKey = 'emails_${email["Category"]}';
+      List<Map<String, dynamic>> categoryList =
+          (await storageService.getData(categoryKey))?['emails']
+                  ?.cast<Map<String, dynamic>>() ??
+              [];
+      categoryList.add(email);
+      await storageService.saveData(categoryKey, {'emails': categoryList});
+    }
+  }
+
+  // Shows the summary for the given category key
+  Future<void> _showSummary(BuildContext context, String categoryKey) async {
+    if (_isProcessing) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please be patient. Processing in progress.')),
+      );
+      return;
+    }
+
+    final generatedSummaries =
+        await storageService.getData('generatedSummaries');
+
+    if (generatedSummaries == null || generatedSummaries[categoryKey] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('No data available. Generate summaries first.')),
+      );
+      return;
+    }
+
+    final summary = generatedSummaries[categoryKey];
+    final tts = text_to_speech();
+    bool isSpeaking = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Summary'),
+              content: Text(summary),
+              actions: [
+                IconButton(
+                  icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),
+                  onPressed: () async {
+                    if (isSpeaking) {
+                      await tts.stop();
+                    } else {
+                      await tts.speak(summary);
+                    }
+                    setState(() {
+                      isSpeaking = !isSpeaking;
+                    });
+                  },
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }

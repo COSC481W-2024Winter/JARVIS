@@ -4,7 +4,6 @@ import 'package:jarvis/backend/weather_service.dart';
 import 'package:jarvis/profile_screen_jarvis.dart';
 import 'package:jarvis/email_categorization_screen.dart';
 import 'package:jarvis/backend/email_gmail_signin_service.dart';
-import 'package:jarvis/email_summary.dart';
 import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:jarvis/backend/text_to_gpt_service.dart';
@@ -25,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String weatherCondition = "";
   String temperature = "";
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,63 +33,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
-  return AppBar(
-    leading: Padding(
-      padding: const EdgeInsets.only(left: 15.0),
-      child: _buildSettingsButton(context),
-    ),
-    actions: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(right: 15.0),
-        child: _buildProfileButton(context),
+    return AppBar(
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 15.0),
+        child: _buildSettingsButton(context),
       ),
-    ],
-    title: _buildCategorizationButton(context),
-    centerTitle: true,
-    automaticallyImplyLeading: false,
-  );
-}
-
-  ElevatedButton _buildCategorizationButton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () => _navigateToCategorizationScreen(context),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF8FA5FD),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      minimumSize: Size(200, 40), 
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100), 
-      ),
-      elevation: 0, 
-    ),
-    child: const Text(
-      'Categorize Emails',
-      style: TextStyle(color: Colors.white, fontSize: 16.0),
-    ),
-  );
-}
-
-// Example widget method to display weather data
-  Widget _displayWeather() {
-    if (weatherCondition.isEmpty) return SizedBox.shrink(); // Don't display if no data
-    return Column(
-      children: [
-        
-        Text(temperature, style: TextStyle(fontSize: 16)),
-        Text(weatherCondition, style: TextStyle(fontSize: 16)),
-        
-
+      actions: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(right: 15.0),
+          child: _buildProfileButton(context),
+        ),
       ],
     );
   }
 
-  void _navigateToCategorizationScreen(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
+// Example widget method to display weather data
+  Widget _displayWeather() {
+    if (weatherCondition.isEmpty)
+      return SizedBox.shrink(); // Don't display if no data
+    return Column(
+      children: [
+        Text(temperature, style: TextStyle(fontSize: 16)),
+        Text(weatherCondition, style: TextStyle(fontSize: 16)),
+      ],
     );
-    setState(
-        () {}); // Refresh the UI after returning from EmailCategorizationScreen
   }
 
   IconButton _buildProfileButton(BuildContext context) {
@@ -110,67 +75,63 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  ElevatedButton _buildEmailSumButton(BuildContext context) {
+  ElevatedButton _buildEmailCategorizationButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _navigateToEmailSumButtonsScreen(context),
+      onPressed: () => _navigateToEmailCategorizationScreen(context),
       style: ElevatedButton.styleFrom(
-        //shape: const CircleBorder(),
         backgroundColor: const Color(0xFF8FA5FD),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         shadowColor: Color.fromRGBO(255, 255, 255, 1),
         elevation: 7,
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Email Summaries',
-            style: TextStyle(color: Colors.white, fontSize: 20.0),
-          ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 24.0)),
           Icon(
             Icons.mail,
-            size: 30.0,
+            size: 24.0,
             color: Colors.white,
           ),
           SizedBox(width: 8),
+          Text(
+            'Email Categorization',
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+          ),
         ],
       ),
     );
   }
 
-  // luna - new button for weather 
+  // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () async {
-      //WeatherService().fetchWeather('Ypsilanti');
-      // This currently prints the weather to the console. Later, you can update the UI accordingly.
-      final weatherData = await WeatherService().fetchWeather('Ypsilanti');
+    return ElevatedButton(
+      onPressed: () async {
+        //WeatherService().fetchWeather('Ypsilanti');
+        // This currently prints the weather to the console. Later, you can update the UI accordingly.
+        final weatherData = await WeatherService().fetchWeather('Ypsilanti');
         setState(() {
           // Assuming fetchWeather returns a string like "Cloudy, 23°C"
           // You'll need to adjust based on your actual return type and format
           List<String> parts = weatherData.split(" ");
           weatherCondition = parts[6];
           temperature = parts[12];
-
         });
-
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF8FA5FD), // Adjust the color as needed
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF8FA5FD), // Adjust the color as needed
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
+        elevation: 0,
       ),
-      elevation: 0,
-    ),
-    child: const Text(
-      'Weather',
-      style: TextStyle(color: Colors.white, fontSize: 16.0),
-    ),
-  );
-}
-
+      child: const Text(
+        'Weather',
+        style: TextStyle(color: Colors.white, fontSize: 16.0),
+      ),
+    );
+  }
 
   Center _buildBody(BuildContext context) {
     return Center(
@@ -181,8 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
-          _buildEmailSumButton(context),
-          const SizedBox(height: 40), 
+          _buildEmailCategorizationButton(context),
+          const SizedBox(height: 40),
           _buildWeatherButton(context),
           const SizedBox(height: 20), // Adjust spacing as needed
           _displayWeather(), // Display the weather data
@@ -275,14 +236,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _navigateToEmailSumButtonsScreen(BuildContext context) {
+  void _navigateToEmailCategorizationScreen(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const EmailSum()));
+      context,
+      MaterialPageRoute(builder: (context) => EmailCategorizationScreen()),
+    );
   }
 
   void _navigateToSettings(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const Setting()));
   }
-
 }
