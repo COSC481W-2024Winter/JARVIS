@@ -449,7 +449,9 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
           builder: (context, setState) {
             return AlertDialog(
               title: const Text('Summary'),
-              content: Text(summary),
+              content: SingleChildScrollView(
+                child: Text(summary),
+              ),
               actions: [
                 IconButton(
                   icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),

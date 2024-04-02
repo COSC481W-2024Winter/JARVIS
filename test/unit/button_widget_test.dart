@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jarvis/email_summary.dart';
+import 'package:jarvis/deprecated/email_summary.dart';
 import 'package:jarvis/widgets/email_buttons.dart';
 
 void main() {
