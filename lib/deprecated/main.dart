@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/firebase_options.dart';
-import 'auth_gate.dart';
+import '../auth_gate.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {

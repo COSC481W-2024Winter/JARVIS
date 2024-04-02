@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jarvis/backend/email_gmail_class.dart'; // Adjust the import path according to your project structure
-import 'package:jarvis/emails_screen.dart'; // Adjust the import path according to your project structure
+import 'package:jarvis/deprecated/emails_screen.dart'; // Adjust the import path according to your project structure
 
 void main() {
   // A group of tests for EmailsScreen
