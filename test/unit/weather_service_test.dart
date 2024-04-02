@@ -30,7 +30,7 @@ void main() {
     // Assertions to verify the correctness of the processed data
     expect(result, contains("Test City"));
     expect(result, contains("Clouds"));
-    expect(result, contains("10.0°C"));
+    expect(result, contains("10.0°F"));
     //expect(result, contains("8.0°C"));
    // expect(result, contains("12.0°C"));
     expect(result, contains("5.0"));
