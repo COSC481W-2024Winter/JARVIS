@@ -8,6 +8,8 @@ import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
+import 'package:jarvis/backend/news_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -133,6 +135,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+ElevatedButton _buildNewsButton(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? lastClickTime = prefs.getInt('lastClickTime');
+      int currentTime = DateTime.now().millisecondsSinceEpoch;
+
+      if (lastClickTime != null && currentTime - lastClickTime < 3600000) {
+        // If the button was clicked within the last hour, speak the previously summarized content
+        String? lastSummarizedContent = prefs.getString('lastSummarizedContent');
+        if (lastSummarizedContent != null) {
+          text_to_speech().speak(lastSummarizedContent);
+        }
+      } else {
+        // If the button wasn't clicked within the last hour, get new news and summarize it
+        final newsContents = await news_service().getTopNews();
+        String contents = await text_to_gpt_service().send_to_GPT(newsContents.join('\n'), "news");
+        print('Content: $contents');
+        text_to_speech().speak(contents);
+
+        // Save the current time and the summarized content
+        await prefs.setInt('lastClickTime', currentTime);
+        await prefs.setString('lastSummarizedContent', contents);
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF8FA5FD),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      shadowColor: Color.fromRGBO(255, 255, 255, 1),
+      elevation: 7,
+    ),
+    child: Text(
+      'News Summary',
+      style: TextStyle(color: Colors.white, fontSize: 16.0),
+    ),
+  );
+}
+
   Center _buildBody(BuildContext context) {
     return Center(
       child: Column(
@@ -142,10 +182,13 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
+          const SizedBox(height: 40),
           _buildEmailCategorizationButton(context),
           const SizedBox(height: 40),
+          _buildNewsButton(context),
+          const SizedBox(height: 40),
           _buildWeatherButton(context),
-          const SizedBox(height: 20), // Adjust spacing as needed
+          const SizedBox(height: 10), // Adjust spacing as needed
           _displayWeather(), // Display the weather data
         ],
       ),
