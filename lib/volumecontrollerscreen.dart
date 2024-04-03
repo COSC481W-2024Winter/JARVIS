@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
-            Text('Current volume: $_volumeListenerValue'),
+          
             Row(
               children: [
                 Text('Set Volume:'),
@@ -55,38 +55,12 @@ class _MyAppState extends State<MyApp> {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Volume is: $_getVolume'),
-                TextButton(
-                  onPressed: () async {
-                    _getVolume = await VolumeController().getVolume();
-                    setState(() {});
-                  },
-                  child: Text('Get Volume'),
-                ),
-              ],
-            ),
+           
             TextButton(
               onPressed: () => VolumeController().muteVolume(),
-              child: Text('Mute Volume'),
+              child: Text('Mute'),
             ),
-            TextButton(
-              onPressed: () => VolumeController().maxVolume(),
-              child: Text('Max Volume'),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Show system UI:${VolumeController().showSystemUI}'),
-                TextButton(
-                  onPressed: () => setState(() => VolumeController().showSystemUI = !VolumeController().showSystemUI),
-                  child: Text('Show/Hide UI'),
-                )
-              ],
-            ),
-            SizedBox(height: 20), // Add some space between buttons and Go Back button
+
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Go back to previous page
