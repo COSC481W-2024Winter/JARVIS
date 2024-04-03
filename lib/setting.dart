@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jarvis/auth_gate.dart';
+import 'package:jarvis/volumecontrollerscreen.dart';
 import 'widgets/customButton.dart';
 import 'widgets/CustomHeader.dart';
 
+
 class Setting extends StatelessWidget {
   const Setting({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +25,16 @@ class Setting extends StatelessWidget {
           ),
 
           const SizedBox(height: 30),
+
+          //Volume button
+          CustomButton(
+            label: 'Volume',
+            onPressed: () {
+              _navigateToVolumeScreen(context);
+            },
+          ),
+
+           const SizedBox(height: 30),
 
           // Language button
           CustomButton(
@@ -60,4 +73,10 @@ class Setting extends StatelessWidget {
       ),
     );
   }
+ void _navigateToVolumeScreen(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MyApp()));
+  }
 }
+
+

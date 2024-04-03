@@ -8,6 +8,7 @@ import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _gptResponse = "";
   String weatherCondition = "";
   String temperature = "";
+
+  double _volumeValue = 0.5; // Initial volume value
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+            
 
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
@@ -147,8 +151,26 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildWeatherButton(context),
           const SizedBox(height: 20), // Adjust spacing as needed
           _displayWeather(), // Display the weather data
+          _buildVolumeSlider(), // Add volume slider widget
+          const SizedBox(height: 20),
         ],
       ),
+    );
+  }
+
+  Slider _buildVolumeSlider() {
+    return Slider(
+      value: _volumeValue,
+      onChanged: (newValue) {
+        setState(() {
+          _volumeValue = newValue;
+        });
+        VolumeController().setVolume(newValue);
+      },
+      min: 0.0,
+      max: 1.0,
+      divisions: 10,
+      label: _volumeValue.toStringAsFixed(1),
     );
   }
 
