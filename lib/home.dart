@@ -10,6 +10,8 @@ import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
 import 'package:jarvis/backend/news_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -109,15 +111,19 @@ class _HomeScreenState extends State<HomeScreen> {
   ElevatedButton _buildWeatherButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
+        await WeatherService().requestLocationPermission();
         //WeatherService().fetchWeather('Ypsilanti');
         // This currently prints the weather to the console. Later, you can update the UI accordingly.
-        final weatherData = await WeatherService().fetchWeather('Ypsilanti');
+        final weatherData = await WeatherService().fetchWeather();
         setState(() {
           // Assuming fetchWeather returns a string like "Cloudy, 23°C"
           // You'll need to adjust based on your actual return type and format
           List<String> parts = weatherData.split(" ");
+          //weatherCondition = parts[0].split(" ")[3];
+          //temperature = parts[1].split(" ")[4];
+          temperature = parts[11];
           weatherCondition = parts[6];
-          temperature = parts[12];
+          
         });
       },
       style: ElevatedButton.styleFrom(
