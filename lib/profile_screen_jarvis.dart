@@ -812,6 +812,21 @@ class ProfileScreenJarvis extends MultiProviderScreen {
     final ageController = state.ageController;
     final storyController = state.storyController;
 
+    storyController.addListener(() {
+      var numOfWords = storyController.text
+          .split(' ')
+          .where((word) => word.isNotEmpty)
+          .length;
+      if (numOfWords > 25) {
+        // If the number of words is more than 30, remove the last word
+        List<String> words = storyController.text.split(' ');
+        words.removeLast();
+        storyController.text = words.join(' ');
+        storyController.selection = TextSelection.fromPosition(
+            TextPosition(offset: storyController.text.length));
+      }
+    });
+
     final isCupertino = CupertinoUserInterfaceLevel.maybeOf(context) != null;
     final providersScopeKey = RebuildScopeKey();
     final mfaScopeKey = RebuildScopeKey();
@@ -852,6 +867,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         const SizedBox(height: 10),
         // Full name text field
         TextField(
+          inputFormatters: [LengthLimitingTextInputFormatter(20)],
           controller: fullNameController,
           decoration: const InputDecoration(
             labelText: 'Full Name',
@@ -872,6 +888,8 @@ class ProfileScreenJarvis extends MultiProviderScreen {
 
         // Age text field
         TextField(
+          inputFormatters: [LengthLimitingTextInputFormatter(2)],
+          keyboardType: TextInputType.number,
           controller: ageController,
           decoration: const InputDecoration(
             labelText: 'Age',
