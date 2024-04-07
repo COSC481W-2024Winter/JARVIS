@@ -25,7 +25,7 @@ void main() {
     final weatherService = WeatherService();
 
     // Call processWeatherData with the parsed JSON
-    final String result = await weatherService.processWeatherData(jsonMap, "Test City");
+    final String result = await weatherService.processWeatherData(jsonMap);
 
     // Assertions to verify the correctness of the processed data
     expect(result, contains("Test City"));

@@ -65,6 +65,11 @@
                 </array>
         </dict>
 </array>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app needs access to location when open.</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>This app needs access to location when in the background.</string>
+
 <!-- End of the Google Sign-in Section -->
 </dict>
 </plist>
