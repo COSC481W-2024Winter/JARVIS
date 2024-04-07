@@ -75,7 +75,7 @@ class Setting extends StatelessWidget {
   }
  void _navigateToVolumeScreen(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MyApp()));
+        context, MaterialPageRoute(builder: (context) => MyAppp()));
   }
 }
 

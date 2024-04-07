@@ -457,7 +457,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
                     if (isSpeaking) {
                       await tts.stop();
                     } else {
-                      await tts.speak(summary);
+                      await tts.speak(summary , Language.english);
                     }
                     setState(() {
                       isSpeaking = !isSpeaking;

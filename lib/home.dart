@@ -19,10 +19,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
+  final text_to_speech tts = text_to_speech();
   String _wordsSpoken = "";
   String _gptResponse = "";
   String weatherCondition = "";
   String temperature = "";
+  Language _selectedLanguage = Language.english;
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +49,54 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-// Example widget method to display weather data
-  Widget _displayWeather() {
-    if (weatherCondition.isEmpty)
-      return SizedBox.shrink(); // Don't display if no data
-    return Column(
-      children: [
-        Text(temperature, style: TextStyle(fontSize: 16)),
-        Text(weatherCondition, style: TextStyle(fontSize: 16)),
+  Widget _buildLanguageSelector() {
+    return DropdownButton<Language>(
+      value: _selectedLanguage,
+      onChanged: (Language? language) {
+        if (language != null) {
+          setState(() {
+            _selectedLanguage = language;
+          });
+        }
+      },
+      items: const [
+        DropdownMenuItem<Language>(
+          value: Language.english,
+          child: Text('English'),
+        ),
+        DropdownMenuItem<Language>(
+          value: Language.spanish,
+          child: Text('Spanish'),
+        ),
+        DropdownMenuItem<Language>(
+          value: Language.chinese,
+          child: Text('Chinese'),
+        ),
       ],
     );
   }
-            
+
+  Widget _buildBody(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('Welcome!', style: Theme.of(context).textTheme.displaySmall),
+          const SizedBox(height: 20),
+          _buildLanguageSelector(),
+          const SizedBox(height: 20),
+          _buildMicrophoneButton(),
+          _buildTranscriptionText(),
+          _buildEmailCategorizationButton(context),
+          const SizedBox(height: 40),
+          _buildWeatherButton(context),
+          const SizedBox(height: 20), // Adjust spacing as needed
+          _displayWeather(), // Display the weather data
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
 
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
@@ -104,23 +142,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        //WeatherService().fetchWeather('Ypsilanti');
-        // This currently prints the weather to the console. Later, you can update the UI accordingly.
         final weatherData = await WeatherService().fetchWeather('Ypsilanti');
         setState(() {
-          // Assuming fetchWeather returns a string like "Cloudy, 23°C"
-          // You'll need to adjust based on your actual return type and format
           List<String> parts = weatherData.split(" ");
           weatherCondition = parts[6];
           temperature = parts[12];
         });
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD), // Adjust the color as needed
+        backgroundColor: const Color(0xFF8FA5FD),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -134,31 +167,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Center _buildBody(BuildContext context) {
+  Center _displayWeather() {
+    if (weatherCondition.isEmpty)
+      return Center(); // Don't display if no data
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('Welcome!', style: Theme.of(context).textTheme.displaySmall),
-          const SizedBox(height: 20),
-          _buildMicrophoneButton(),
-          _buildTranscriptionText(),
-          _buildEmailCategorizationButton(context),
-          const SizedBox(height: 40),
-          _buildWeatherButton(context),
-          const SizedBox(height: 20), // Adjust spacing as needed
-          _displayWeather(), // Display the weather data
-          const SizedBox(height: 20),
+        children: [
+          Text(temperature, style: TextStyle(fontSize: 16)),
+          Text(weatherCondition, style: TextStyle(fontSize: 16)),
         ],
       ),
     );
   }
 
-
   IconButton _buildMicrophoneButton() {
     return IconButton(
-      icon: Icon(speechToText.isListening ? Icons.mic : Icons.mic_none,
-          size: 50.0, color: const Color(0xFF8FA5FD)),
+      icon: Icon(
+        speechToText.isListening ? Icons.mic : Icons.mic_none,
+        size: 50.0,
+        color: const Color(0xFF8FA5FD),
+      ),
       onPressed: speechToText.isListening ? _stopListening : _startListening,
     );
   }
@@ -224,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _wordsSpoken = "";
     });
 
-    text_to_speech().speak(generatedText);
+    tts.speak(generatedText, _selectedLanguage);
   }
 
   void _navigateToProfileScreen(BuildContext context) {

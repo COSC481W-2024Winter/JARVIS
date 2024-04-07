@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-class MyApp extends StatefulWidget {
+class MyAppp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyAppp> {
   double _volumeListenerValue = 0;
   double _getVolume = 0;
   double _setVolumeValue = 0;

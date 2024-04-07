@@ -25,7 +25,7 @@ class WeatherService {
       final weatherSummary = processWeatherData(data, city);
       
       // Use the Text to Speech service to read out the weather summary
-      await this.tts.speak(weatherSummary);
+      await this.tts.speak(weatherSummary , Language.english);
       return weatherSummary;
     } else {
       print('Failed to fetch weather data. Status code: ${response.statusCode}');
