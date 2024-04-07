@@ -28,6 +28,9 @@ jobs:
       JARVISTEST684_EMAIL_REFRESH: ${{ secrets.JARVISTEST684_EMAIL_REFRESH }}
       JARVISTEST684_EMAIL_TEMP: ${{ secrets.JARVISTEST684_EMAIL_TEMP }}
       SORTER_KEY: ${{ secrets.SORTER_KEY }}
+      OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
+      NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+
 
     steps:
       - uses: actions/checkout@v4
@@ -60,6 +63,8 @@ jobs:
           echo JARVISTEST684_EMAIL_REFRESH=${JARVISTEST684_EMAIL_REFRESH} >> .env
           echo JARVISTEST684_EMAIL_TEMP=${JARVISTEST684_EMAIL_TEMP} >> .env
           echo SORTER_KEY=${SORTER_KEY} >> .env
+          echo OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY} >> .env
+          echo NEWS_API_KEY=${NEWS_API_KEY} >> .env
 
       - name: Analyze project source
         run: flutter analyze

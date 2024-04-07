@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/auth_gate.dart';
 import 'package:jarvis/volumecontrollerscreen.dart';
 import 'widgets/customButton.dart';
-import 'widgets/CustomHeader.dart';
+import 'package:jarvis/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 
 class Setting extends StatelessWidget {
@@ -11,9 +12,7 @@ class Setting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title: 'Settings',
-      ),
+      appBar: _buildAppBar(context),
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -40,6 +39,16 @@ class Setting extends StatelessWidget {
           CustomButton(
             label: 'Language',
             onPressed: () {},
+          ),
+
+          const SizedBox(height: 30),
+
+          // Appearance button
+          CustomButton(
+            label: 'Appearance',
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+            },
           ),
 
           Expanded(
@@ -73,9 +82,22 @@ class Setting extends StatelessWidget {
       ),
     );
   }
+
  void _navigateToVolumeScreen(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MyAppp()));
+
+  // Builds the app bar for the settings screen
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: const Text('Settings'),
+      centerTitle: true,
+    );
+
   }
 }
 
