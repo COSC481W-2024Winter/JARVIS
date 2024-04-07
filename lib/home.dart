@@ -113,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ElevatedButton _buildWeatherButton(BuildContext context) {
     return ElevatedButton(
         onPressed: () async {
+          await WeatherService().requestLocationPermission();
           //WeatherService().fetchWeather('Ypsilanti');
           // This currently prints the weather to the console. Later, you can update the UI accordingly.
           final weatherData = await WeatherService().fetchWeather();
