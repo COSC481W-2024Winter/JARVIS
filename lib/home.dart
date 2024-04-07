@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           const SizedBox(height: 40),
           _buildWeatherButton(context),
           const SizedBox(height: 10), // Adjust spacing as needed
-          _displayWeather(), // Display the weather data
+          // _displayWeather(), // Display the weather data
         ],
       ),
     );
