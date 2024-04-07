@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String weatherCondition = "";
   String temperature = "";
   bool _isSpeaking = false; // flag to check if the text is being spoken
+  bool _isWeatherSpeaking = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,45 +112,51 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
-    return ElevatedButton(
-        onPressed: () async {
-          await WeatherService().requestLocationPermission();
-          //WeatherService().fetchWeather('Ypsilanti');
-          // This currently prints the weather to the console. Later, you can update the UI accordingly.
-          final weatherData = await WeatherService().fetchWeather();
-          setState(() {
-            // Assuming fetchWeather returns a string like "Cloudy, 23°C"
-            // You'll need to adjust based on your actual return type and format
-            List<String> parts = weatherData.split(" ");
-            weatherCondition = parts[6];
-            temperature = parts[12];
-          });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          shadowColor: Theme.of(context).colorScheme.shadow,
-          elevation: 7,
+  return ElevatedButton(
+    onPressed: () async {
+      if (_isWeatherSpeaking) {
+        await WeatherService().stopSpeaking();
+        setState(() {
+          _isWeatherSpeaking = false;
+        });
+      } else {
+        await WeatherService().requestLocationPermission();
+        final weatherData = await WeatherService().fetchWeather();
+        setState(() {
+          List<String> parts = weatherData.split(" ");
+          weatherCondition = parts[6];
+          temperature = parts[11];
+          _isWeatherSpeaking = true;
+        });
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      elevation: 7,
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.cloud,
+          size: 24.0,
+          color: Theme.of(context).colorScheme.secondary,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.cloud,
-              size: 24.0,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Weather Report',
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontSize: 16.0),
-            ),
-          ],
-        ));
-  }
+        const SizedBox(width: 8),
+        Text(
+          _isWeatherSpeaking ? 'Stop Weather' : 'Weather Report',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontSize: 16.0,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   ElevatedButton _buildNewsButton(BuildContext context) {
     return ElevatedButton(
