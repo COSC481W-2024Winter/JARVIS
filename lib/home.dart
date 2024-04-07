@@ -18,13 +18,14 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
   String _gptResponse = "";
   String weatherCondition = "";
   String temperature = "";
+  bool _isSpeaking = false; // flag to check if the text is being spoken
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 8),
           Text(
             'Email Categorization',
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
           ),
         ],
       ),
@@ -108,68 +110,87 @@ class _HomeScreenState extends State<HomeScreen> {
   // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async {
-        //WeatherService().fetchWeather('Ypsilanti');
-        // This currently prints the weather to the console. Later, you can update the UI accordingly.
-        final weatherData = await WeatherService().fetchWeather('Ypsilanti');
-        setState(() {
-          // Assuming fetchWeather returns a string like "Cloudy, 23°C"
-          // You'll need to adjust based on your actual return type and format
-          List<String> parts = weatherData.split(" ");
-          weatherCondition = parts[6];
-          temperature = parts[12];
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        shadowColor: Theme.of(context).colorScheme.shadow,
-        elevation: 7,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.cloud,
-            size: 24.0,
-            color: Theme.of(context).colorScheme.secondary,
-          ),
-          const SizedBox(width: 8),
-           Text(
-        'Weather Report',
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
-      ),
-        ],)
-    );
+        onPressed: () async {
+          //WeatherService().fetchWeather('Ypsilanti');
+          // This currently prints the weather to the console. Later, you can update the UI accordingly.
+          final weatherData = await WeatherService().fetchWeather('Ypsilanti');
+          setState(() {
+            // Assuming fetchWeather returns a string like "Cloudy, 23°C"
+            // You'll need to adjust based on your actual return type and format
+            List<String> parts = weatherData.split(" ");
+            weatherCondition = parts[6];
+            temperature = parts[12];
+          });
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          shadowColor: Theme.of(context).colorScheme.shadow,
+          elevation: 7,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.cloud,
+              size: 24.0,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Weather Report',
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 16.0),
+            ),
+          ],
+        ));
   }
 
-ElevatedButton _buildNewsButton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int? lastClickTime = prefs.getInt('lastClickTime');
-      int currentTime = DateTime.now().millisecondsSinceEpoch;
+  ElevatedButton _buildNewsButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        int? lastClickTime = prefs.getInt('lastClickTime');
+        int currentTime = DateTime.now().millisecondsSinceEpoch;
 
-      if (lastClickTime != null && currentTime - lastClickTime < 3600000) {
-        // If the button was clicked within the last hour, speak the previously summarized content
-        String? lastSummarizedContent = prefs.getString('lastSummarizedContent');
-        if (lastSummarizedContent != null) {
-          text_to_speech().speak(lastSummarizedContent);
+        if (_isSpeaking) {
+          // if speaking, stop
+          await text_to_speech().stop();
+          setState(() {
+            _isSpeaking = false;
+          });
+        } else {
+          // if not speaking, start
+          if (lastClickTime != null && currentTime - lastClickTime < 3600000) {
+            // if clicked within the past hour, read the last summarized content
+            String? lastSummarizedContent =
+                prefs.getString('lastSummarizedContent');
+            if (lastSummarizedContent != null) {
+              text_to_speech().speak(lastSummarizedContent);
+              setState(() {
+                _isSpeaking = true;
+              });
+            }
+          } else {
+            // if clicked more than an hour ago, summarize the latest news
+            final newsContents = await news_service().getTopNews();
+            String contents = await text_to_gpt_service()
+                .send_to_GPT(newsContents.join('\n'), "news");
+            print('Content: $contents');
+            text_to_speech().speak(contents);
+            setState(() {
+              _isSpeaking = true;
+            });
+
+            // save the current time and summarized content
+            await prefs.setInt('lastClickTime', currentTime);
+            await prefs.setString('lastSummarizedContent', contents);
+          }
         }
-      } else {
-        // If the button wasn't clicked within the last hour, get new news and summarize it
-        final newsContents = await news_service().getTopNews();
-        String contents = await text_to_gpt_service().send_to_GPT(newsContents.join('\n'), "news");
-        print('Content: $contents');
-        text_to_speech().speak(contents);
-
-        // Save the current time and the summarized content
-        await prefs.setInt('lastClickTime', currentTime);
-        await prefs.setString('lastSummarizedContent', contents);
-      }
-    },
-    style: ElevatedButton.styleFrom(
+      },
+      style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         shadowColor: Theme.of(context).colorScheme.shadow,
@@ -185,13 +206,15 @@ ElevatedButton _buildNewsButton(BuildContext context) {
             color: Theme.of(context).colorScheme.secondary,
           ),
           const SizedBox(width: 8),
-           Text(
-        'News Summary',
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
+          Text(
+            'News Summary',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
+          ),
+        ],
       ),
-        ],)
-  );
-}
+    );
+  }
 
   Center _buildBody(BuildContext context) {
     return Center(
@@ -309,5 +332,29 @@ ElevatedButton _buildNewsButton(BuildContext context) {
   void _navigateToSettings(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const Setting()));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // This method is called when the app is paused or resumed
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // stop speech to text when app is paused
+      text_to_speech().stop();
+      setState(() {
+        _isSpeaking = false;
+      });
+    }
   }
 }
