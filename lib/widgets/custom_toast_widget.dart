@@ -16,12 +16,12 @@ class ToastWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: Colors.grey[600],
+        color: Theme.of(context).colorScheme.tertiary,
       ),
       child: Text(
         message,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.secondary,
           fontSize: 16.0, // Adjust the font size here
           decoration: TextDecoration.none,
         ),
