@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.person, color: const Color(0xFF8FA5FD)),
+      icon: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
       iconSize: 40,
       onPressed: () => _navigateToProfileScreen(context),
     );
@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton _buildSettingsButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.settings, color: const Color(0xFF8FA5FD)),
+      icon: Icon(Icons.settings, color: Theme.of(context).colorScheme.primary),
       iconSize: 40,
       onPressed: () => _navigateToSettings(context),
     );
@@ -81,9 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return ElevatedButton(
       onPressed: () => _navigateToEmailCategorizationScreen(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        shadowColor: Color.fromRGBO(255, 255, 255, 1),
+        shadowColor: Theme.of(context).colorScheme.shadow,
         elevation: 7,
       ),
       child: Row(
@@ -93,12 +93,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Icon(
             Icons.mail,
             size: 24.0,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.secondary,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             'Email Categorization',
-            style: TextStyle(color: Colors.white, fontSize: 16.0),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
           ),
         ],
       ),
@@ -121,17 +121,26 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD), // Adjust the color as needed
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        elevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        elevation: 7,
       ),
-      child: const Text(
-        'Weather',
-        style: TextStyle(color: Colors.white, fontSize: 16.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.cloud,
+            size: 24.0,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(width: 8),
+           Text(
+        'Weather Report',
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
       ),
+        ],)
     );
   }
 
@@ -161,15 +170,26 @@ ElevatedButton _buildNewsButton(BuildContext context) {
       }
     },
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF8FA5FD),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      shadowColor: Color.fromRGBO(255, 255, 255, 1),
-      elevation: 7,
-    ),
-    child: Text(
-      'News Summary',
-      style: TextStyle(color: Colors.white, fontSize: 16.0),
-    ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        elevation: 7,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.newspaper,
+            size: 24.0,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(width: 8),
+           Text(
+        'News Summary',
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
+      ),
+        ],)
   );
 }
 
@@ -198,7 +218,7 @@ ElevatedButton _buildNewsButton(BuildContext context) {
   IconButton _buildMicrophoneButton() {
     return IconButton(
       icon: Icon(speechToText.isListening ? Icons.mic : Icons.mic_none,
-          size: 50.0, color: const Color(0xFF8FA5FD)),
+          size: 50.0, color: Theme.of(context).colorScheme.primary),
       onPressed: speechToText.isListening ? _stopListening : _startListening,
     );
   }

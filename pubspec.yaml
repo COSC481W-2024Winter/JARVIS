@@ -70,3 +70,5 @@ flutter:
     - assets/dash.png
     - .env
     - assets/data/uncategorized_emails_10.json
+    - assets/appLogo.png
+    - assets/appLogoTransparent.png

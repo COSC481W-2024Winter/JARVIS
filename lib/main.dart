@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/firebase_options.dart';
 import 'auth_gate.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jarvis/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +13,9 @@ void main() async {
     options: await DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(create: (context) => ThemeProvider(),
+  child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,8 +23,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: AuthGate(),
+      theme: Provider.of<ThemeProvider>(context).themeData, //MaterialApp cannot be constant or else the theme cannot be used
     );
   }
 }
