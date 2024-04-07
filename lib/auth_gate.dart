@@ -25,7 +25,7 @@ class AuthGate extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.asset('assets/Icon-192 copy.png'),
+                  child: Image.asset('assets/appLogoTransparent.png'),
                 ),
               );
             },
@@ -38,11 +38,11 @@ class AuthGate extends StatelessWidget {
               );
             },
             footerBuilder: (context, action) {
-              return const Padding(
+              return Padding(
                 padding: EdgeInsets.only(top: 16),
                 child: Text(
                   'By signing in, you agree to our terms and conditions.',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
               );
             },
@@ -51,7 +51,7 @@ class AuthGate extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.asset('assets/Icon-192 copy.png'),
+                  child: Image.asset('assets/appLogo.png'),
                 ),
               );
             },
