@@ -10,8 +10,6 @@ import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
 import 'package:jarvis/backend/news_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -221,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             String? lastSummarizedContent =
                 prefs.getString('lastSummarizedContent');
             if (lastSummarizedContent != null) {
-              text_to_speech().speak(lastSummarizedContent);
+              text_to_speech().speak(lastSummarizedContent, _selectedLanguage);
               setState(() {
                 _isSpeaking = true;
               });
@@ -232,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             String contents = await text_to_gpt_service()
                 .send_to_GPT(newsContents.join('\n'), "news");
             print('Content: $contents');
-            text_to_speech().speak(contents);
+            text_to_speech().speak(contents, _selectedLanguage);
             setState(() {
               _isSpeaking = true;
             });

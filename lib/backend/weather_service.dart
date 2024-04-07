@@ -23,20 +23,23 @@ class WeatherService {
       desiredAccuracy: LocationAccuracy.low,
     );
 
-    final url = 'https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey&units=imperial';
+    final url =
+        'https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$apiKey&units=imperial';
     final response = await this.client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final weatherSummary = processWeatherData(data, city);
-      
+      final weatherSummary = processWeatherData(data);
+
       // Use the Text to Speech service to read out the weather summary
-      await this.tts.speak(weatherSummary , Language.english);
+      await this.tts.speak(weatherSummary, Language.english);
       return weatherSummary;
     } else {
-      print('Failed to fetch weather data. Status code: ${response.statusCode}');
+      print(
+          'Failed to fetch weather data. Status code: ${response.statusCode}');
       return 'Failed to fetch weather data.';
     }
+  }
 
   Future<Position> _determinePosition() async {
     LocationPermission permission;
@@ -50,7 +53,8 @@ class WeatherService {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
     }
 
     return await Geolocator.getCurrentPosition();

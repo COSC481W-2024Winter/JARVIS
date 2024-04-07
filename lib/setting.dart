@@ -5,10 +5,8 @@ import 'widgets/customButton.dart';
 import 'package:jarvis/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class Setting extends StatelessWidget {
   const Setting({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +31,7 @@ class Setting extends StatelessWidget {
             },
           ),
 
-           const SizedBox(height: 30),
+          const SizedBox(height: 30),
 
           // Language button
           CustomButton(
@@ -83,22 +81,20 @@ class Setting extends StatelessWidget {
     );
   }
 
- void _navigateToVolumeScreen(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MyAppp()));
+  void _navigateToVolumeScreen(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MyAppp()));
+  }
 
   // Builds the app bar for the settings screen
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+        icon: Icon(Icons.arrow_back,
+            color: Theme.of(context).colorScheme.primary),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: const Text('Settings'),
       centerTitle: true,
     );
-
   }
 }
-
-
