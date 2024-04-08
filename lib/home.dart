@@ -123,9 +123,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         await WeatherService().requestLocationPermission();
         final weatherData = await WeatherService().fetchWeather();
         setState(() {
-          List<String> parts = weatherData.split(" ");
-          weatherCondition = parts[6];
-          temperature = parts[11];
+          weatherCondition = weatherData['condition']!;
+          temperature = weatherData['temperature']!;
           _isWeatherSpeaking = true;
         });
       }
