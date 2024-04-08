@@ -8,6 +8,10 @@ import 'package:jarvis/setting.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
+import 'package:jarvis/backend/news_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,13 +20,15 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
   String _wordsSpoken = "";
   String _gptResponse = "";
   String weatherCondition = "";
   String temperature = "";
+  bool _isSpeaking = false; // flag to check if the text is being spoken
+  bool _isWeatherSpeaking = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.person, color: const Color(0xFF8FA5FD)),
+      icon: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
       iconSize: 40,
       onPressed: () => _navigateToProfileScreen(context),
     );
@@ -69,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   IconButton _buildSettingsButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.settings, color: const Color(0xFF8FA5FD)),
+      icon: Icon(Icons.settings, color: Theme.of(context).colorScheme.primary),
       iconSize: 40,
       onPressed: () => _navigateToSettings(context),
     );
@@ -79,9 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return ElevatedButton(
       onPressed: () => _navigateToEmailCategorizationScreen(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        shadowColor: Color.fromRGBO(255, 255, 255, 1),
+        shadowColor: Theme.of(context).colorScheme.shadow,
         elevation: 7,
       ),
       child: Row(
@@ -91,12 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Icon(
             Icons.mail,
             size: 24.0,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.secondary,
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             'Email Categorization',
-            style: TextStyle(color: Colors.white, fontSize: 16.0),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
           ),
         ],
       ),
@@ -105,30 +112,116 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        //WeatherService().fetchWeather('Ypsilanti');
-        // This currently prints the weather to the console. Later, you can update the UI accordingly.
-        final weatherData = await WeatherService().fetchWeather('Ypsilanti');
+  return ElevatedButton(
+    onPressed: () async {
+      if (_isWeatherSpeaking) {
+        await WeatherService().stopSpeaking();
         setState(() {
-          // Assuming fetchWeather returns a string like "Cloudy, 23°C"
-          // You'll need to adjust based on your actual return type and format
+          _isWeatherSpeaking = false;
+        });
+      } else {
+        await WeatherService().requestLocationPermission();
+        final weatherData = await WeatherService().fetchWeather();
+        setState(() {
           List<String> parts = weatherData.split(" ");
           weatherCondition = parts[6];
-          temperature = parts[12];
+          temperature = parts[11];
+          _isWeatherSpeaking = true;
         });
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      elevation: 7,
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.cloud,
+          size: 24.0,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          _isWeatherSpeaking ? 'Stop Weather' : 'Weather Report',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontSize: 16.0,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+  ElevatedButton _buildNewsButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        int? lastClickTime = prefs.getInt('lastClickTime');
+        int currentTime = DateTime.now().millisecondsSinceEpoch;
+
+        if (_isSpeaking) {
+          // if speaking, stop
+          await text_to_speech().stop();
+          setState(() {
+            _isSpeaking = false;
+          });
+        } else {
+          // if not speaking, start
+          if (lastClickTime != null && currentTime - lastClickTime < 3600000) {
+            // if clicked within the past hour, read the last summarized content
+            String? lastSummarizedContent =
+                prefs.getString('lastSummarizedContent');
+            if (lastSummarizedContent != null) {
+              text_to_speech().speak(lastSummarizedContent);
+              setState(() {
+                _isSpeaking = true;
+              });
+            }
+          } else {
+            // if clicked more than an hour ago, summarize the latest news
+            final newsContents = await news_service().getTopNews();
+            String contents = await text_to_gpt_service()
+                .send_to_GPT(newsContents.join('\n'), "news");
+            print('Content: $contents');
+            text_to_speech().speak(contents);
+            setState(() {
+              _isSpeaking = true;
+            });
+
+            // save the current time and summarized content
+            await prefs.setInt('lastClickTime', currentTime);
+            await prefs.setString('lastSummarizedContent', contents);
+          }
+        }
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD), // Adjust the color as needed
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        elevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        elevation: 7,
       ),
-      child: const Text(
-        'Weather',
-        style: TextStyle(color: Colors.white, fontSize: 16.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.newspaper,
+            size: 24.0,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'News Summary',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary, fontSize: 16.0),
+          ),
+        ],
       ),
     );
   }
@@ -142,10 +235,13 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20),
           _buildMicrophoneButton(),
           _buildTranscriptionText(),
+          const SizedBox(height: 40),
           _buildEmailCategorizationButton(context),
           const SizedBox(height: 40),
+          _buildNewsButton(context),
+          const SizedBox(height: 40),
           _buildWeatherButton(context),
-          const SizedBox(height: 20), // Adjust spacing as needed
+          const SizedBox(height: 10), // Adjust spacing as needed
           _displayWeather(), // Display the weather data
         ],
       ),
@@ -155,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
   IconButton _buildMicrophoneButton() {
     return IconButton(
       icon: Icon(speechToText.isListening ? Icons.mic : Icons.mic_none,
-          size: 50.0, color: const Color(0xFF8FA5FD)),
+          size: 50.0, color: Theme.of(context).colorScheme.primary),
       onPressed: speechToText.isListening ? _stopListening : _startListening,
     );
   }
@@ -246,5 +342,29 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigateToSettings(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const Setting()));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // This method is called when the app is paused or resumed
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // stop speech to text when app is paused
+      text_to_speech().stop();
+      setState(() {
+        _isSpeaking = false;
+      });
+    }
   }
 }

@@ -80,12 +80,11 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Colors.white),
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      title: Text('Email Categorization'),
+      title: const Text('Email Categorization'),
       centerTitle: true,
-      backgroundColor: Color(0xFF8FA5FD),
     );
   }
 
@@ -96,28 +95,30 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildGenerateSummariesButton(),
-          SizedBox(height: 20),
-          _buildClearSummariesButton(),
-          SizedBox(height: 40),
+          SizedBox(height: 30),
+          
           _buildCategoryButton(
             'Company Business/Strategy',
             'emails_companyBusinessStrategy',
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 30),
           _buildCategoryButton(
             'Logistic Arrangements',
             'emails_logisticArrangements',
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 30),
           _buildCategoryButton(
             'Purely Personal',
             'emails_purelyPersonal',
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 30),
           _buildCategoryButton(
-            'Document Editing/Checking/Collaboration',
+            'Documents and Collaboration',
             'emails_documentEditingCheckingCollaboration',
           ),
+          SizedBox(height: 30),
+          _buildClearSummariesButton(),
+          
         ],
       ),
     );
@@ -128,16 +129,16 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return ElevatedButton(
       onPressed: _isProcessing ? null : () => _showEmailCountDialog(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8FA5FD),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
         elevation: 7,
       ),
-      child: const Text(
+      child: Text(
         'Generate Summaries',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
       ),
     );
   }
@@ -147,7 +148,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return ElevatedButton(
       onPressed: () => _showClearSummariesConfirmationDialog(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
+        backgroundColor: Theme.of(context).colorScheme.error,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
@@ -156,7 +157,7 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       ),
       child: Text(
         'Clear Summaries',
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16),
       ),
     );
   }
@@ -167,16 +168,17 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return ElevatedButton(
       onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: hasData ? Color(0xFF8FA5FD) : Colors.grey,
+        backgroundColor: hasData ? Theme.of(context).colorScheme.primary : Colors.grey,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
         elevation: 5,
+        fixedSize: const Size(300,60),
       ),
       child: Text(
         label,
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16),
       ),
     );
   }
@@ -449,7 +451,9 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
           builder: (context, setState) {
             return AlertDialog(
               title: const Text('Summary'),
-              content: Text(summary),
+              content: SingleChildScrollView(
+                child: Text(summary),
+              ),
               actions: [
                 IconButton(
                   icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),

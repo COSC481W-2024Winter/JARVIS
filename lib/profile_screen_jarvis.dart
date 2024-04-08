@@ -153,12 +153,12 @@ class _EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    
 
     return UniversalIconButton(
       materialIcon: isEditing ? Icons.check : Icons.edit,
       cupertinoIcon: isEditing ? CupertinoIcons.check_mark : CupertinoIcons.pen,
-      color: theme.colorScheme.secondary,
+      color: Theme.of(context).colorScheme.primary,
       onPressed: () {
         onPressed?.call();
       },

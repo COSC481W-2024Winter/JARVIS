@@ -9,9 +9,6 @@ class text_to_gpt_service {
   static const String _apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   Future<String> send_to_GPT(String wordsSpoken, String type) async {
-    print('Sending to ChatGPT: $wordsSpoken');
-    print('Type: $type');
-
     if (wordsSpoken.isEmpty) return '';
 
     var headers = {
@@ -48,9 +45,16 @@ class text_to_gpt_service {
         "max_tokens": 100,
         "temperature": 0.7,
       });
-    } else {
-      //other types of messages
-      return '';
+    } else if(type == "news") {
+      body = json.encode({
+        "model": "gpt-3.5-turbo-16k",
+        "messages": [
+          {"role": "system", "content": "Your job is to summarize the news content into one or two sentences, don’t analyze anything, just summarize it"},
+          {"role": "user", "content": wordsSpoken}
+        ],
+        "max_tokens": 100,
+        "temperature": 0.7,
+      });
     }
 
     var response =

@@ -13,6 +13,9 @@ dependencies:
     sdk: flutter
   firebase_core: ^2.24.2
   firebase_auth: ^4.17.4
+  geolocator: ^11.0.0
+
+  permission_handler: ^11.3.1
 
   flutter_dotenv: ^5.1.0 #for .env file
 
@@ -28,6 +31,7 @@ dependencies:
   firebase_ui_auth: ^1.13.0
   google_sign_in: ^6.2.1
   firebase_ui_oauth_google: ^1.3.0
+  provider: ^6.1.2
 
   speech_to_text: ^6.6.0 #for speech to text
 
@@ -69,3 +73,5 @@ flutter:
     - assets/dash.png
     - .env
     - assets/data/uncategorized_emails_10.json
+    - assets/appLogo.png
+    - assets/appLogoTransparent.png
