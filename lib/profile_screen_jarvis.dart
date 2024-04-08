@@ -812,6 +812,21 @@ class ProfileScreenJarvis extends MultiProviderScreen {
     final ageController = state.ageController;
     final storyController = state.storyController;
 
+    storyController.addListener(() {
+      var numOfWords = storyController.text
+          .split(' ')
+          .where((word) => word.isNotEmpty)
+          .length;
+      if (numOfWords > 25) {
+        // If the number of words is more than 30, remove the last word
+        List<String> words = storyController.text.split(' ');
+        words.removeLast();
+        storyController.text = words.join(' ');
+        storyController.selection = TextSelection.fromPosition(
+            TextPosition(offset: storyController.text.length));
+      }
+    });
+
     final isCupertino = CupertinoUserInterfaceLevel.maybeOf(context) != null;
     final providersScopeKey = RebuildScopeKey();
     final mfaScopeKey = RebuildScopeKey();
@@ -852,6 +867,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         const SizedBox(height: 10),
         // Full name text field
         TextField(
+          inputFormatters: [LengthLimitingTextInputFormatter(20)],
           controller: fullNameController,
           decoration: const InputDecoration(
             labelText: 'Full Name',
@@ -872,6 +888,8 @@ class ProfileScreenJarvis extends MultiProviderScreen {
 
         // Age text field
         TextField(
+          inputFormatters: [LengthLimitingTextInputFormatter(2)],
+          keyboardType: TextInputType.number,
           controller: ageController,
           decoration: const InputDecoration(
             labelText: 'Age',
@@ -917,80 +935,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
             await state.saveData();
           },
         ),
-
-        RebuildScope(
-          builder: (context) {
-            final user = auth.currentUser!;
-            final linkedProviders = getLinkedProviders(user);
-
-            if (linkedProviders.isEmpty) {
-              return const SizedBox.shrink();
-            }
-
-            return Padding(
-              padding: const EdgeInsets.only(top: 32),
-              child: _LinkedProvidersRow(
-                auth: auth,
-                providers: linkedProviders,
-                onProviderUnlinked: providersScopeKey.rebuild,
-                showUnlinkConfirmationDialog: showUnlinkConfirmationDialog,
-              ),
-            );
-          },
-          scopeKey: providersScopeKey,
-        ),
-
-        RebuildScope(
-          builder: (context) {
-            final user = auth.currentUser!;
-            final availableProviders = getAvailableProviders(context, user);
-
-            if (availableProviders.isEmpty) {
-              return const SizedBox.shrink();
-            }
-
-            return Padding(
-              padding: const EdgeInsets.only(top: 32),
-              child: _AvailableProvidersRow(
-                auth: auth,
-                providers: availableProviders,
-                onProviderLinked: providersScopeKey.rebuild,
-              ),
-            );
-          },
-          scopeKey: providersScopeKey,
-        ),
-        if (showMFATile)
-          RebuildScope(
-            builder: (context) {
-              final user = auth.currentUser!;
-              final mfa = user.multiFactor;
-
-              return FutureBuilder<List<fba.MultiFactorInfo>>(
-                future: mfa.getEnrolledFactors(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final enrolledFactors = snapshot.requireData;
-
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: _MFABadge(
-                      providers: providers,
-                      enrolled: enrolledFactors.isNotEmpty,
-                      auth: auth,
-                      onToggled: mfaScopeKey.rebuild,
-                    ),
-                  );
-                },
-              );
-            },
-            scopeKey: mfaScopeKey,
-          ),
-        ...children,
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         SignOutButton(
           auth: auth,
           variant: ButtonVariant.outlined,
