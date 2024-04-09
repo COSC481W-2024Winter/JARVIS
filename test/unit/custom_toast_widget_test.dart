@@ -15,20 +15,39 @@ void main() {
     expect(find.text(testMessage), findsOneWidget);
   });
 
-  testWidgets('ToastWidget respects duration', (WidgetTester tester) async {
-    const testMessage = 'Test Message';
-    const testDuration = Duration(seconds: 3);
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: ToastWidget(message: testMessage, duration: testDuration),
+testWidgets('showToast respects duration', (WidgetTester tester) async {
+  const testMessage = 'Test Message';
+  const testDuration = Duration(seconds: 3);
+
+  await tester.pumpWidget(MaterialApp(
+    home: Scaffold(
+      body: Builder(
+        builder: (BuildContext context) {
+          return GestureDetector(
+            onTap: () {
+              showToast(context, testMessage, duration: testDuration);
+            },
+            child: const Text('Show Toast'),
+          );
+        },
       ),
-    ));
+    ),
+  ));
 
-    // Initially, we should find the widget
-    expect(find.byType(ToastWidget), findsOneWidget);
+  // Initially, the ToastWidget should not be present
+  expect(find.byType(ToastWidget), findsNothing);
 
-    // After the duration, it should be gone
-    await tester.pumpAndSettle(testDuration);
-    expect(find.byType(ToastWidget), findsNothing);
-  });
+  // Tap the button to show the toast
+  await tester.tap(find.text('Show Toast'));
+  await tester.pumpAndSettle();
+
+  // After tapping, the ToastWidget should be present
+  expect(find.byType(ToastWidget), findsOneWidget);
+
+  // Wait for the toast duration
+  await tester.pumpAndSettle(testDuration);
+
+  // After the duration, the ToastWidget should be gone
+  expect(find.byType(ToastWidget), findsNothing);
+});
 }
