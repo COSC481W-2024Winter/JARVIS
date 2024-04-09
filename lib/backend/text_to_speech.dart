@@ -7,12 +7,18 @@ class text_to_speech {
       : flutterTts = flutterTts ?? FlutterTts();
 
   Future<void> speak(String text) async {
-    await flutterTts.setLanguage("en-US");
-    await flutterTts.setPitch(1.0);
     await flutterTts.speak(text);
   }
 
   Future<void> stop() async {
     await flutterTts.stop();
+  }
+
+  Future<void> setLanguage(String language) async {
+    await flutterTts.setLanguage(language);
+  }
+
+  Future<void> setPitch(double pitch) async {
+    await flutterTts.setPitch(pitch);
   }
 }
