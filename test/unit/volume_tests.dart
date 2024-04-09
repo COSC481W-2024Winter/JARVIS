@@ -42,5 +42,36 @@ void main() {
 
   });
 
+  //test dispose method
+  testWidgets('Volume Slider should say 0.0', (WidgetTester tester) async {
+    // Create a mock volume controller
+    final volumeController = MockVolumeController();
+
+    // Stub the setVolume method to do nothing
+    when(volumeController.setVolume(0.0)).thenReturn(null);
+
+    // Build the widget tree
+    await tester.pumpWidget(MaterialApp(home: MyAppp()));
+
+    // Check that the 'go back' button does something
+    await tester.tap(find.text('Go Back'));
+    await tester.pump();
+
+    // Check that the 'mute' button does something
+    await tester.tap(find.text('Mute'));
+    await tester.pump();
+
+
+
+
+
+  });
+
+
+
+
+
+
+
   
 }

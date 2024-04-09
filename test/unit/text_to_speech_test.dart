@@ -15,39 +15,54 @@ void main() {
     textToSpeech = text_to_speech(flutterTts: mockFlutterTts);
   });
 
-  test('TextToSpeech speak method should set language correctly for English', () async {
-    when(mockFlutterTts.setLanguage("en-US")).thenAnswer((_) => Future.value(0));
+  //make tests for speak method
+  test('TextToSpeech speak method should call speak method from FlutterTts', () async {
     when(mockFlutterTts.speak("Hello, world!")).thenAnswer((_) => Future.value(0));
-    when(mockFlutterTts.setPitch(1.0)).thenAnswer((_) => Future.value(0));
-
-    await textToSpeech.speak('Hello, world!', Language.english);
-
-    verify(mockFlutterTts.setLanguage("en-US")).called(1);
+    await textToSpeech.speak('Hello, world!');
     verify(mockFlutterTts.speak("Hello, world!")).called(1);
-    verify(mockFlutterTts.setPitch(1.0)).called(1);
-  });
 
-  test('TextToSpeech speak method should set language correctly for Spanish', () async {
-    when(mockFlutterTts.setLanguage("es-ES")).thenAnswer((_) => Future.value(0));
     when(mockFlutterTts.speak("Hola, mundo!")).thenAnswer((_) => Future.value(0));
-    when(mockFlutterTts.setPitch(1.0)).thenAnswer((_) => Future.value(0));
-
-    await textToSpeech.speak('Hola, mundo!', Language.spanish);
-
-    verify(mockFlutterTts.setLanguage("es-ES")).called(1);
+    await textToSpeech.speak('Hola, mundo!');
     verify(mockFlutterTts.speak("Hola, mundo!")).called(1);
-    verify(mockFlutterTts.setPitch(1.0)).called(1);
+
+    when(mockFlutterTts.speak("你好，世界！")).thenAnswer((_) => Future.value(0));
+    await textToSpeech.speak('你好，世界！');
+    verify(mockFlutterTts.speak("你好，世界！")).called(1);
   });
 
-  test('TextToSpeech speak method should set language correctly for Chinese', () async {
+  //make tests for setLanguage and setPitch methods
+  test('TextToSpeech setLanguage method should call setLanguage method from FlutterTts', () async {
+    when(mockFlutterTts.setLanguage("en-US")).thenAnswer((_) => Future.value(0));
+    await textToSpeech.setLanguage('en-US');
+    verify(mockFlutterTts.setLanguage("en-US")).called(1);
+
+    when(mockFlutterTts.setLanguage("es-ES")).thenAnswer((_) => Future.value(0));
+    await textToSpeech.setLanguage('es-ES');
+    verify(mockFlutterTts.setLanguage("es-ES")).called(1);
+
     when(mockFlutterTts.setLanguage("zh-CN")).thenAnswer((_) => Future.value(0));
-    when(mockFlutterTts.speak("你好，世界！")).thenAnswer((_) => Future.value(0));
-    when(mockFlutterTts.setPitch(1.0)).thenAnswer((_) => Future.value(0));
-
-    await textToSpeech.speak('你好，世界！', Language.chinese);
-
+    await textToSpeech.setLanguage('zh-CN');
     verify(mockFlutterTts.setLanguage("zh-CN")).called(1);
-    verify(mockFlutterTts.speak("你好，世界！")).called(1);
+  });
+
+  test('TextToSpeech setPitch method should call setPitch method from FlutterTts', () async {
+    when(mockFlutterTts.setPitch(1.0)).thenAnswer((_) => Future.value(0));
+    await textToSpeech.setPitch(1.0);
     verify(mockFlutterTts.setPitch(1.0)).called(1);
+
+    when(mockFlutterTts.setPitch(0.5)).thenAnswer((_) => Future.value(0));
+    await textToSpeech.setPitch(0.5);
+    verify(mockFlutterTts.setPitch(0.5)).called(1);
+
+    when(mockFlutterTts.setPitch(2.0)).thenAnswer((_) => Future.value(0));
+    await textToSpeech.setPitch(2.0);
+    verify(mockFlutterTts.setPitch(2.0)).called(1);
+  });
+
+  //make tests for stop method
+  test('TextToSpeech stop method should call stop method from FlutterTts', () async {
+    when(mockFlutterTts.stop()).thenAnswer((_) => Future.value(0));
+    await textToSpeech.stop();
+    verify(mockFlutterTts.stop()).called(1);
   });
 }

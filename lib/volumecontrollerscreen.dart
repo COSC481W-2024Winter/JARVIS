@@ -67,6 +67,18 @@ class _MyAppState extends State<MyAppp> {
               },
               child: Text('Go Back'),
             ),
+
+            // Show system UI
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Show system UI:${VolumeController().showSystemUI}'),
+                TextButton(
+                  onPressed: () => setState(() => VolumeController().showSystemUI = !VolumeController().showSystemUI),
+                  child: Text('Show/Hide UI'),
+                )
+              ],
+            ),
           ],
         ),
       ),

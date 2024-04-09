@@ -10,6 +10,8 @@ import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
 import 'package:jarvis/backend/news_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,17 +23,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final GoogleSignInService signInService = GoogleSignInService();
   final SpeechToText speechToText = SpeechToText();
-  final text_to_speech tts = text_to_speech();
   String _wordsSpoken = "";
   String _gptResponse = "";
   String weatherCondition = "";
   String temperature = "";
-
-  Language _selectedLanguage = Language.english;
-
   bool _isSpeaking = false; // flag to check if the text is being spoken
   bool _isWeatherSpeaking = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,52 +53,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildLanguageSelector() {
-    return DropdownButton<Language>(
-      value: _selectedLanguage,
-      onChanged: (Language? language) {
-        if (language != null) {
-          setState(() {
-            _selectedLanguage = language;
-          });
-        }
-      },
-      items: const [
-        DropdownMenuItem<Language>(
-          value: Language.english,
-          child: Text('English'),
-        ),
-        DropdownMenuItem<Language>(
-          value: Language.spanish,
-          child: Text('Spanish'),
-        ),
-        DropdownMenuItem<Language>(
-          value: Language.chinese,
-          child: Text('Chinese'),
-        ),
+// Example widget method to display weather data
+  Widget _displayWeather() {
+    if (weatherCondition.isEmpty)
+      return SizedBox.shrink(); // Don't display if no data
+    return Column(
+      children: [
+        Text(temperature, style: TextStyle(fontSize: 16)),
+        Text(weatherCondition, style: TextStyle(fontSize: 16)),
       ],
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text('Welcome!', style: Theme.of(context).textTheme.displaySmall),
-          const SizedBox(height: 20),
-          _buildLanguageSelector(),
-          const SizedBox(height: 20),
-          _buildMicrophoneButton(),
-          _buildTranscriptionText(),
-          _buildEmailCategorizationButton(context),
-          const SizedBox(height: 40),
-          _buildWeatherButton(context),
-          const SizedBox(height: 20), // Adjust spacing as needed
-          _displayWeather(), // Display the weather data
-          const SizedBox(height: 20),
-        ],
-      ),
     );
   }
 
@@ -150,8 +110,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
-
   return ElevatedButton(
     onPressed: () async {
       if (_isWeatherSpeaking) {
@@ -162,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       } else {
         await WeatherService().requestLocationPermission();
         final weatherData = await WeatherService().fetchWeather();
-
         setState(() {
           weatherCondition = weatherData['condition']!;
           temperature = weatherData['temperature']!;
@@ -218,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             String? lastSummarizedContent =
                 prefs.getString('lastSummarizedContent');
             if (lastSummarizedContent != null) {
-              text_to_speech().speak(lastSummarizedContent, _selectedLanguage);
+              text_to_speech().speak(lastSummarizedContent);
               setState(() {
                 _isSpeaking = true;
               });
@@ -229,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             String contents = await text_to_gpt_service()
                 .send_to_GPT(newsContents.join('\n'), "news");
             print('Content: $contents');
-            text_to_speech().speak(contents, _selectedLanguage);
+            text_to_speech().speak(contents);
             setState(() {
               _isSpeaking = true;
             });
@@ -241,12 +200,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         }
       },
       style: ElevatedButton.styleFrom(
-
         backgroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         shadowColor: Theme.of(context).colorScheme.shadow,
         elevation: 7,
-
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -268,9 +225,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Center _displayWeather() {
-    if (weatherCondition.isEmpty)
-      return Center(); // Don't display if no data
+  Center _buildBody(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -286,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           const SizedBox(height: 40),
           _buildWeatherButton(context),
           const SizedBox(height: 10), // Adjust spacing as needed
-          // _displayWeather(), // Display the weather data
+          _displayWeather(), // Display the weather data
         ],
       ),
     );
@@ -361,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       _wordsSpoken = "";
     });
 
-    tts.speak(generatedText, _selectedLanguage);
+    text_to_speech().speak(generatedText);
   }
 
   void _navigateToProfileScreen(BuildContext context) {
@@ -411,5 +366,4 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       });
     }
   }
-
 }
