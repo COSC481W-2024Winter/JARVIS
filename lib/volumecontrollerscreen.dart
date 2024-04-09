@@ -72,7 +72,7 @@ class _MyAppState extends State<MyAppp> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Show system UI:${VolumeController().showSystemUI}'),
+                //Text('Show system UI:${VolumeController().showSystemUI}'),
                 TextButton(
                   onPressed: () => setState(() => VolumeController().showSystemUI = !VolumeController().showSystemUI),
                   child: Text('Show/Hide UI'),

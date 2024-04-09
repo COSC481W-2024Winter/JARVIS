@@ -81,17 +81,15 @@ class _SettingState extends State<Setting> {
                   onChanged: (String? newValue) {
                     _setLanguage(newValue!);
                   },
-                  items: <String>['en-US', 'es-ES', 'zh-CN']
+                  items: <String>['en-US', 'es-ES']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(value == 'en-US'
-                            ? 'English'
-                            : value == 'es-ES'
-                                ? 'Spanish'
-                                : 'Chinese'),
+                            ? 'English' : 'Spanish'
+                            ),
                       ),
                     );
                   }).toList(),
@@ -137,6 +135,8 @@ class _SettingState extends State<Setting> {
             ),
           ),
 
+          const SizedBox(height: 30),
+
           // Volume button with same design as the dropdowns
           const SizedBox(height: 30),
           Container(
@@ -151,7 +151,12 @@ class _SettingState extends State<Setting> {
                 onPressed: () {
                   _navigateToVolumeScreen(context);
                 },
-                child: const Text('Volume'),
+                child: 
+                const Text(
+            'Volume',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+                //const Text('Volume'),
               ),
             ),
           ),
