@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jarvis/volumecontrollerscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class Setting extends StatefulWidget {
   const Setting({super.key});
@@ -13,11 +14,25 @@ class Setting extends StatefulWidget {
 class _SettingState extends State<Setting> {
   String _selectedLanguage = 'en-US';
   double _selectedPitch = 1.0;
+  double _volumeListenerValue = 0;
+  double _getVolume = 0;
+  double _setVolumeValue = 0;
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    VolumeController().listener((volume) {
+      setState(() => _volumeListenerValue = volume);
+    });
+
+    VolumeController().getVolume().then((volume) => _setVolumeValue = volume);
+  }
+
+  @override
+  void dispose() {
+    VolumeController().removeListener();
+    super.dispose();
   }
 
   Future<void> _loadSettings() async {
@@ -69,7 +84,7 @@ class _SettingState extends State<Setting> {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.blue, width: 2),
+              border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: SizedBox(
@@ -108,7 +123,7 @@ class _SettingState extends State<Setting> {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.blue, width: 2),
+              border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: SizedBox(
@@ -137,11 +152,16 @@ class _SettingState extends State<Setting> {
 
           const SizedBox(height: 30),
 
+          const Text(
+            'Volume',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          /*
           // Volume button with same design as the dropdowns
           const SizedBox(height: 30),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.blue, width: 2),
+              border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: SizedBox(
@@ -160,6 +180,80 @@ class _SettingState extends State<Setting> {
               ),
             ),
           ),
+
+          //Button made by Jacob to replicate the dropdown menu style, quickly discarded
+          const SizedBox(height: 30),
+          TextButton(onPressed: () {
+                  _navigateToVolumeScreen(context);
+                }, 
+                child: Text(
+                  "Volume",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
+                  ),
+                  ),
+                ),
+                ),*/
+
+          //using text was the easiest thing to do okay
+          Row(
+              children: [
+                Text('aaaaaaaa',
+                style: TextStyle(color: Theme.of(context).colorScheme.background)),
+                Flexible(
+                  child: Slider(
+                    min: 0,
+                    max: 1,
+                    onChanged: (double value) {
+                      _setVolumeValue = value;
+                      VolumeController().setVolume(_setVolumeValue);
+                      setState(() {});
+                    },
+                    value: _setVolumeValue,
+                  ),
+                ),
+                Text('aaaaaaaa',
+                style: TextStyle(color: Theme.of(context).colorScheme.background)),
+              ],
+            ),
+           
+            TextButton(
+              onPressed: () => VolumeController().muteVolume(),
+              child: Text('Mute'),
+              style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
+                  ),
+                  ),
+                ),
+            ),
+            const SizedBox(height: 20.0),
+            // Show system UI
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //Text('Show system UI:${VolumeController().showSystemUI}'),
+                TextButton(
+                  onPressed: () => setState(() => VolumeController().showSystemUI = !VolumeController().showSystemUI),
+                  child: Text('Show/Hide UI'),
+                  style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
+                  ),
+                  ),
+                ),
+                )
+              ],
+            ),
 
           Expanded(
             child: Container(),
