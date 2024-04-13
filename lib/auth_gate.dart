@@ -35,7 +35,7 @@ class AuthGate extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 250,
+                          width: 310,
                           child: OAuthProviderButton(
                             provider: GoogleProvider(clientId: dotenv.env['GOOGLE_CLIENT_ID']!),
                           ),

@@ -98,12 +98,12 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
           SizedBox(height: 30),
           
           _buildCategoryButton(
-            'Company Business/Strategy',
+            'Business and Strategy',
             'emails_companyBusinessStrategy',
           ),
           SizedBox(height: 30),
           _buildCategoryButton(
-            'Logistic Arrangements',
+            'Logistics and Planning',
             'emails_logisticArrangements',
           ),
           SizedBox(height: 30),

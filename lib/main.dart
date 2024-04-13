@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jarvis/firebase_options.dart';
+import 'package:jarvis/theme/theme.dart';
 import 'auth_gate.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jarvis/theme/theme_provider.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: AuthGate(),
-      theme: Provider.of<ThemeProvider>(context).themeData, //MaterialApp cannot be constant or else the theme cannot be used
+      theme: lightMode,
+      darkTheme: darkMode, //MaterialApp cannot be constant or else the theme cannot be used
     );
   }
 }
