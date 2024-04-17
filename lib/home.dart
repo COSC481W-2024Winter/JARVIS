@@ -54,16 +54,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
 // Example widget method to display weather data
-  Widget _displayWeather() {
-    if (weatherCondition.isEmpty)
-      return SizedBox.shrink(); // Don't display if no data
-    return Column(
-      children: [
-        Text(temperature, style: TextStyle(fontSize: 16)),
-        Text(weatherCondition, style: TextStyle(fontSize: 16)),
-      ],
-    );
-  }
+  // Widget _displayWeather() {
+  //   if (weatherCondition.isEmpty)
+  //     return SizedBox.shrink(); // Don't display if no data
+  //   return Column(
+  //     children: [
+  //       Text(temperature, style: TextStyle(fontSize: 16)),
+  //       Text(weatherCondition, style: TextStyle(fontSize: 16)),
+  //     ],
+  //   );
+  // }
 
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         const SizedBox(width: 8),
         Text(
-          _isWeatherSpeaking ? 'Stop Weather' : 'Weather Report',
+          _isWeatherSpeaking ? 'Weather Report' : 'Weather Report',
           style: TextStyle(
             color: Theme.of(context).colorScheme.secondary,
             fontSize: 16.0,
@@ -241,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           const SizedBox(height: 40),
           _buildWeatherButton(context),
           const SizedBox(height: 10), // Adjust spacing as needed
-          _displayWeather(), // Display the weather data
+          //_displayWeather(), // Display the weather data
         ],
       ),
     );
