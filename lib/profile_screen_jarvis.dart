@@ -926,7 +926,7 @@ class ProfileScreenJarvis extends MultiProviderScreen {
           ),
         ),
 
-        const SizedBox(height: 10),
+        const SizedBox(height: 30),
 
         // Submit button
         CustomSubmitButton(
@@ -939,14 +939,6 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         SignOutButton(
           auth: auth,
           variant: ButtonVariant.outlined,
-        ),
-        const SizedBox(height: 8),
-        DeleteAccountButton(
-          auth: auth,
-          showDeleteConfirmationDialog: showDeleteConfirmationDialog,
-          onSignInRequired: () {
-            return _reauthenticate(context);
-          },
         ),
       ],
     );
