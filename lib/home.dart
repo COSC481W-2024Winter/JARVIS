@@ -112,50 +112,50 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () async {
-      if (_isWeatherSpeaking) {
-        await WeatherService().stopSpeaking();
-        setState(() {
-          _isWeatherSpeaking = false;
-        });
-      } else {
-        await WeatherService().requestLocationPermission();
-        final weatherData = await WeatherService().fetchWeather();
-        setState(() {
-          weatherCondition = weatherData['condition']!;
-          temperature = weatherData['temperature']!;
-          _isWeatherSpeaking = true;
-        });
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      elevation: 7,
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.cloud,
-          size: 24.0,
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          _isWeatherSpeaking ? 'Weather Report' : 'Weather Report',
-          style: TextStyle(
+    return ElevatedButton(
+      onPressed: () async {
+        if (_isWeatherSpeaking) {
+          await WeatherService().stopSpeaking();
+          setState(() {
+            _isWeatherSpeaking = false;
+          });
+        } else {
+          await WeatherService().requestLocationPermission();
+          final weatherData = await WeatherService().fetchWeather();
+          setState(() {
+            weatherCondition = weatherData['condition']!;
+            temperature = weatherData['temperature']!;
+            _isWeatherSpeaking = true;
+          });
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        elevation: 7,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.cloud,
+            size: 24.0,
             color: Theme.of(context).colorScheme.secondary,
-            fontSize: 16.0,
           ),
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(width: 8),
+          Text(
+            _isWeatherSpeaking ? 'Weather Report' : 'Weather Report',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   ElevatedButton _buildNewsButton(BuildContext context) {
     return ElevatedButton(
@@ -255,7 +255,47 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  bool _isDialogShown = false;
+
   Padding _buildTranscriptionText() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_gptResponse != "" && _gptResponse.isNotEmpty && !_isDialogShown) {
+        _isDialogShown = true;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return WillPopScope(
+              onWillPop: () async {
+                _gptResponse = "";
+                _isDialogShown = false;
+                Navigator.of(context).pop();
+                return true;
+              },
+              child: AlertDialog(
+                content: Text(
+                  _gptResponse,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("Close"),
+                    onPressed: () {
+                      _gptResponse = "";
+                      _isDialogShown = false;
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+    });
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -266,13 +306,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
           ),
           const SizedBox(height: 8.0),
-          Text(
-            _gptResponse,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
         ],
       ),
     );
