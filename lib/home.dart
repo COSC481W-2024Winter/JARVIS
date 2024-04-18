@@ -53,18 +53,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-// Example widget method to display weather data
-  // Widget _displayWeather() {
-  //   if (weatherCondition.isEmpty)
-  //     return SizedBox.shrink(); // Don't display if no data
-  //   return Column(
-  //     children: [
-  //       Text(temperature, style: TextStyle(fontSize: 16)),
-  //       Text(weatherCondition, style: TextStyle(fontSize: 16)),
-  //     ],
-  //   );
-  // }
-
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
@@ -255,56 +243,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  bool _isDialogShown = false;
-
   Padding _buildTranscriptionText() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_gptResponse != "" && _gptResponse.isNotEmpty && !_isDialogShown) {
-        _isDialogShown = true;
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return WillPopScope(
-              onWillPop: () async {
-                _gptResponse = "";
-                _isDialogShown = false;
-                Navigator.of(context).pop();
-                return true;
-              },
-              child: AlertDialog(
-                content: Text(
-                  _gptResponse,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text("Close"),
-                    onPressed: () {
-                      _gptResponse = "";
-                      _isDialogShown = false;
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-    });
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _wordsSpoken,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
-          ),
           const SizedBox(height: 8.0),
         ],
       ),
@@ -349,6 +293,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       _wordsSpoken = "";
     });
 
+    print('User input: $_wordsSpoken');
+    print('GPT response: $_gptResponse');
     text_to_speech().speak(generatedText);
   }
 
