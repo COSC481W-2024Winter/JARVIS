@@ -80,7 +80,8 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+        icon: Icon(Icons.arrow_back,
+            color: Theme.of(context).colorScheme.primary),
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: const Text('Email Categorization'),
@@ -96,7 +97,6 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
         children: [
           _buildGenerateSummariesButton(),
           SizedBox(height: 30),
-          
           _buildCategoryButton(
             'Business and Strategy',
             'emails_companyBusinessStrategy',
@@ -118,7 +118,6 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
           ),
           SizedBox(height: 30),
           _buildClearSummariesButton(),
-          
         ],
       ),
     );
@@ -138,7 +137,8 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       ),
       child: Text(
         'Generate Summaries',
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 18),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary, fontSize: 18),
       ),
     );
   }
@@ -157,7 +157,8 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       ),
       child: Text(
         'Clear Summaries',
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary, fontSize: 16),
       ),
     );
   }
@@ -168,17 +169,19 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
     return ElevatedButton(
       onPressed: hasData ? () => _showSummary(context, categoryKey) : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: hasData ? Theme.of(context).colorScheme.primary : Colors.grey,
+        backgroundColor:
+            hasData ? Theme.of(context).colorScheme.primary : Colors.grey,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
         elevation: 5,
-        fixedSize: const Size(300,60),
+        fixedSize: const Size(300, 60),
       ),
       child: Text(
         label,
-        style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 16),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary, fontSize: 16),
       ),
     );
   }
@@ -449,30 +452,43 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Summary'),
-              content: SingleChildScrollView(
-                child: Text(summary),
+            return WillPopScope(
+              onWillPop: () async {
+                if (isSpeaking) {
+                  await tts.stop();
+                }
+                return true;
+              },
+              child: AlertDialog(
+                title: const Text('Summary'),
+                content: SingleChildScrollView(
+                  child: Text(summary),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),
+                    onPressed: () async {
+                      if (isSpeaking) {
+                        await tts.stop();
+                      } else {
+                        await tts.speak(summary);
+                      }
+                      setState(() {
+                        isSpeaking = !isSpeaking;
+                      });
+                    },
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (isSpeaking) {
+                        await tts.stop();
+                      }
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ],
               ),
-              actions: [
-                IconButton(
-                  icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),
-                  onPressed: () async {
-                    if (isSpeaking) {
-                      await tts.stop();
-                    } else {
-                      await tts.speak(summary);
-                    }
-                    setState(() {
-                      isSpeaking = !isSpeaking;
-                    });
-                  },
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
-                ),
-              ],
             );
           },
         );

@@ -102,20 +102,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   ElevatedButton _buildWeatherButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        if (_isWeatherSpeaking) {
-          await WeatherService().stopSpeaking();
-          setState(() {
-            _isWeatherSpeaking = false;
-          });
-        } else {
-          await WeatherService().requestLocationPermission();
-          final weatherData = await WeatherService().fetchWeather();
-          setState(() {
-            weatherCondition = weatherData['condition']!;
-            temperature = weatherData['temperature']!;
-            _isWeatherSpeaking = true;
-          });
-        }
+        await WeatherService().requestLocationPermission();
+        final weatherData = await WeatherService().fetchWeather();
+        setState(() {
+          // PERHAPS DEPRECATED
+          weatherCondition = weatherData['condition']!;
+          temperature = weatherData['temperature']!;
+        });
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -151,40 +144,31 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         int? lastClickTime = prefs.getInt('lastClickTime');
         int currentTime = DateTime.now().millisecondsSinceEpoch;
-
-        if (_isSpeaking) {
-          // if speaking, stop
-          await text_to_speech().stop();
-          setState(() {
-            _isSpeaking = false;
-          });
-        } else {
-          // if not speaking, start
-          if (lastClickTime != null && currentTime - lastClickTime < 3600000) {
-            // if clicked within the past hour, read the last summarized content
-            String? lastSummarizedContent =
-                prefs.getString('lastSummarizedContent');
-            if (lastSummarizedContent != null) {
-              text_to_speech().speak(lastSummarizedContent);
-              setState(() {
-                _isSpeaking = true;
-              });
-            }
-          } else {
-            // if clicked more than an hour ago, summarize the latest news
-            final newsContents = await news_service().getTopNews();
-            String contents = await text_to_gpt_service()
-                .send_to_GPT(newsContents.join('\n'), "news");
-            print('Content: $contents');
-            text_to_speech().speak(contents);
+        if (lastClickTime != null && currentTime - lastClickTime < 3600000) {
+          // if clicked within the past hour, read the last summarized content
+          String? lastSummarizedContent =
+              prefs.getString('lastSummarizedContent');
+          if (lastSummarizedContent != null) {
+            text_to_speech().speak(lastSummarizedContent);
             setState(() {
+              // DEPRECATED
               _isSpeaking = true;
             });
-
-            // save the current time and summarized content
-            await prefs.setInt('lastClickTime', currentTime);
-            await prefs.setString('lastSummarizedContent', contents);
           }
+        } else {
+          // if clicked more than an hour ago, summarize the latest news
+          final newsContents = await news_service().getTopNews();
+          String contents = await text_to_gpt_service()
+              .send_to_GPT(newsContents.join('\n'), "news");
+          print('Content: $contents');
+          text_to_speech().speak(contents);
+          setState(() {
+            _isSpeaking = true;
+          });
+
+          // save the current time and summarized content
+          await prefs.setInt('lastClickTime', currentTime);
+          await prefs.setString('lastSummarizedContent', contents);
         }
       },
       style: ElevatedButton.styleFrom(
@@ -213,6 +197,39 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  ElevatedButton _buildStopButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        text_to_speech().stop();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        elevation: 7,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.stop,
+            size: 24.0,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Stop',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Center _buildBody(BuildContext context) {
     return Center(
       child: Column(
@@ -228,7 +245,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           _buildNewsButton(context),
           const SizedBox(height: 40),
           _buildWeatherButton(context),
-          const SizedBox(height: 10), // Adjust spacing as needed
+          const SizedBox(height: 40),
+          _buildStopButton(context), // Adjust spacing as needed
           //_displayWeather(), // Display the weather data
         ],
       ),
@@ -288,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void processing() async {
     String generatedText =
         await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
-        print('User input: $_wordsSpoken');
+    print('User input: $_wordsSpoken');
     setState(() {
       _gptResponse = generatedText;
       _wordsSpoken = "";
