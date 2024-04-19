@@ -53,18 +53,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-// Example widget method to display weather data
-  // Widget _displayWeather() {
-  //   if (weatherCondition.isEmpty)
-  //     return SizedBox.shrink(); // Don't display if no data
-  //   return Column(
-  //     children: [
-  //       Text(temperature, style: TextStyle(fontSize: 16)),
-  //       Text(weatherCondition, style: TextStyle(fontSize: 16)),
-  //     ],
-  //   );
-  // }
-
   IconButton _buildProfileButton(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
@@ -112,50 +100,50 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   // luna - new button for weather
   ElevatedButton _buildWeatherButton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () async {
-      if (_isWeatherSpeaking) {
-        await WeatherService().stopSpeaking();
-        setState(() {
-          _isWeatherSpeaking = false;
-        });
-      } else {
-        await WeatherService().requestLocationPermission();
-        final weatherData = await WeatherService().fetchWeather();
-        setState(() {
-          weatherCondition = weatherData['condition']!;
-          temperature = weatherData['temperature']!;
-          _isWeatherSpeaking = true;
-        });
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      elevation: 7,
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.cloud,
-          size: 24.0,
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        const SizedBox(width: 8),
-        Text(
-          _isWeatherSpeaking ? 'Weather Report' : 'Weather Report',
-          style: TextStyle(
+    return ElevatedButton(
+      onPressed: () async {
+        if (_isWeatherSpeaking) {
+          await WeatherService().stopSpeaking();
+          setState(() {
+            _isWeatherSpeaking = false;
+          });
+        } else {
+          await WeatherService().requestLocationPermission();
+          final weatherData = await WeatherService().fetchWeather();
+          setState(() {
+            weatherCondition = weatherData['condition']!;
+            temperature = weatherData['temperature']!;
+            _isWeatherSpeaking = true;
+          });
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shadowColor: Theme.of(context).colorScheme.shadow,
+        elevation: 7,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.cloud,
+            size: 24.0,
             color: Theme.of(context).colorScheme.secondary,
-            fontSize: 16.0,
           ),
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(width: 8),
+          Text(
+            _isWeatherSpeaking ? 'Weather Report' : 'Weather Report',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   ElevatedButton _buildNewsButton(BuildContext context) {
     return ElevatedButton(
@@ -261,18 +249,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _wordsSpoken,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
-          ),
           const SizedBox(height: 8.0),
-          Text(
-            _gptResponse,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
         ],
       ),
     );
@@ -311,11 +288,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void processing() async {
     String generatedText =
         await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
+        print('User input: $_wordsSpoken');
     setState(() {
       _gptResponse = generatedText;
       _wordsSpoken = "";
     });
 
+    print('GPT response: $_gptResponse');
     text_to_speech().speak(generatedText);
   }
 
