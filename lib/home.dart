@@ -1,5 +1,6 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jarvis/backend/weather_service.dart';
 import 'package:jarvis/profile_screen_jarvis.dart';
 import 'package:jarvis/email_categorization_screen.dart';
@@ -32,6 +33,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       appBar: _buildAppBar(context),
       body: _buildBody(context),

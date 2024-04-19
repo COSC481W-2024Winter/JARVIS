@@ -75,6 +75,10 @@ class _AvailableProvidersRowState extends State<_AvailableProvidersRow> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     final l = FirebaseUILocalizations.labelsOf(context);
     final isCupertino = CupertinoUserInterfaceLevel.maybeOf(context) != null;
 
