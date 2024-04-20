@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jarvis/volumecontrollerscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
@@ -70,6 +71,10 @@ class _SettingState extends State<Setting> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       appBar: _buildAppBar(context),
       body: Column(
