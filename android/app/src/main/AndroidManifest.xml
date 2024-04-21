@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
     <application
-        android:label="jarvis"
+        android:label="JARVIS"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
