@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fba;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
@@ -157,8 +159,6 @@ class _EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return UniversalIconButton(
       materialIcon: isEditing ? Icons.check : Icons.edit,
       cupertinoIcon: isEditing ? CupertinoIcons.check_mark : CupertinoIcons.pen,

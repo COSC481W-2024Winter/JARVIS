@@ -37,7 +37,6 @@ class _MyAppState extends State<MyAppp> {
         ),
         body: Column(
           children: [
-          
             Row(
               children: [
                 Text('Set Volume:'),
@@ -55,7 +54,7 @@ class _MyAppState extends State<MyAppp> {
                 ),
               ],
             ),
-           
+
             TextButton(
               onPressed: () => VolumeController().muteVolume(),
               child: Text('Mute'),
@@ -74,7 +73,8 @@ class _MyAppState extends State<MyAppp> {
               children: [
                 //Text('Show system UI:${VolumeController().showSystemUI}'),
                 TextButton(
-                  onPressed: () => setState(() => VolumeController().showSystemUI = !VolumeController().showSystemUI),
+                  onPressed: () => setState(() => VolumeController()
+                      .showSystemUI = !VolumeController().showSystemUI),
                   child: Text('Show/Hide UI'),
                 )
               ],

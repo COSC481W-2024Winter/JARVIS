@@ -1,6 +1,7 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jarvis/auth_gate.dart';
 import 'package:jarvis/backend/weather_service.dart';
 import 'package:jarvis/profile_screen_jarvis.dart';
 import 'package:jarvis/email_categorization_screen.dart';
@@ -11,8 +12,6 @@ import 'package:jarvis/backend/text_to_gpt_service.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
 import 'package:jarvis/backend/news_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -310,25 +309,39 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void processing() async {
-  if (_wordsSpoken.isNotEmpty) {
-    String generatedText = await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
-    print('User input: $_wordsSpoken');
-    setState(() {
-      _gptResponse = generatedText;
-      _wordsSpoken = "";
-    });
-    print('GPT response: $_gptResponse');
-    text_to_speech().speak(generatedText);
+    if (_wordsSpoken.isNotEmpty) {
+      String generatedText =
+          await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
+      print('User input: $_wordsSpoken');
+      setState(() {
+        _gptResponse = generatedText;
+        _wordsSpoken = "";
+      });
+      print('GPT response: $_gptResponse');
+      text_to_speech().speak(generatedText);
+    }
   }
-}
 
   void _navigateToProfileScreen(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute<ProfileScreenJarvis>(
         builder: (context) => ProfileScreenJarvis(
-          appBar: AppBar(title: const Text('User Profile')),
-          actions: [SignedOutAction((context) => Navigator.of(context).pop())],
+          appBar: AppBar(
+            title: const Text('User Profile'),
+            leading: BackButton(
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              ),
+            ),
+          ),
+          actions: [
+            SignedOutAction((context) => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => AuthGate()),
+                )),
+          ],
         ),
       ),
     );
