@@ -10,6 +10,7 @@ import 'package:jarvis/backend/email_sorting_runner.dart';
 import 'package:jarvis/backend/local_storage_service.dart';
 import 'package:jarvis/backend/chatgpt_service.dart';
 import 'package:jarvis/backend/email_summarizer.dart';
+import 'package:jarvis/home.dart';
 import 'package:jarvis/widgets/custom_toast_widget.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
 
@@ -82,12 +83,16 @@ class _EmailCategorizationScreenState extends State<EmailCategorizationScreen> {
   }
 
   // Builds the app bar for the email categorization screen
+
   AppBar _buildAppBar() {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.arrow_back,
             color: Theme.of(context).colorScheme.primary),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        ),
       ),
       title: const Text('Email Categorization'),
       centerTitle: true,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jarvis/home.dart';
 import 'package:jarvis/volumecontrollerscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jarvis/backend/text_to_speech.dart';
@@ -68,7 +69,6 @@ class _SettingState extends State<Setting> {
     _saveSettings();
   }
 
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -89,7 +89,8 @@ class _SettingState extends State<Setting> {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.primary, width: 2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: SizedBox(
@@ -107,9 +108,7 @@ class _SettingState extends State<Setting> {
                       value: value,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(value == 'en-US'
-                            ? 'English' : 'Spanish'
-                            ),
+                        child: Text(value == 'en-US' ? 'English' : 'Spanish'),
                       ),
                     );
                   }).toList(),
@@ -128,7 +127,8 @@ class _SettingState extends State<Setting> {
           const SizedBox(height: 10),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).colorScheme.primary, width: 2),
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.primary, width: 2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: SizedBox(
@@ -207,58 +207,64 @@ class _SettingState extends State<Setting> {
 
           //using text was the easiest thing to do okay
           Row(
-              children: [
-                Text('aaaaaaaa',
-                style: TextStyle(color: Theme.of(context).colorScheme.background)),
-                Flexible(
-                  child: Slider(
-                    min: 0,
-                    max: 1,
-                    onChanged: (double value) {
-                      _setVolumeValue = value;
-                      VolumeController().setVolume(_setVolumeValue);
-                      setState(() {});
-                    },
-                    value: _setVolumeValue,
-                  ),
+            children: [
+              Text('aaaaaaaa',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.background)),
+              Flexible(
+                child: Slider(
+                  min: 0,
+                  max: 1,
+                  onChanged: (double value) {
+                    _setVolumeValue = value;
+                    VolumeController().setVolume(_setVolumeValue);
+                    setState(() {});
+                  },
+                  value: _setVolumeValue,
                 ),
-                Text('aaaaaaaa',
-                style: TextStyle(color: Theme.of(context).colorScheme.background)),
-              ],
+              ),
+              Text('aaaaaaaa',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.background)),
+            ],
+          ),
+
+          TextButton(
+            onPressed: () => VolumeController().muteVolume(),
+            child: Text('Mute'),
+            style: ButtonStyle(
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary, width: 2.0),
+                ),
+              ),
             ),
-           
-            TextButton(
-              onPressed: () => VolumeController().muteVolume(),
-              child: Text('Mute'),
-              style: ButtonStyle(
+          ),
+          const SizedBox(height: 20.0),
+          // Show system UI
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //Text('Show system UI:${VolumeController().showSystemUI}'),
+              TextButton(
+                onPressed: () => setState(() => VolumeController()
+                    .showSystemUI = !VolumeController().showSystemUI),
+                child: Text('Show/Hide UI'),
+                style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
-                  ),
-                  ),
-                ),
-            ),
-            const SizedBox(height: 20.0),
-            // Show system UI
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //Text('Show system UI:${VolumeController().showSystemUI}'),
-                TextButton(
-                  onPressed: () => setState(() => VolumeController().showSystemUI = !VolumeController().showSystemUI),
-                  child: Text('Show/Hide UI'),
-                  style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2.0),
-                  ),
+                      side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2.0),
+                    ),
                   ),
                 ),
-                )
-              ],
-            ),
+              )
+            ],
+          ),
 
           Expanded(
             child: Container(),
@@ -274,7 +280,10 @@ class _SettingState extends State<Setting> {
       leading: IconButton(
         icon: Icon(Icons.arrow_back,
             color: Theme.of(context).colorScheme.primary),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        ),
       ),
       title: const Text('Settings'),
       centerTitle: true,
