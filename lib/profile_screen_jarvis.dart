@@ -14,6 +14,7 @@ import 'package:firebase_ui_shared/firebase_ui_shared.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:flutter/material.dart' hide Title;
 import 'package:flutter/services.dart';
+import 'package:jarvis/widgets/custom_toast_widget.dart';
 
 import 'widgets/rebuild_scope.dart';
 import 'widgets/subtitle.dart';
@@ -936,7 +937,12 @@ class ProfileScreenJarvis extends MultiProviderScreen {
         CustomSubmitButton(
           label: 'Submit',
           onPressed: () async {
-            await state.saveData();
+            bool saveSuccess = await state.saveData();
+            if (saveSuccess) {
+              showToast(context, 'Your story has been successfully saved.');
+            } else {
+              showToast(context, 'Error saving story. Please try again.');
+            }
           },
         ),
         const SizedBox(height: 8),
@@ -1025,7 +1031,7 @@ class ProfileScreenState extends ChangeNotifier {
   TextEditingController get ageController => _ageController;
   TextEditingController get storyController => _storyController;
 
-  Future<void> saveData() async {
+  Future<bool> saveData() async {
     final user = fba.FirebaseAuth.instance.currentUser;
     final userData = {
       'fullName': _fullNameController.text,
@@ -1034,9 +1040,16 @@ class ProfileScreenState extends ChangeNotifier {
     };
 
     if (user != null) {
-      final userDoc =
-          FirebaseFirestore.instance.collection('users').doc(user.uid);
-      await userDoc.set(userData, SetOptions(merge: true));
+      try {
+        final userDoc =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+        await userDoc.set(userData, SetOptions(merge: true));
+        return true; // Return true if the save operation is successful
+      } catch (e) {
+        print('Error saving data: $e');
+        return false; // Return false if an error occurs
+      }
     }
+    return false; // Return false if the user is null
   }
 }
