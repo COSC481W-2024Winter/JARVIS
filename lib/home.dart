@@ -279,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _startListening() async {
+    text_to_speech().stop();
     bool available = await speechToText.initialize();
     if (available) {
       await speechToText.listen(onResult: _onSpeechResult);
@@ -309,17 +310,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void processing() async {
-    String generatedText =
-        await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
+  if (_wordsSpoken.isNotEmpty) {
+    String generatedText = await text_to_gpt_service().send_to_GPT(_wordsSpoken, "talk");
     print('User input: $_wordsSpoken');
     setState(() {
       _gptResponse = generatedText;
       _wordsSpoken = "";
     });
-
     print('GPT response: $_gptResponse');
     text_to_speech().speak(generatedText);
   }
+}
 
   void _navigateToProfileScreen(BuildContext context) {
     Navigator.push(
